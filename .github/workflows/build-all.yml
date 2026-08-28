@@ -1,0 +1,123 @@
+name: Build & Release Multi-Arch LV2 Plugins (ARM & x86)
+
+on:
+  push:
+    branches: [ "main" ]
+    tags: [ "v*" ]
+  workflow_dispatch:
+
+jobs:
+  build-arm-and-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - arch: armhf
+            triplet: arm-linux-gnueabihf
+            cxx: arm-linux-gnueabihf-g++
+            pkg_suffix: armhf
+            desc: "Raspberry Pi 3/4 32-bit (Patchbox OS)"
+          - arch: arm64
+            triplet: aarch64-linux-gnu
+            cxx: aarch64-linux-gnu-g++
+            pkg_suffix: arm64
+            desc: "Raspberry Pi 4/5 64-bit (Patchbox OS 64-bit)"
+          - arch: x86_64
+            triplet: x86_64-linux-gnu
+            cxx: g++
+            pkg_suffix: x86_64
+            desc: "Linux x86_64 (MOD Desktop / MODEP)"
+
+    steps:
+    - name: Checkout Source
+      uses: actions/checkout@v4
+
+    - name: Install Cross Compilers & Build Tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
+                               gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
+                               build-essential lv2-dev liblilv-dev zip tar gzip
+
+    - name: Build All Plugins for ${{ matrix.arch }} (${{ matrix.desc }})
+      run: |
+        mkdir -p build_output
+        CXX="${{ matrix.cxx }}"
+        echo "Building plugins with $CXX..."
+
+        compile_plugin() {
+          dir="$1"
+          src="$2"
+          so_name="$3"
+          echo "Compiling $dir -> $so_name..."
+          $CXX -O3 -fPIC -shared -static-libstdc++ -static-libgcc \
+               -I plugins/include -I plugins/$dir/src \
+               plugins/$dir/$src -o plugins/$dir/$so_name
+        }
+
+        compile_plugin "harmonic-tremolo" "src/harmonic_tremolo_lv2.cpp" "harmonic_tremolo.so"
+        compile_plugin "cyber-denoiser" "src/cyber_denoiser_lv2.cpp" "cyber_denoiser.so"
+        compile_plugin "galaxy-strobe-tune" "src/galaxy_strobe_tune_lv2.cpp" "galaxy_strobe_tune.so"
+        compile_plugin "dimension-c" "src/dimension_c_lv2.cpp" "dimension_c.so"
+        compile_plugin "Dimension_IV.lv2" "src/dimension_iv_lv2.cpp" "Dimension_IV_dsp.so"
+        compile_plugin "Dearmondo610.lv2" "src/dearmondo610_lv2.cpp" "DeArmondo610_dsp.so"
+        compile_plugin "guitar-midi" "src/guitar_midi_lv2.cpp" "guitar_midi.so"
+        compile_plugin "bluesbreaker.lv2" "src/bluesbreaker_lv2.cpp" "bluesbreaker.so"
+        compile_plugin "aether.lv2" "src/aether_lv2.cpp" "aether_dsp.so"
+        compile_plugin "nam-loader.lv2" "src/nam_loader_lv2.cpp" "nam_loader.so"
+        compile_plugin "cyber-hum-killer.lv2" "src/cyber_hum_killer_lv2.cpp" "cyber_hum_killer.so"
+        compile_plugin "smart-fizz-killer.lv2" "src/smart_fizz_killer_lv2.cpp" "smart_fizz_killer.so"
+
+    - name: Package Bundle for ${{ matrix.arch }}
+      run: |
+        mkdir -p dist_${{ matrix.pkg_suffix }}
+        
+        copy_bundle() {
+          src_p="$1"
+          b_name="$2"
+          dest="dist_${{ matrix.pkg_suffix }}/$b_name"
+          mkdir -p "$dest"
+          cp -r plugins/$src_p/*.ttl "$dest/" 2>/dev/null || true
+          cp -r plugins/$src_p/*.so "$dest/" 2>/dev/null || true
+          cp -r plugins/$src_p/*.dll "$dest/" 2>/dev/null || true
+          if [ -d "plugins/$src_p/modgui" ]; then
+            cp -r "plugins/$src_p/modgui" "$dest/"
+          fi
+        }
+
+        copy_bundle "harmonic-tremolo" "harmonic-tremolo.lv2"
+        copy_bundle "cyber-denoiser" "cyber-denoiser.lv2"
+        copy_bundle "galaxy-strobe-tune" "galaxy-strobe-tune.lv2"
+        copy_bundle "dimension-c" "dimension-c.lv2"
+        copy_bundle "Dimension_IV.lv2" "Dimension_IV.lv2"
+        copy_bundle "Dearmondo610.lv2" "Dearmondo610.lv2"
+        copy_bundle "guitar-midi" "guitar-midi.lv2"
+        copy_bundle "bluesbreaker.lv2" "bluesbreaker.lv2"
+        copy_bundle "aether.lv2" "aether.lv2"
+        copy_bundle "nam-loader.lv2" "nam-loader.lv2"
+        copy_bundle "cyber-hum-killer.lv2" "cyber-hum-killer.lv2"
+        copy_bundle "smart-fizz-killer.lv2" "smart-fizz-killer.lv2"
+
+        cd dist_${{ matrix.pkg_suffix }}
+        tar -czvf ../modep_plugins_${{ matrix.pkg_suffix }}.tar.gz *
+        zip -r ../modep_plugins_${{ matrix.pkg_suffix }}.zip *
+        cd ..
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: modep_plugins_${{ matrix.pkg_suffix }}
+        path: |
+          modep_plugins_${{ matrix.pkg_suffix }}.tar.gz
+          modep_plugins_${{ matrix.pkg_suffix }}.zip
+
+    - name: Attach Assets to GitHub Release
+      if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v1.0.0
+        files: |
+          modep_plugins_${{ matrix.pkg_suffix }}.tar.gz
+          modep_plugins_${{ matrix.pkg_suffix }}.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

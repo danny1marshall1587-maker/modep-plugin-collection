@@ -1,0 +1,136 @@
+<div class="mod-pedal mod-pedal-boxy{{{cns}}} mod-black black nam-loader-pedal{{{c_extra}}}">
+    <div mod-role="drag-handle" class="mod-drag-handle"></div>
+
+    <div class="mod-plugin-brand"><h1>CYBER AUDIO</h1></div>
+    <div class="mod-plugin-name"><h1>NEURAL AMP MODELER</h1></div>
+
+    <div class="mod-light on" mod-role="bypass-light"></div>
+
+    <!-- OLED Amp Screen & Tone 3000 Quick Display -->
+    <div class="nam-display clearfix" title="Click to open NAM Folder Browser">
+        <div class="nam-display-header">
+            <span class="nam-title-badge">TONE 3000 / NAM</span>
+            <span class="nam-folder-crumb" mod-role="folder_crumb">📁 03 - High Gain</span>
+            <button type="button" class="nam-open-browser-btn" mod-role="open_browser_btn">📁 BROWSE FOLDERS</button>
+        </div>
+
+        <div class="nam-center-info">
+            <div class="nam-nav-arrow nam-prev-btn" mod-role="prev_model" title="Previous NAM Model">◀</div>
+            <div class="nam-text-block">
+                <div class="nam-model-name" mod-role="model_name">Marshall JCM800 2203</div>
+                <div class="nam-model-desc" mod-role="model_desc">Tight punchy 80s British rock rhythm and roaring harmonics</div>
+            </div>
+            <div class="nam-nav-arrow nam-next-btn" mod-role="next_model" title="Next NAM Model">▶</div>
+        </div>
+
+        <div class="nam-display-footer">
+            <span class="nam-neural-tag">NEURAL WAVENET / LSTM</span>
+            <span class="nam-cat-badge" mod-role="cat_badge">Classic 80s Rock</span>
+            <span class="nam-cab-tag" mod-role="cab_tag">4x12 CAB IR: ON</span>
+        </div>
+    </div>
+
+    <!-- Full Interactive Folder Structure File Browser Overlay -->
+    <div class="nam-browser-overlay" mod-role="browser_overlay" style="display: none;">
+        <!-- Pinned Sticky Top Navigation Bar -->
+        <div class="nam-browser-sticky-top">
+            <button type="button" class="nam-btn-back" mod-role="btn_back">
+                <span class="back-arrow">⬅</span> BACK TO PREVIOUS FOLDER
+            </button>
+            <div class="nam-browser-path" mod-role="current_path_display">📁 / Root /</div>
+            <button type="button" class="nam-btn-close" mod-role="btn_close">✖ CLOSE</button>
+        </div>
+
+        <!-- Scrollable Folder & File List -->
+        <div class="nam-browser-scroll-container">
+            <div class="nam-browser-list" mod-role="browser_items_list">
+                <!-- Dynamically populated with Folders and NAM Files -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden input for standard MOD-UI host sync and patch saving -->
+    <div style="display:none;">
+        <input type="hidden" mod-role="input-control-port" mod-port-symbol="profile" value="8" />
+    </div>
+
+    <!-- Tone 3000 Quick Model Selector & Amp Controls Row 1 -->
+    <div class="mod-control-group row-1 clearfix">
+        <div class="mod-knob" title="NAM Model Selector (Browse 24 Built-in Tone 3000 Captures)">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="profile"></div>
+            <span class="mod-knob-title">MODEL</span>
+        </div>
+        <div class="mod-knob" title="Preamp Gain / Drive">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="drive"></div>
+            <span class="mod-knob-title">GAIN</span>
+        </div>
+        <div class="mod-knob" title="Bass EQ">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="bass"></div>
+            <span class="mod-knob-title">BASS</span>
+        </div>
+        <div class="mod-knob" title="Middle EQ">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="mid"></div>
+            <span class="mod-knob-title">MID</span>
+        </div>
+    </div>
+
+    <!-- Amp Controls Row 2 -->
+    <div class="mod-control-group row-2 clearfix">
+        <div class="mod-knob" title="Treble EQ">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="treble"></div>
+            <span class="mod-knob-title">TREBLE</span>
+        </div>
+        <div class="mod-knob" title="Master Volume">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="volume"></div>
+            <span class="mod-knob-title">MASTER</span>
+        </div>
+        <div class="mod-knob" title="Noise Gate Threshold (dB)">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="gate"></div>
+            <span class="mod-knob-title">GATE</span>
+        </div>
+        <div class="mod-switch-wrap" title="Speaker Cabinet IR Emulation">
+            <div class="mod-switch-image" mod-role="input-control-port" mod-port-symbol="cab_enable" mod-widget="switch"></div>
+            <span class="mod-switch-title">CAB IR</span>
+        </div>
+    </div>
+
+    <div class="mod-footswitch" mod-role="bypass" title="Footswitch (Engage / Bypass)"></div>
+
+    <!-- MOD SDK Standard Input Connectors (Audio / MIDI / CV) -->
+    <div class="mod-pedal-input">
+        {{#effect.ports.audio.input}}
+        <div class="mod-input mod-input-disconnected" title="{{name}}" mod-role="input-audio-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-input-image"></div>
+        </div>
+        {{/effect.ports.audio.input}}
+        {{#effect.ports.midi.input}}
+        <div class="mod-input mod-input-disconnected" title="{{name}}" mod-role="input-midi-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-input-image"></div>
+        </div>
+        {{/effect.ports.midi.input}}
+        {{#effect.ports.cv.input}}
+        <div class="mod-input mod-input-disconnected" title="{{name}}" mod-role="input-cv-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-input-image"></div>
+        </div>
+        {{/effect.ports.cv.input}}
+    </div>
+
+    <!-- MOD SDK Standard Output Connectors (Audio / MIDI / CV) -->
+    <div class="mod-pedal-output">
+        {{#effect.ports.audio.output}}
+        <div class="mod-output mod-output-disconnected" title="{{name}}" mod-role="output-audio-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-output-image"></div>
+        </div>
+        {{/effect.ports.audio.output}}
+        {{#effect.ports.midi.output}}
+        <div class="mod-output mod-output-disconnected" title="{{name}}" mod-role="output-midi-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-output-image"></div>
+        </div>
+        {{/effect.ports.midi.output}}
+        {{#effect.ports.cv.output}}
+        <div class="mod-output mod-output-disconnected" title="{{name}}" mod-role="output-cv-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-output-image"></div>
+        </div>
+        {{/effect.ports.cv.output}}
+    </div>
+</div>

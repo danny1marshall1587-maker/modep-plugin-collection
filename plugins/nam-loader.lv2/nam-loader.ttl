@@ -4,6 +4,7 @@
 @prefix doap:  <http://usefulinc.com/ns/doap#> .
 @prefix units: <http://lv2plug.in/ns/extensions/units#> .
 @prefix mod:   <http://moddevices.com/ns/mod#> .
+@prefix state: <http://lv2plug.in/ns/ext/state#> .
 
 <http://moddevices.com/plugins/danny/nam-loader>
     a lv2:Plugin ,
@@ -12,7 +13,8 @@
     doap:license <http://opensource.org/licenses/mit> ;
     mod:brand "CyberAudio" ;
     mod:label "NAM Loader" ;
-    rdfs:comment "Neural Amp Modeler (NAM) profile & Tone 3000 loader with 12 built-in world-class amp/pedal captures, 3-band tonestack, noise gate, and speaker cabinet simulation." ;
+    rdfs:comment "Neural Amp Modeler (NAM) profile & Tone 3000 loader with organized folder file browser, 24 pro-grade amp/pedal captures, 3-band tonestack, noise gate, speaker cabinet simulation, and patch state persistence." ;
+    lv2:extensionData state:interface ;
 
     lv2:port [
         a lv2:AudioPort ,
@@ -43,46 +45,82 @@
         lv2:index 3 ;
         lv2:symbol "profile" ;
         lv2:name "NAM Model" ;
-        lv2:default 4 ;
+        lv2:default 8 ;
         lv2:minimum 0 ;
-        lv2:maximum 11 ;
+        lv2:maximum 23 ;
         lv2:portProperty lv2:enumeration , lv2:integer ;
         lv2:scalePoint [
-            rdfs:label "Fender '65 Deluxe (Clean)" ;
+            rdfs:label "Fender '65 Deluxe Reverb" ;
             rdf:value 0
         ] , [
-            rdfs:label "Vox AC30 Top Boost (Chime)" ;
+            rdfs:label "Fender '59 Tweed Bassman" ;
             rdf:value 1
         ] , [
-            rdfs:label "Marshall Bluesbreaker (Edge)" ;
+            rdfs:label "Dumble ODS Clean Channel" ;
             rdf:value 2
         ] , [
-            rdfs:label "Dumble ODS Crunch (Boutique)" ;
+            rdfs:label "Matchless DC-30 Clean" ;
             rdf:value 3
         ] , [
-            rdfs:label "Marshall JCM800 2203 (Rock)" ;
+            rdfs:label "Vox AC30 Top Boost 1964" ;
             rdf:value 4
         ] , [
-            rdfs:label "Soldano SLO-100 (Lead)" ;
+            rdfs:label "Marshall Bluesbreaker 1962" ;
             rdf:value 5
         ] , [
-            rdfs:label "Peavey 5150 Block (Metal)" ;
+            rdfs:label "Marshall JTM45 Plexi" ;
             rdf:value 6
         ] , [
-            rdfs:label "Mesa Dual Rectifier (High Gain)" ;
+            rdfs:label "Orange Rockerverb 50" ;
             rdf:value 7
         ] , [
-            rdfs:label "Friedman BE-100 (Boutique Lead)" ;
+            rdfs:label "Marshall JCM800 2203" ;
             rdf:value 8
         ] , [
-            rdfs:label "Ampeg SVT-CL (Tube Bass)" ;
+            rdfs:label "Soldano SLO-100 Super Lead" ;
             rdf:value 9
         ] , [
-            rdfs:label "Klon Centaur (Transparent OD)" ;
+            rdfs:label "Peavey 5150 Block Letter" ;
             rdf:value 10
         ] , [
-            rdfs:label "TS808 Tube Screamer (Mid Boost)" ;
+            rdfs:label "Mesa Dual Rectifier Multi-Watt" ;
             rdf:value 11
+        ] , [
+            rdfs:label "Friedman BE-100 Brown Eye" ;
+            rdf:value 12
+        ] , [
+            rdfs:label "Bogner Ecstasy 101B Red" ;
+            rdf:value 13
+        ] , [
+            rdfs:label "ENGL Powerball II Lead" ;
+            rdf:value 14
+        ] , [
+            rdfs:label "Diezel VH4 Channel 3" ;
+            rdf:value 15
+        ] , [
+            rdfs:label "Ampeg SVT-CL Classic Stack" ;
+            rdf:value 16
+        ] , [
+            rdfs:label "Darkglass Microtubes B7K" ;
+            rdf:value 17
+        ] , [
+            rdfs:label "Acoustic Tube DI Preamp" ;
+            rdf:value 18
+        ] , [
+            rdfs:label "Klon Centaur Gold Horsie" ;
+            rdf:value 19
+        ] , [
+            rdfs:label "Ibanez TS808 Tube Screamer" ;
+            rdf:value 20
+        ] , [
+            rdfs:label "ProCo Rat 2 Vintage LM308" ;
+            rdf:value 21
+        ] , [
+            rdfs:label "Electro-Harmonix Big Muff Pi" ;
+            rdf:value 22
+        ] , [
+            rdfs:label "King of Tone High Gain Side" ;
+            rdf:value 23
         ] ;
     ] , [
         a lv2:ControlPort ,

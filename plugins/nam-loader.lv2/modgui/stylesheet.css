@@ -1,0 +1,211 @@
+/* Neural Amp Modeler (NAM Loader) Stylesheet for MODEP / MOD-UI */
+
+.nam-loader-pedal {
+    position: absolute;
+    width: 320px;
+    height: 480px;
+    background: radial-gradient(circle at 50% 20%, #201c18 0%, #110e0b 60%, #060504 100%);
+    border-radius: 24px;
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.95), inset 0 1px 3px rgba(255, 170, 0, 0.5), inset 0 -4px 8px rgba(0, 0, 0, 0.95);
+    border: 3px solid #b87a20;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    user-select: none;
+    overflow: visible;
+    z-index: 10;
+}
+
+.nam-loader-pedal .mod-drag-handle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 28px;
+    cursor: move;
+    z-index: 20;
+}
+
+.nam-loader-pedal .mod-plugin-brand {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.nam-loader-pedal .mod-plugin-brand h1 {
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    color: #ffaa00;
+    font-weight: 800;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px rgba(255, 170, 0, 0.8);
+    margin: 0;
+}
+
+.nam-loader-pedal .mod-plugin-name {
+    text-align: center;
+    border-bottom: 1.5px solid rgba(255, 170, 0, 0.3);
+    padding-bottom: 4px;
+    margin: 2px 25px 8px 25px;
+}
+
+.nam-loader-pedal .mod-plugin-name h1 {
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    color: #ffffff;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 170, 0, 0.9);
+    margin: 0;
+}
+
+/* ========================================================
+   OLED AMP DISPLAY & TONE 3000 BROWSER
+======================================================== */
+.nam-loader-pedal .nam-display {
+    width: 90%;
+    height: 125px;
+    margin: 2px auto 8px auto;
+    background: #080603;
+    border-radius: 12px;
+    border: 2px solid #805010;
+    box-shadow: inset 0 0 20px rgba(255, 170, 0, 0.25), 0 3px 10px rgba(0,0,0,0.85);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    box-sizing: border-box;
+}
+
+.nam-loader-pedal .nam-display-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 8px;
+    font-weight: 800;
+    color: #ffc266;
+    letter-spacing: 1px;
+}
+
+.nam-loader-pedal .nam-title-badge {
+    color: #ffaa00;
+}
+
+.nam-loader-pedal .nam-cat-badge {
+    background: rgba(255, 170, 0, 0.2);
+    border: 1px solid #ffaa00;
+    padding: 1px 4px;
+    border-radius: 3px;
+    color: #ffaa00;
+    text-transform: uppercase;
+}
+
+.nam-loader-pedal .nam-center-info {
+    text-align: center;
+    margin: 2px 0;
+}
+
+.nam-loader-pedal .nam-model-name {
+    font-size: 20px;
+    font-weight: 900;
+    color: #ffffff;
+    text-shadow: 0 0 15px rgba(255, 170, 0, 0.9), 0 0 25px rgba(255, 200, 50, 0.5);
+    line-height: 1.1;
+    margin-bottom: 3px;
+}
+
+.nam-loader-pedal .nam-model-desc {
+    font-size: 8.5px;
+    font-weight: 600;
+    color: #e6c299;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+}
+
+.nam-loader-pedal .nam-display-footer {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 7.5px;
+    font-weight: 800;
+    color: #ffaa00;
+}
+
+.nam-loader-pedal .nam-cab-tag {
+    color: #00e5ff;
+}
+
+/* ========================================================
+   AMP CONTROLS ROWS
+======================================================== */
+.nam-loader-pedal .mod-control-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 12px;
+    margin: 4px 0 !important;
+}
+
+.nam-loader-pedal .mod-knob,
+.nam-loader-pedal .mod-switch-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 55px;
+    margin: 0;
+}
+
+.nam-loader-pedal .mod-knob-title,
+.nam-loader-pedal .mod-switch-title {
+    font-size: 8px;
+    font-weight: 800;
+    color: #ffc266;
+    letter-spacing: 0.8px;
+    margin-top: 3px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+}
+
+/* ========================================================
+   FOOTSWITCH & BYPASS LIGHT
+======================================================== */
+.nam-loader-pedal .mod-light {
+    position: absolute;
+    bottom: 95px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: #241402;
+    border: 2px solid #805010;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+    transition: all 0.15s ease-in-out;
+    cursor: pointer;
+    z-index: 50;
+}
+
+.nam-loader-pedal .mod-light.on,
+.nam-loader-pedal.mod-pedal-on .mod-light {
+    background-color: #ffaa00;
+    box-shadow: 0 0 14px #ffaa00, 0 0 25px #ff6600, inset 0 1px 2px #ffffff;
+    border-color: #ffe6b3;
+}
+
+.nam-loader-pedal .mod-footswitch {
+    position: absolute !important;
+    bottom: 18px;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 66px !important;
+    height: 66px !important;
+    background-image: url(/resources/pedals/footswitch.png) !important;
+    background-position: bottom center !important;
+    background-repeat: no-repeat !important;
+    background-size: auto 132px !important;
+    cursor: pointer !important;
+    z-index: 60 !important;
+}
+
+.nam-loader-pedal .mod-footswitch.on {
+    background-position-y: top !important;
+}

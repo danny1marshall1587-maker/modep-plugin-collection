@@ -1,0 +1,32 @@
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix atom: <http://lv2plug.in/ns/ext/atom#> .
+@prefix pset: <http://lv2plug.in/ns/ext/presets#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix state: <http://lv2plug.in/ns/ext/state#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<urn:hvcc:DeArmondo610>
+    a lv2:Plugin ;
+    lv2:binary <DeArmondo610_dsp.dll> , <DeArmondo610_dsp.so> ;
+    rdfs:seeAlso <DeArmondo610_dsp.ttl> , <modgui.ttl> .
+
+<1-Volume_Only.ttl>
+	lv2:appliesTo <urn:hvcc:DeArmondo610> ;
+	a pset:Preset ;
+	rdfs:seeAlso <1-Volume_Only.ttl> .
+	
+<2-Tone_Only.ttl>
+	lv2:appliesTo <urn:hvcc:DeArmondo610> ;
+	a pset:Preset ;
+	rdfs:seeAlso <2-Tone_Only.ttl> .
+	
+<3-Volume_Tone_Sweep.ttl>
+	lv2:appliesTo <urn:hvcc:DeArmondo610> ;
+	a pset:Preset ;
+	rdfs:seeAlso <3-Volume_Tone_Sweep.ttl> .
+
+<0-More_Tone.ttl>
+	lv2:appliesTo <urn:hvcc:DeArmondo610> ;
+	a pset:Preset ;
+	rdfs:seeAlso <0-More_Tone.ttl> .

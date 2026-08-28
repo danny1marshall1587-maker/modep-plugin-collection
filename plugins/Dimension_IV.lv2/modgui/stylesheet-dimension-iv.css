@@ -1,0 +1,176 @@
+
+
+@import url(/fonts/epf/stylesheet.css);
+@import url(/fonts/nexa/stylesheet.css);
+@import url(/fonts/pirulen/stylesheet.css);
+@import url(/fonts/questrial/stylesheet.css);
+
+/* = CONTAINER
+================================================ */
+.mod-pedal-dimiv{{{cns}}} {
+    background-position:center center;
+    background-repeat:no-repeat;
+    height:530px;
+    position:absolute;
+    width:274px;
+    border-radius: 18px;
+}
+
+/* PORTS
+================================================ */
+
+.mod-pedal-dimiv{{{cns}}}.mod-pedal .mod-pedal-input,
+.mod-pedal-dimiv{{{cns}}}.mod-pedal .mod-pedal-output {
+    top: 186px;
+}
+
+/* = PLUGIN'S AUTHOR
+================================================ */
+.mod-pedal-dimiv{{{cns}}} .mod-plugin-brand {
+    bottom:95px;
+    left:30px;
+    position:absolute;
+    right:30px;
+    text-align:center;
+    text-transform:uppercase;
+}
+
+.mod-pedal-dimiv{{{cns}}} .mod-plugin-brand h1 {
+    color:#292d31;
+    font-family:"Nexa";
+    font-size:32px;
+    text-shadow:1px 2px 2px rgba(0,0,0,.5),2px 4px 5px rgba(0,0,0,.5),0px 0px 8px rgba(0,0,0,.5), -1px -1px 1px rgba(255,255,255,.2);
+}
+
+
+/* = LIGHT ON/OFF
+================================================ */
+.mod-pedal-dimiv{{{cns}}} .mod-light {
+    height:32px;
+    left:121px;
+    position:absolute;
+    top:197px;
+    width:32px;
+}
+
+.mod-dimiv .mod-light.on {
+  background-image: url(/resources/pedal/lav-light-on.png{{{ns}}});
+}
+
+.mod-dimiv .mod-light.off {
+  background-image: url(/resources/pedal/lav-light-off.png{{{ns}}});
+}
+
+/* = FOOTSWITCH
+================================================ */
+.mod-pedal-dimiv{{{cns}}} .mod-footswitch {
+    bottom:46px;
+    cursor:pointer;
+    height:155px;
+    left:13px;
+    position:absolute;
+    right:13px;
+}
+
+
+/* = BACKGROUND IMAGE
+================================================ */
+
+.mod-pedal-dimiv{{{cns}}}.mod-dimiv { background-image:url(/resources/pedal/dimiv-pedal.png{{{ns}}}); }
+
+
+/* = Enumerated List Buttons
+================================================ */
+
+.mod-pedal-dimiv{{{cns}}}.mod-dimiv .mod-enumerated {
+    font-size: 0;
+	height: 124px;
+	margin-top: -5px;
+}
+
+.mod-enumerated >hover {
+	 background: rgba(0, 0, 0, 0.0);
+}
+
+.mod-pedal-dimiv{{{cns}}}.mod-dimiv .mod-enumerated-list {
+    width: 240px;
+	height: 120px;
+}
+
+.mod-pedal-dimiv{{{cns}}}.mod-dimiv .mod-enumerated .mod-enumerated-selected {
+    font-size: 0px;
+}
+
+.mod-dimbutton .selected {
+	 background-position: -13px 0px !important;
+}
+
+
+/* = BUTTONS
+================================================ */
+
+.buttonbox  {
+	display: flex !important;
+	flex-direction: row;
+
+	left: 22px; 
+}
+
+.buttonbox>hover {
+	 background: rgba(0, 0, 0, 0.0);
+}
+
+.mod-pedal-dimiv{{{cns}}} .mod-control-group .mod-enumerated .mod-dimbutton .mod-button1-image {
+    background-image:url(/resources/buttons/I-button.png{{{ns}}});
+}
+
+.mod-pedal-dimiv{{{cns}}} .mod-control-group .mod-enumerated .mod-dimbutton .mod-button2-image {
+    background-image:url(/resources/buttons/II-button.png{{{ns}}});
+}
+.mod-pedal-dimiv{{{cns}}} .mod-control-group .mod-enumerated .mod-dimbutton .mod-button3-image {
+    background-image:url(/resources/buttons/III-button.png{{{ns}}});
+}
+.mod-pedal-dimiv{{{cns}}} .mod-control-group .mod-enumerated  .mod-dimbutton .mod-button4-image {
+    background-image:url(/resources/buttons/IV-button.png{{{ns}}});
+}
+
+.mod-pedal-dimiv{{{cns}}} .mod-control-group {
+    height:141px;
+    left:17px;
+    position:absolute;
+    right:17px;
+    top:23px;
+	background: rgba(0, 0, 0, 0.0);
+}
+
+.mod-control-group>hover {
+	background: rgba(0, 0, 0, 0.0) !important;
+}
+
+.mod-dimbutton {
+    margin:0px auto;
+    position:relative;
+    overflow: hidden;
+	background: rgba(0, 0, 0, 0.0);
+}
+
+.mod-pedal-dimiv{{{cns}}} .mod-control-group .dimmod-button{
+    height:124px;
+    float:left;
+    overflow:hidden;
+    position:relative;
+    text-align:center;
+    width:240px;
+}
+.mod-pedal-dimiv{{{cns}}} .mod-control-group .mod-dimbutton > span.mod-knob-title {
+    display:none;
+}
+.mod-pedal-dimiv{{{cns}}} .mod-button1-image,.mod-dimbutton .mod-button2-image,.mod-button3-image,.mod-button4-image {
+    height:112px;
+    width: 50px;
+	background-position: -74px 0px;
+    background-repeat:no-repeat;
+    background-size:auto 120px;
+}
+
+

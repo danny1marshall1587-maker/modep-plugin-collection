@@ -1,0 +1,177 @@
+
+
+/* = CONTAINER
+================================================ */
+.mod-pedal .mondomatic-tread {{{cns}}} {
+    background-position:center center;
+    background-repeat:no-repeat;
+    background-size:250px 601px;
+    height:601px;
+    position:absolute;
+    width:250px;
+}
+
+/* = BACKGROUND IMAGES
+================================================ */
+
+.mondomatic-tread{{{cns}}} .treadle {
+    background-image:url(/resources/pedals/treadlebodyEcho.png{{{ns}}});
+	background-repeat:no-repeat;
+    background-size:auto 632px;
+    height:632px;
+    width:277px;
+    margin:0 auto;
+	position: relative;
+}
+
+/* PORTS
+================================================ */
+
+.mondomatic-tread{{{cns}}} .mod-pedal-input,
+.mondomatic-tread{{{cns}}} .mod-pedal-output {
+    top: 250px;
+}
+
+.mondomatic-tread{{{cns}}} .mod-pedal-input {
+	right: -16px !important;
+}
+
+
+/* = LIGHT ON/OFF
+================================================ */
+.mondomatic-tread{{{cns}}} .mod-light {
+    background-position:center center;
+    background-repeat:no-repeat;
+    height:32px;
+	width: 32px;
+	right: 123px;
+    position:absolute;
+    top: 16px;
+}
+
+
+
+/* = FOOTSWITCH
+================================================ */
+.mondomatic-tread{{{cns}}} .mod-footswitch {
+    background-image:url(/resources/pedals/footswitch.png{{{ns}}});
+    background-position:bottom center;
+    background-repeat:no-repeat;
+    background-size:auto 80px;
+    top: 15px;
+    right: 175px;
+    cursor:pointer;
+    height: 40px;
+    width: 40px;
+    margin: auto;
+    position:absolute !important;
+	transform: rotate(-17deg);
+}
+.mondomatic-tread{{{cns}}} .mod-footswitch.on {
+    background-position-y: top !important
+}
+
+/* = KNOB/TREADLE
+================================================ */
+.mondomatic-tread{{{cns}}} .mod-control-group {
+    margin:20px !important;
+    position:relative;
+    text-align:center;
+    z-index:30;
+	top: 50px;
+}
+.mondomatic-tread{{{cns}}} .top {
+    margin-top:0px !important;
+}
+
+.mondomatic-tread{{{cns}}} .mod-control-group .mod-tread {
+    overflow:visible;
+    position:relative;
+	height: 580px;
+	width: 190px;
+	top: 27px;
+	left: 20px;
+	transform: scaleX(1.13);
+	transform: scaleY(1.1);
+}
+
+.mondomatic-tread{{{cns}}} .mod-control-group .mod-tread .mod-tread-image {
+    background-image:url(/resources/knobs/treadlepedal1.png{{{ns}}});
+    background-repeat:no-repeat;
+    background-size:auto 601px;
+    height:601px;
+    width:250px;
+    margin:0 auto;
+	position: relative;
+	right: 30px;
+	top: -14px;
+}
+
+ .mondomatic-tread{{{cns}}} .mod-tread  > div:hover {
+    cursor: pointer;
+}
+
+.mondomatic-tread{{{cns}}} .mod-pedal-knob {
+	margin-top: 0px;
+	position: relative;
+	float: right;
+    height: 39px;
+	width: 39px;
+	top: -37px;
+	right: 48px;
+}
+.mondomatic-tread{{{cns}}} .mod-pedal-knob .mod-knob-image {
+    background-image:url(/resources/knobs/treadknob.png{{{ns}}}) !important;
+    background-repeat:no-repeat;
+    background-size:auto 60px;
+    height:60px;
+    width:60px;
+    margin:0 auto;
+	transform: scale(0.65);
+	position: relative;
+	right: 10px;
+	bottom: 10px;
+}
+
+ .mondomatic-tread{{{cns}}} .mod-pedal-knob  > div:hover {
+    cursor: pointer;
+}
+ .mondomatic-tread{{{cns}}} .mod-pedal-knob .mod-knob-title
+{
+    color: light gray;
+    bottom: 1px;
+    display:block;
+    font-size:10px;
+    font-weight:bold;
+    height:11px;
+    line-height:1;
+    margin:0;
+    overflow:hidden;
+    padding:0;
+    position:absolute;
+    right:-28px;
+    text-transform:uppercase;
+}
+
+/* SLIDER 
+============ */
+    
+    .mondomatic-tread{{{cns}}} .mod-pedal-slider {
+        margin-top: 3px;
+		position: relative;
+		float: right;
+		right: 35px;
+		top: -33px;
+		transform: rotate(8deg);
+    }
+	.mondomatic-tread{{{cns}}} .mod-pedal-slider .mod-slider-image {
+        background-image: url(/resources/knobs/slider-switch01.png{{{ns}}}) !important;
+        background-repeat:no-repeat;
+        background-size:auto 27px;
+        height:27px;
+        width:48px;
+		}
+		
+ .mondomatic-tread{{{cns}}} .mod-pedal-slider  > div:hover {
+    cursor: pointer;
+}

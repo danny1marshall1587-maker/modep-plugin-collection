@@ -1,0 +1,30 @@
+@prefix modgui: <http://moddevices.com/ns/modgui#> .
+@prefix lv2:    <http://lv2plug.in/ns/lv2core#> .
+
+<urn:hvcc:DeArmondo610>
+    modgui:gui [
+        modgui:resourcesDirectory <modgui> ;
+        modgui:iconTemplate <modgui/icon-dearmondo610.html> ;
+        modgui:stylesheet <modgui/stylesheet-dearmondo610.css> ;
+        modgui:screenshot <modgui/screenshot-dearmondo610.png> ;
+        modgui:thumbnail <modgui/thumbnail-dearmondo610.png> ;
+        modgui:brand "Mondomatic" ;
+        modgui:label "DeArmondo610" ;
+        modgui:port [
+            lv2:index 0 ;
+            lv2:symbol "emphasis" ;
+            lv2:name "Emphasis" ;
+        ] , [
+            lv2:index 1 ;
+	     lv2:symbol "pedal" ;
+            lv2:name "Pedal" ;
+        ] , [
+            lv2:index 2 ;
+            lv2:symbol "tonesweep" ;
+            lv2:name "Tone Sweep" ;
+        ], [
+            lv2:index 3 ;
+            lv2:symbol "volumemin" ;
+            lv2:name "Volume Min" ;
+        ] ;
+    ] .

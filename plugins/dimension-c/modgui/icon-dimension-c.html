@@ -1,0 +1,100 @@
+<div class="mod-pedal mod-pedal-boxy{{{cns}}} mod-purple purple dimension-c-pedal{{{c_extra}}}">
+    <div mod-role="drag-handle" class="mod-drag-handle"></div>
+
+    <div class="mod-plugin-brand"><h1>CYBER AUDIO</h1></div>
+    <div class="mod-plugin-name"><h1>Dimension-C Chorus</h1></div>
+
+    <div class="mod-light on" mod-role="bypass-light"></div>
+
+    <!-- The 4 Iconic Dimension Pushbutton Array (Boss DC-2 & SDD-320) -->
+    <div class="dimension-buttons-viewport clearfix">
+        <div class="dimension-mode-title">DIMENSION MODES</div>
+        
+        <div class="pushbutton-array">
+            <div class="dimension-pushbutton active" data-mode="1" title="Mode I: Subtle Studio Spatial Width (0.25 Hz)">
+                <span class="btn-led"></span>
+                <span class="btn-number">I</span>
+                <span class="btn-subtitle">SUBTLE</span>
+            </div>
+            <div class="dimension-pushbutton" data-mode="2" title="Mode II: Lush 80s Clean Chorus (0.50 Hz)">
+                <span class="btn-led"></span>
+                <span class="btn-number">II</span>
+                <span class="btn-subtitle">LUSH</span>
+            </div>
+            <div class="dimension-pushbutton" data-mode="3" title="Mode III: Deep Spatial Stereo Movement (0.85 Hz)">
+                <span class="btn-led"></span>
+                <span class="btn-number">III</span>
+                <span class="btn-subtitle">DEEP</span>
+            </div>
+            <div class="dimension-pushbutton" data-mode="4" title="Mode IV: Intense Shimmering Dimension (1.25 Hz)">
+                <span class="btn-led"></span>
+                <span class="btn-number">IV</span>
+                <span class="btn-subtitle">INTENSE</span>
+            </div>
+            <div class="dimension-pushbutton all-mode" data-mode="5" title="SDD-320 Secret Mode: All 4 Buttons Engaged">
+                <span class="btn-led"></span>
+                <span class="btn-number">ALL</span>
+                <span class="btn-subtitle">SDD-320</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Secondary Controls Row (Width, Mix, BBD Warmth) -->
+    <div class="mod-control-group clearfix">
+        <div class="mod-knob" title="Stereo Spatial Width (0% Mono to 200% Super-Wide)">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="width"></div>
+            <span class="mod-knob-title">WIDTH</span>
+        </div>
+        <div class="mod-knob" title="Dry/Wet Mix (0% to 100%)">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="mix"></div>
+            <span class="mod-knob-title">MIX</span>
+        </div>
+        <div class="mod-switch-wrap" title="NE570 Analog BBD Compander & Warm Saturation Filter">
+            <div class="mod-switch-image" mod-role="input-control-port" mod-port-symbol="color" mod-widget="switch"></div>
+            <span class="mod-switch-title">BBD WARM</span>
+        </div>
+    </div>
+
+    <div class="mod-footswitch" mod-role="bypass" title="Footswitch (Bypass / Engage)"></div>
+
+    <!-- Hidden standard port for mode synchronization -->
+    <input type="hidden" mod-role="input-control-port" mod-port-symbol="mode" value="1" />
+
+    <!-- MOD SDK Standard Input Connectors (Audio / MIDI / CV) -->
+    <div class="mod-pedal-input">
+        {{#effect.ports.audio.input}}
+        <div class="mod-input mod-input-disconnected" title="{{name}}" mod-role="input-audio-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-input-image"></div>
+        </div>
+        {{/effect.ports.audio.input}}
+        {{#effect.ports.midi.input}}
+        <div class="mod-input mod-input-disconnected" title="{{name}}" mod-role="input-midi-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-input-image"></div>
+        </div>
+        {{/effect.ports.midi.input}}
+        {{#effect.ports.cv.input}}
+        <div class="mod-input mod-input-disconnected" title="{{name}}" mod-role="input-cv-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-input-image"></div>
+        </div>
+        {{/effect.ports.cv.input}}
+    </div>
+
+    <!-- MOD SDK Standard Output Connectors (Audio / MIDI / CV) -->
+    <div class="mod-pedal-output">
+        {{#effect.ports.audio.output}}
+        <div class="mod-output mod-output-disconnected" title="{{name}}" mod-role="output-audio-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-output-image"></div>
+        </div>
+        {{/effect.ports.audio.output}}
+        {{#effect.ports.midi.output}}
+        <div class="mod-output mod-output-disconnected" title="{{name}}" mod-role="output-midi-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-output-image"></div>
+        </div>
+        {{/effect.ports.midi.output}}
+        {{#effect.ports.cv.output}}
+        <div class="mod-output mod-output-disconnected" title="{{name}}" mod-role="output-cv-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-output-image"></div>
+        </div>
+        {{/effect.ports.cv.output}}
+    </div>
+</div>

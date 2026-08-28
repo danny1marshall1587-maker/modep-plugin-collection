@@ -1,0 +1,22 @@
+@prefix modgui: <http://moddevices.com/ns/modgui#> .
+@prefix lv2:    <http://lv2plug.in/ns/lv2core#> .
+
+<urn:hvcc:Dimension_IV>
+    modgui:gui [
+        modgui:resourcesDirectory <modgui> ;
+        modgui:iconTemplate <modgui/icon-dimension-iv.html> ;
+        modgui:stylesheet <modgui/stylesheet-dimension-iv.css> ;
+        modgui:screenshot <modgui/screenshot-dimension-iv.png> ;
+        modgui:thumbnail <modgui/thumbnail-dimension-iv.png> ;
+        modgui:brand "Mondomatic" ;
+        modgui:label "Dimension IV" ;
+        modgui:port [
+            lv2:index 0 ;
+            lv2:symbol "antiphase" ;
+            lv2:name "Antiphase" ;
+        	],[
+            lv2:index 1 ;
+            lv2:symbol "dimension" ;
+            lv2:name "Dimension" ;
+        	]  ;
+    	] .

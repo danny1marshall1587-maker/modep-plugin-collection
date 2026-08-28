@@ -6,10 +6,14 @@ on:
     tags: [ "v*" ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-arm-and-linux:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         include:
           - arch: armhf
@@ -41,7 +45,6 @@ jobs:
 
     - name: Build All Plugins for ${{ matrix.arch }} (${{ matrix.desc }})
       run: |
-        mkdir -p build_output
         CXX="${{ matrix.cxx }}"
         echo "Building plugins with $CXX..."
 
@@ -112,7 +115,6 @@ jobs:
           modep_plugins_${{ matrix.pkg_suffix }}.zip
 
     - name: Attach Assets to GitHub Release
-      if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
       uses: softprops/action-gh-release@v2
       with:
         tag_name: v1.0.0

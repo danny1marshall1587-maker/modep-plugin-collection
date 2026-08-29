@@ -31,6 +31,7 @@ PLUGINS=(
   "cyber-hum-killer.lv2:src/cyber_hum_killer_lv2.cpp:cyber_hum_killer.so:cyber-hum-killer.lv2"
   "smart-fizz-killer.lv2:src/smart_fizz_killer_lv2.cpp:smart_fizz_killer.so:smart-fizz-killer.lv2"
   "cyber-expression-cv.lv2:src/cyber_expression_cv_lv2.cpp:cyber_expression_cv.so:cyber-expression-cv.lv2"
+  "aelapse.lv2:src/aelapse_lv2.cpp:aelapse_dsp.so:aelapse.lv2"
 )
 
 mkdir -p dist

@@ -4,7 +4,7 @@ CXXFLAGS += -O3 -fPIC -shared -static-libstdc++ -static-libgcc -I plugins/includ
 
 all: plugins
 
-plugins: harmonic-tremolo cyber-denoiser galaxy-strobe-tune dimension-c dimension-iv dearmondo610 guitar-midi bluesbreaker aether nam-loader cyber-hum-killer smart-fizz-killer cyber-expression-cv
+plugins: harmonic-tremolo cyber-denoiser galaxy-strobe-tune dimension-c dimension-iv dearmondo610 guitar-midi bluesbreaker aether nam-loader cyber-hum-killer smart-fizz-killer cyber-expression-cv aelapse
 
 harmonic-tremolo:
 	$(CXX) $(CXXFLAGS) -I plugins/harmonic-tremolo/src plugins/harmonic-tremolo/src/harmonic_tremolo_lv2.cpp -o plugins/harmonic-tremolo/harmonic_tremolo.so
@@ -44,6 +44,9 @@ smart-fizz-killer:
 
 cyber-expression-cv:
 	$(CXX) $(CXXFLAGS) -I plugins/cyber-expression-cv.lv2/src plugins/cyber-expression-cv.lv2/src/cyber_expression_cv_lv2.cpp -o plugins/cyber-expression-cv.lv2/cyber_expression_cv.so
+
+aelapse:
+	$(CXX) $(CXXFLAGS) -I plugins/aelapse.lv2/src plugins/aelapse.lv2/src/aelapse_lv2.cpp -o plugins/aelapse.lv2/aelapse_dsp.so
 
 
 install:

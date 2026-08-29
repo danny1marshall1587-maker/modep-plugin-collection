@@ -71,22 +71,18 @@ jobs:
         compile_plugin "cyber-hum-killer.lv2" "src/cyber_hum_killer_lv2.cpp" "cyber_hum_killer.so"
         compile_plugin "smart-fizz-killer.lv2" "src/smart_fizz_killer_lv2.cpp" "smart_fizz_killer.so"
         compile_plugin "cyber-expression-cv.lv2" "src/cyber_expression_cv_lv2.cpp" "cyber_expression_cv.so"
+        compile_plugin "aelapse.lv2" "src/aelapse_lv2.cpp" "aelapse_dsp.so"
 
     - name: Package Bundle for ${{ matrix.arch }}
       run: |
         mkdir -p dist_${{ matrix.pkg_suffix }}
         
         copy_bundle() {
-          src_p="$1"
-          b_name="$2"
-          dest="dist_${{ matrix.pkg_suffix }}/$b_name"
-          mkdir -p "$dest"
-          cp -r plugins/$src_p/*.ttl "$dest/" 2>/dev/null || true
-          cp -r plugins/$src_p/*.so "$dest/" 2>/dev/null || true
-          cp -r plugins/$src_p/*.dll "$dest/" 2>/dev/null || true
-          if [ -d "plugins/$src_p/modgui" ]; then
-            cp -r "plugins/$src_p/modgui" "$dest/"
-          fi
+          src=$1
+          dest=$2
+          mkdir -p dist_${{ matrix.pkg_suffix }}/$dest
+          cp -r plugins/$src/* dist_${{ matrix.pkg_suffix }}/$dest/ 2>/dev/null || true
+          rm -f dist_${{ matrix.pkg_suffix }}/$dest/*.dll dist_${{ matrix.pkg_suffix }}/$dest/*.o
         }
 
         copy_bundle "harmonic-tremolo" "harmonic-tremolo.lv2"
@@ -102,6 +98,7 @@ jobs:
         copy_bundle "cyber-hum-killer.lv2" "cyber-hum-killer.lv2"
         copy_bundle "smart-fizz-killer.lv2" "smart-fizz-killer.lv2"
         copy_bundle "cyber-expression-cv.lv2" "cyber-expression-cv.lv2"
+        copy_bundle "aelapse.lv2" "aelapse.lv2"
 
         cd dist_${{ matrix.pkg_suffix }}
         tar -czvf ../modep_plugins_${{ matrix.pkg_suffix }}.tar.gz *

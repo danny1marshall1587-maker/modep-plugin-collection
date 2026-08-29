@@ -4,7 +4,7 @@ CXXFLAGS += -O3 -fPIC -shared -static-libstdc++ -static-libgcc -I plugins/includ
 
 all: plugins
 
-plugins: harmonic-tremolo cyber-denoiser galaxy-strobe-tune dimension-c dimension-iv dearmondo610 guitar-midi bluesbreaker aether nam-loader cyber-hum-killer smart-fizz-killer
+plugins: harmonic-tremolo cyber-denoiser galaxy-strobe-tune dimension-c dimension-iv dearmondo610 guitar-midi bluesbreaker aether nam-loader cyber-hum-killer smart-fizz-killer cyber-expression-cv
 
 harmonic-tremolo:
 	$(CXX) $(CXXFLAGS) -I plugins/harmonic-tremolo/src plugins/harmonic-tremolo/src/harmonic_tremolo_lv2.cpp -o plugins/harmonic-tremolo/harmonic_tremolo.so
@@ -41,6 +41,10 @@ cyber-hum-killer:
 
 smart-fizz-killer:
 	$(CXX) $(CXXFLAGS) -I plugins/smart-fizz-killer.lv2/src plugins/smart-fizz-killer.lv2/src/smart_fizz_killer_lv2.cpp -o plugins/smart-fizz-killer.lv2/smart_fizz_killer.so
+
+cyber-expression-cv:
+	$(CXX) $(CXXFLAGS) -I plugins/cyber-expression-cv.lv2/src plugins/cyber-expression-cv.lv2/src/cyber_expression_cv_lv2.cpp -o plugins/cyber-expression-cv.lv2/cyber_expression_cv.so
+
 
 install:
 	mkdir -p /var/modep/lv2/

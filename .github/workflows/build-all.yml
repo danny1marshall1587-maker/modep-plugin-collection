@@ -70,6 +70,7 @@ jobs:
         compile_plugin "nam-loader.lv2" "src/nam_loader_lv2.cpp" "nam_loader.so"
         compile_plugin "cyber-hum-killer.lv2" "src/cyber_hum_killer_lv2.cpp" "cyber_hum_killer.so"
         compile_plugin "smart-fizz-killer.lv2" "src/smart_fizz_killer_lv2.cpp" "smart_fizz_killer.so"
+        compile_plugin "cyber-expression-cv.lv2" "src/cyber_expression_cv_lv2.cpp" "cyber_expression_cv.so"
 
     - name: Package Bundle for ${{ matrix.arch }}
       run: |
@@ -100,6 +101,7 @@ jobs:
         copy_bundle "nam-loader.lv2" "nam-loader.lv2"
         copy_bundle "cyber-hum-killer.lv2" "cyber-hum-killer.lv2"
         copy_bundle "smart-fizz-killer.lv2" "smart-fizz-killer.lv2"
+        copy_bundle "cyber-expression-cv.lv2" "cyber-expression-cv.lv2"
 
         cd dist_${{ matrix.pkg_suffix }}
         tar -czvf ../modep_plugins_${{ matrix.pkg_suffix }}.tar.gz *

@@ -30,6 +30,7 @@ PLUGINS=(
   "nam-loader.lv2:src/nam_loader_lv2.cpp:nam_loader.so:nam-loader.lv2"
   "cyber-hum-killer.lv2:src/cyber_hum_killer_lv2.cpp:cyber_hum_killer.so:cyber-hum-killer.lv2"
   "smart-fizz-killer.lv2:src/smart_fizz_killer_lv2.cpp:smart_fizz_killer.so:smart-fizz-killer.lv2"
+  "cyber-expression-cv.lv2:src/cyber_expression_cv_lv2.cpp:cyber_expression_cv.so:cyber-expression-cv.lv2"
 )
 
 mkdir -p dist

@@ -1,0 +1,89 @@
+@prefix lv2:    <http://lv2plug.in/ns/lv2core#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix modgui: <http://moddevices.com/ns/modgui#> .
+
+<http://moddevices.com/plugins/danny/aelapse>
+    modgui:gui [
+        modgui:resourcesDirectory <modgui> ;
+        modgui:iconTemplate <modgui/icon-aelapse.html> ;
+        modgui:stylesheet <modgui/stylesheet.css> ;
+        modgui:javascript <modgui/script.js> ;
+        modgui:brand "Smiarx / Cyber" ;
+        modgui:label "Aelapse" ;
+        modgui:model "boxy" ;
+        modgui:panel "custom" ;
+        modgui:color "#201815" ;
+        modgui:port [
+            lv2:index 5 ;
+            lv2:symbol "delay_drywet" ;
+            lv2:name "D-Mix" ;
+        ] , [
+            lv2:index 6 ;
+            lv2:symbol "delay_time" ;
+            lv2:name "D-Time" ;
+        ] , [
+            lv2:index 7 ;
+            lv2:symbol "delay_feedback" ;
+            lv2:name "Feedback" ;
+        ] , [
+            lv2:index 8 ;
+            lv2:symbol "delay_cut_low" ;
+            lv2:name "Low Cut" ;
+        ] , [
+            lv2:index 9 ;
+            lv2:symbol "delay_cut_hi" ;
+            lv2:name "High Cut" ;
+        ] , [
+            lv2:index 10 ;
+            lv2:symbol "delay_saturation" ;
+            lv2:name "Tape Sat" ;
+        ] , [
+            lv2:index 11 ;
+            lv2:symbol "delay_drift" ;
+            lv2:name "Drift" ;
+        ] , [
+            lv2:index 14 ;
+            lv2:symbol "springs_drywet" ;
+            lv2:name "S-Mix" ;
+        ] , [
+            lv2:index 15 ;
+            lv2:symbol "springs_width" ;
+            lv2:name "Width" ;
+        ] , [
+            lv2:index 16 ;
+            lv2:symbol "springs_length" ;
+            lv2:name "Length" ;
+        ] , [
+            lv2:index 17 ;
+            lv2:symbol "springs_decay" ;
+            lv2:name "Decay" ;
+        ] , [
+            lv2:index 18 ;
+            lv2:symbol "springs_damp" ;
+            lv2:name "Damp" ;
+        ] , [
+            lv2:index 19 ;
+            lv2:symbol "springs_shape" ;
+            lv2:name "Shape" ;
+        ] , [
+            lv2:index 20 ;
+            lv2:symbol "springs_tone" ;
+            lv2:name "Tone" ;
+        ] , [
+            lv2:index 21 ;
+            lv2:symbol "springs_scatter" ;
+            lv2:name "Scatter" ;
+        ] , [
+            lv2:index 22 ;
+            lv2:symbol "springs_chaos" ;
+            lv2:name "Chaos" ;
+        ] , [
+            lv2:index 23 ;
+            lv2:symbol "master_mix" ;
+            lv2:name "Mix" ;
+        ] , [
+            lv2:index 24 ;
+            lv2:symbol "master_gain" ;
+            lv2:name "Out" ;
+        ] ;
+    ] .

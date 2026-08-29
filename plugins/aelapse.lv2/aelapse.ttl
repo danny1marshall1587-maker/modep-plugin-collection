@@ -1,0 +1,264 @@
+@prefix doap:   <http://usefulinc.com/ns/doap#> .
+@prefix foaf:   <http://xmlns.com/foaf/0.1/> .
+@prefix lv2:    <http://lv2plug.in/ns/lv2core#> .
+@prefix mod:    <http://moddevices.com/ns/mod#> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix units:  <http://lv2plug.in/ns/extensions/units#> .
+
+<http://moddevices.com/plugins/danny/aelapse>
+    a lv2:Plugin ,
+      lv2:DelayPlugin ,
+      lv2:ReverbPlugin ;
+    doap:name "Aelapse (Tape Delay & Spring Reverb)" ;
+    doap:license <http://opensource.org/licenses/gpl-3.0> ;
+    mod:brand "Smiarx / Cyber" ;
+    mod:label "Aelapse" ;
+    rdfs:comment "Vintage analog tape delay mechanism combined with physical dispersion spring reverb tank for guitar, synth pads, and dub repeats." ;
+
+    lv2:port [
+        a lv2:AudioPort ,
+          lv2:InputPort ;
+        lv2:index 0 ;
+        lv2:symbol "in_l" ;
+        lv2:name "In L" ;
+    ] , [
+        a lv2:AudioPort ,
+          lv2:InputPort ;
+        lv2:index 1 ;
+        lv2:symbol "in_r" ;
+        lv2:name "In R" ;
+    ] , [
+        a lv2:AudioPort ,
+          lv2:OutputPort ;
+        lv2:index 2 ;
+        lv2:symbol "out_l" ;
+        lv2:name "Out L" ;
+    ] , [
+        a lv2:AudioPort ,
+          lv2:OutputPort ;
+        lv2:index 3 ;
+        lv2:symbol "out_r" ;
+        lv2:name "Out R" ;
+    ] ,
+
+    # --- TAPE DELAY SECTION ---
+    [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 4 ;
+        lv2:symbol "delay_active" ;
+        lv2:name "Delay Active" ;
+        lv2:default 1 ;
+        lv2:minimum 0 ;
+        lv2:maximum 1 ;
+        lv2:portProperty lv2:toggled , lv2:integer ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 5 ;
+        lv2:symbol "delay_drywet" ;
+        lv2:name "Delay Mix" ;
+        lv2:default 50.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        units:unit units:pc ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 6 ;
+        lv2:symbol "delay_time" ;
+        lv2:name "Tape Time" ;
+        lv2:default 0.35 ;
+        lv2:minimum 0.01 ;
+        lv2:maximum 2.50 ;
+        units:unit units:s ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 7 ;
+        lv2:symbol "delay_feedback" ;
+        lv2:name "Repeats / Feedback" ;
+        lv2:default 0.45 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 1.10 ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 8 ;
+        lv2:symbol "delay_cut_low" ;
+        lv2:name "Tape Low Cut" ;
+        lv2:default 80.0 ;
+        lv2:minimum 20.0 ;
+        lv2:maximum 2000.0 ;
+        units:unit units:hz ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 9 ;
+        lv2:symbol "delay_cut_hi" ;
+        lv2:name "Tape High Cut" ;
+        lv2:default 4500.0 ;
+        lv2:minimum 500.0 ;
+        lv2:maximum 20000.0 ;
+        units:unit units:hz ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 10 ;
+        lv2:symbol "delay_saturation" ;
+        lv2:name "Tape Saturation" ;
+        lv2:default 35.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        units:unit units:pc ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 11 ;
+        lv2:symbol "delay_drift" ;
+        lv2:name "Wow & Flutter Drift" ;
+        lv2:default 25.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        units:unit units:pc ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 12 ;
+        lv2:symbol "delay_mode" ;
+        lv2:name "Delay Mode" ;
+        lv2:default 0 ;
+        lv2:minimum 0 ;
+        lv2:maximum 2 ;
+        lv2:portProperty lv2:enumeration , lv2:integer ;
+        lv2:scalePoint [ rdfs:label "Normal Tape" ; rdf:value 0 ] ,
+                       [ rdfs:label "Back & Forth (Ping-Pong)" ; rdf:value 1 ] ,
+                       [ rdfs:label "Reverse Tape" ; rdf:value 2 ] ;
+    ] ,
+
+    # --- PHYSICAL SPRING REVERB SECTION ---
+    [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 13 ;
+        lv2:symbol "springs_active" ;
+        lv2:name "Springs Active" ;
+        lv2:default 1 ;
+        lv2:minimum 0 ;
+        lv2:maximum 1 ;
+        lv2:portProperty lv2:toggled , lv2:integer ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 14 ;
+        lv2:symbol "springs_drywet" ;
+        lv2:name "Springs Mix" ;
+        lv2:default 40.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        units:unit units:pc ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 15 ;
+        lv2:symbol "springs_width" ;
+        lv2:name "Stereo Width" ;
+        lv2:default 100.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 200.0 ;
+        units:unit units:pc ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 16 ;
+        lv2:symbol "springs_length" ;
+        lv2:name "Spring Length" ;
+        lv2:default 0.12 ;
+        lv2:minimum 0.01 ;
+        lv2:maximum 0.25 ;
+        units:unit units:s ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 17 ;
+        lv2:symbol "springs_decay" ;
+        lv2:name "Tank Decay" ;
+        lv2:default 65.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        units:unit units:pc ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 18 ;
+        lv2:symbol "springs_damp" ;
+        lv2:name "Spring Damping" ;
+        lv2:default 40.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        units:unit units:pc ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 19 ;
+        lv2:symbol "springs_shape" ;
+        lv2:name "Dispersion Shape" ;
+        lv2:default 50.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        units:unit units:pc ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 20 ;
+        lv2:symbol "springs_tone" ;
+        lv2:name "Tank Tone" ;
+        lv2:default 850.0 ;
+        lv2:minimum 80.0 ;
+        lv2:maximum 5000.0 ;
+        units:unit units:hz ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 21 ;
+        lv2:symbol "springs_scatter" ;
+        lv2:name "Spring Scatter" ;
+        lv2:default 50.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        units:unit units:pc ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 22 ;
+        lv2:symbol "springs_chaos" ;
+        lv2:name "Spring Chaos" ;
+        lv2:default 20.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        units:unit units:pc ;
+    ] ,
+
+    # --- MASTER SECTION ---
+    [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 23 ;
+        lv2:symbol "master_mix" ;
+        lv2:name "Master Mix" ;
+        lv2:default 100.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        units:unit units:pc ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 24 ;
+        lv2:symbol "master_gain" ;
+        lv2:name "Master Out" ;
+        lv2:default 0.0 ;
+        lv2:minimum -12.0 ;
+        lv2:maximum 12.0 ;
+        units:unit units:db ;
+    ] .

@@ -1,0 +1,259 @@
+.rev-cc-cv-pedal {
+    width: 320px;
+    height: 480px;
+    background: linear-gradient(145deg, #0d131a 0%, #070a0e 100%);
+    border: 2px solid #1a2a3a;
+    border-radius: 12px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(0, 229, 255, 0.2);
+    color: #e0f2fe;
+    font-family: 'Segoe UI', -apple-system, sans-serif;
+    position: relative;
+    user-select: none;
+    box-sizing: border-box;
+    padding: 14px;
+}
+
+.rev-header {
+    text-align: center;
+    border-bottom: 1px solid #1e3a5f;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+
+.rev-brand {
+    font-size: 9px;
+    letter-spacing: 2.5px;
+    color: #00e5ff;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.rev-title {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    color: #ffffff;
+    text-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
+    margin: 2px 0;
+}
+
+.rev-subtitle {
+    font-size: 7.5px;
+    letter-spacing: 1px;
+    color: #94a3b8;
+    text-transform: uppercase;
+}
+
+/* OLED Telemetry Panel */
+.rev-oled-panel {
+    background: #020617;
+    border: 1px solid #00e5ff;
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-bottom: 12px;
+    box-shadow: inset 0 0 10px rgba(0, 229, 255, 0.25);
+}
+
+.rev-oled-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 8px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #64748b;
+    border-bottom: 1px solid #0f172a;
+    padding-bottom: 4px;
+}
+
+.rev-mode-badge {
+    color: #00e5ff;
+    text-shadow: 0 0 6px rgba(0, 229, 255, 0.8);
+}
+
+.rev-meter-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 9px;
+    font-family: monospace;
+    margin: 3px 0;
+}
+
+.meter-name {
+    width: 50px;
+    color: #94a3b8;
+    font-weight: 700;
+}
+
+.meter-track {
+    flex: 1;
+    height: 8px;
+    background: #090d16;
+    border: 1px solid #1e293b;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.meter-bar {
+    height: 100%;
+    width: 0%;
+    transition: width 0.05s ease;
+}
+
+.main-bar {
+    background: linear-gradient(90deg, #0284c7, #00e5ff);
+    box-shadow: 0 0 8px rgba(0, 229, 255, 0.8);
+}
+
+.rev-bar {
+    background: linear-gradient(90deg, #d97706, #f59e0b);
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.8);
+}
+
+.meter-val {
+    width: 55px;
+    text-align: right;
+    color: #38bdf8;
+    font-weight: 700;
+}
+
+/* Reverse Button Switch */
+.rev-switch-section {
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: center;
+}
+
+.rev-dir-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.rev-dir-btn:hover {
+    background: #1e293b;
+    border-color: #00e5ff;
+}
+
+.rev-dir-btn.active {
+    background: #451a03;
+    border-color: #f59e0b;
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+}
+
+.rev-led {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #0284c7;
+    box-shadow: 0 0 8px #00e5ff;
+    transition: all 0.2s ease;
+}
+
+.rev-dir-btn.active .rev-led {
+    background: #f59e0b;
+    box-shadow: 0 0 10px #f59e0b;
+}
+
+.rev-btn-text {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #e2e8f0;
+}
+
+/* Main Knob */
+.rev-main-knob-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.rev-knob-large {
+    text-align: center;
+}
+
+.rev-knob-large .custom-knob-dial {
+    width: 58px;
+    height: 58px;
+    background: radial-gradient(circle, #1e293b 40%, #0f172a 100%);
+    border: 2px solid #00e5ff;
+    border-radius: 50%;
+    margin: 0 auto;
+    position: relative;
+    cursor: ns-resize;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 0 10px rgba(0, 229, 255, 0.3);
+}
+
+.rev-knob-large .knob-rotor {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    width: 3px;
+    height: 20px;
+    background: #00e5ff;
+    box-shadow: 0 0 6px #00e5ff;
+    transform-origin: 50% 24px;
+    transform: translateX(-50%) rotate(-135deg);
+    border-radius: 2px;
+}
+
+.knob-title-large {
+    font-size: 9px;
+    font-weight: 800;
+    color: #38bdf8;
+    margin-top: 5px;
+    letter-spacing: 1px;
+}
+
+/* Secondary Knobs Grid */
+.rev-knobs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.rev-knob-item {
+    text-align: center;
+}
+
+.rev-knob-item .custom-knob-dial {
+    width: 36px;
+    height: 36px;
+    background: radial-gradient(circle, #1e293b 40%, #0f172a 100%);
+    border: 1.5px solid #475569;
+    border-radius: 50%;
+    margin: 0 auto;
+    position: relative;
+    cursor: ns-resize;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+}
+
+.rev-knob-item .knob-rotor {
+    position: absolute;
+    top: 3px;
+    left: 50%;
+    width: 2px;
+    height: 12px;
+    background: #94a3b8;
+    transform-origin: 50% 15px;
+    transform: translateX(-50%) rotate(-135deg);
+    border-radius: 1px;
+}
+
+.knob-label {
+    font-size: 7.5px;
+    font-weight: 700;
+    color: #94a3b8;
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+}

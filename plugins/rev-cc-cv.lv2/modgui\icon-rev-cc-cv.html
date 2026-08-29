@@ -1,0 +1,121 @@
+<div class="mod-pedal mod-pedal-boxy rev-cc-cv-pedal">
+    <div mod-role="drag-handle" class="mod-drag-handle"></div>
+
+    <!-- Brand Header -->
+    <div class="rev-header">
+        <div class="rev-brand">CYBER AUDIO</div>
+        <div class="rev-title">REVCC / CV</div>
+        <div class="rev-subtitle">REVERSE EXPRESSION & CONTROL TO VOLTAGE</div>
+    </div>
+
+    <!-- OLED Realtime Display -->
+    <div class="rev-oled-panel">
+        <div class="rev-oled-header">
+            <span class="rev-oled-label">CV VOLTAGE TELEMETRY</span>
+            <span class="rev-mode-badge" id="rev-mode-text">FORWARD [0V → 10V]</span>
+        </div>
+        <div class="rev-meters">
+            <div class="rev-meter-row">
+                <span class="meter-name">MAIN CV</span>
+                <div class="meter-track"><div class="meter-bar main-bar" id="meter-main"></div></div>
+                <span class="meter-val" id="val-main">+0.00 V</span>
+            </div>
+            <div class="rev-meter-row">
+                <span class="meter-name">INV CV</span>
+                <div class="meter-track"><div class="meter-bar rev-bar" id="meter-rev"></div></div>
+                <span class="meter-val" id="val-rev">+10.00 V</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reverse Direction Master Switch -->
+    <div class="rev-switch-section">
+        <button type="button" class="rev-dir-btn" id="rev-toggle-btn">
+            <span class="rev-led" id="rev-led-indicator"></span>
+            <span class="rev-btn-text" id="rev-btn-label">REVERSE DIRECTION: OFF</span>
+        </button>
+        <!-- Hidden input control port for direction -->
+        <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="direction" style="display:none;"></div>
+    </div>
+
+    <!-- Main Expression Knob -->
+    <div class="rev-main-knob-container">
+        <div class="rev-knob-large">
+            <div class="custom-knob-dial" data-symbol="level" data-min="0" data-max="100" data-default="0">
+                <div class="knob-rotor"></div>
+            </div>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="level" style="display:none;"></div>
+            <div class="knob-title-large">EXPRESSION LEVEL</div>
+        </div>
+    </div>
+
+    <!-- Secondary Parameter Controls -->
+    <div class="rev-knobs-grid">
+        <div class="rev-knob-item">
+            <div class="custom-knob-dial" data-symbol="cc_num" data-min="0" data-max="127" data-default="7">
+                <div class="knob-rotor"></div>
+            </div>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="cc_num" style="display:none;"></div>
+            <div class="knob-label">CC # (EXP 7)</div>
+        </div>
+
+        <div class="rev-knob-item">
+            <div class="custom-knob-dial" data-symbol="min_volts" data-min="-10" data-max="10" data-default="0">
+                <div class="knob-rotor"></div>
+            </div>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="min_volts" style="display:none;"></div>
+            <div class="knob-label">MIN V</div>
+        </div>
+
+        <div class="rev-knob-item">
+            <div class="custom-knob-dial" data-symbol="max_volts" data-min="-10" data-max="10" data-default="10">
+                <div class="knob-rotor"></div>
+            </div>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="max_volts" style="display:none;"></div>
+            <div class="knob-label">MAX V</div>
+        </div>
+
+        <div class="rev-knob-item">
+            <div class="custom-knob-dial" data-symbol="smoothing" data-min="0" data-max="200" data-default="10">
+                <div class="knob-rotor"></div>
+            </div>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="smoothing" style="display:none;"></div>
+            <div class="knob-label">GLIDE (MS)</div>
+        </div>
+
+        <div class="rev-knob-item">
+            <div class="custom-knob-dial" data-symbol="curve" data-min="0" data-max="3" data-default="0">
+                <div class="knob-rotor"></div>
+            </div>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="curve" style="display:none;"></div>
+            <div class="knob-label">CURVE</div>
+        </div>
+
+        <div class="rev-knob-item">
+            <div class="custom-knob-dial" data-symbol="offset" data-min="-5" data-max="5" data-default="0">
+                <div class="knob-rotor"></div>
+            </div>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="offset" style="display:none;"></div>
+            <div class="knob-label">OFFSET</div>
+        </div>
+    </div>
+
+    <!-- MOD-UI Connectors -->
+    <div class="mod-pedal-input">
+        {{#effect.ports.midi.input}}
+        <div class="mod-control-port mod-input mod-input-disconnected" title="{{name}}"
+             mod-role="input-midi-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-input-image"></div>
+        </div>
+        {{/effect.ports.midi.input}}
+    </div>
+
+    <div class="mod-pedal-output">
+        {{#effect.ports.cv.output}}
+        <div class="mod-control-port mod-output mod-output-disconnected" title="{{name}}"
+             mod-role="output-cv-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-output-image"></div>
+        </div>
+        {{/effect.ports.cv.output}}
+    </div>
+</div>

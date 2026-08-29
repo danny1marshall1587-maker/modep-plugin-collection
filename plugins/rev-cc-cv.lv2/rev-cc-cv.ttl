@@ -1,12 +1,11 @@
-@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
-@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix doap: <http://usefulinc.com/ns/doap#> .
-@prefix units: <http://lv2plug.in/ns/extensions/units#> .
-@prefix atom: <http://lv2plug.in/ns/ext/atom#> .
-@prefix midi: <http://lv2plug.in/ns/ext/midi#> .
-@prefix mod:  <http://moddevices.com/ns/mod#> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix atom:   <http://lv2plug.in/ns/ext/atom#> .
+@prefix doap:   <http://usefulinc.com/ns/doap#> .
+@prefix lv2:    <http://lv2plug.in/ns/lv2core#> .
+@prefix midi:   <http://lv2plug.in/ns/ext/midi#> .
+@prefix mod:    <http://moddevices.com/ns/mod#> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix units:  <http://lv2plug.in/ns/extensions/units#> .
 
 <http://moddevices.com/plugins/danny/rev-cc-cv>
     a lv2:Plugin ,
@@ -18,44 +17,52 @@
     rdfs:comment "Advanced MIDI CC and manual control to CV voltage generator featuring instant Reverse Direction mode, dual inverted and bipolar outputs, response curve shaping, and anti-zipper glide." ;
 
     lv2:port [
-        a atom:AtomPort ,
-          lv2:InputPort ;
+        a lv2:InputPort ,
+          atom:AtomPort ;
         atom:bufferType atom:Sequence ;
         atom:supports midi:MidiEvent ;
         lv2:index 0 ;
         lv2:symbol "midi_in" ;
         lv2:name "MIDI In" ;
     ] , [
-        a lv2:CVPort ,
-          mod:CVPort ,
-          lv2:OutputPort ;
+        a lv2:OutputPort ,
+          lv2:CVPort ,
+          mod:CVPort ;
         lv2:index 1 ;
         lv2:symbol "cv_out_main" ;
-        lv2:name "CV Out (Switched)" ;
+        lv2:name "CV Out 1 (Switched)" ;
+        lv2:minimum -10.0 ;
+        lv2:maximum 10.0 ;
     ] , [
-        a lv2:CVPort ,
-          mod:CVPort ,
-          lv2:OutputPort ;
+        a lv2:OutputPort ,
+          lv2:CVPort ,
+          mod:CVPort ;
         lv2:index 2 ;
         lv2:symbol "cv_out_rev" ;
-        lv2:name "CV Out (Inverted)" ;
+        lv2:name "CV Out 2 (Inverted)" ;
+        lv2:minimum -10.0 ;
+        lv2:maximum 10.0 ;
     ] , [
-        a lv2:CVPort ,
-          mod:CVPort ,
-          lv2:OutputPort ;
+        a lv2:OutputPort ,
+          lv2:CVPort ,
+          mod:CVPort ;
         lv2:index 3 ;
         lv2:symbol "cv_out_bipolar" ;
-        lv2:name "CV Out (-5V to +5V)" ;
+        lv2:name "CV Out 3 (-5V to +5V)" ;
+        lv2:minimum -5.0 ;
+        lv2:maximum 5.0 ;
     ] , [
-        a lv2:CVPort ,
-          mod:CVPort ,
-          lv2:OutputPort ;
+        a lv2:OutputPort ,
+          lv2:CVPort ,
+          mod:CVPort ;
         lv2:index 4 ;
         lv2:symbol "cv_out_norm" ;
-        lv2:name "CV Out (0.0 to 1.0)" ;
+        lv2:name "CV Out 4 (0-1V Norm)" ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 1.0 ;
     ] , [
-        a lv2:ControlPort ,
-          lv2:InputPort ;
+        a lv2:InputPort ,
+          lv2:ControlPort ;
         lv2:index 5 ;
         lv2:symbol "direction" ;
         lv2:name "Reverse Mode" ;
@@ -64,8 +71,8 @@
         lv2:maximum 1.0 ;
         lv2:portProperty lv2:toggled , lv2:integer ;
     ] , [
-        a lv2:ControlPort ,
-          lv2:InputPort ;
+        a lv2:InputPort ,
+          lv2:ControlPort ;
         lv2:index 6 ;
         lv2:symbol "level" ;
         lv2:name "Expression Level" ;
@@ -74,8 +81,8 @@
         lv2:maximum 100.0 ;
         units:unit units:pc ;
     ] , [
-        a lv2:ControlPort ,
-          lv2:InputPort ;
+        a lv2:InputPort ,
+          lv2:ControlPort ;
         lv2:index 7 ;
         lv2:symbol "cc_num" ;
         lv2:name "MIDI CC #" ;
@@ -84,8 +91,8 @@
         lv2:maximum 127.0 ;
         lv2:portProperty lv2:integer ;
     ] , [
-        a lv2:ControlPort ,
-          lv2:InputPort ;
+        a lv2:InputPort ,
+          lv2:ControlPort ;
         lv2:index 8 ;
         lv2:symbol "midi_ch" ;
         lv2:name "MIDI Channel" ;
@@ -94,8 +101,8 @@
         lv2:maximum 16.0 ;
         lv2:portProperty lv2:integer ;
     ] , [
-        a lv2:ControlPort ,
-          lv2:InputPort ;
+        a lv2:InputPort ,
+          lv2:ControlPort ;
         lv2:index 9 ;
         lv2:symbol "min_volts" ;
         lv2:name "Min Volts" ;
@@ -104,8 +111,8 @@
         lv2:maximum 10.0 ;
         units:unit units:v ;
     ] , [
-        a lv2:ControlPort ,
-          lv2:InputPort ;
+        a lv2:InputPort ,
+          lv2:ControlPort ;
         lv2:index 10 ;
         lv2:symbol "max_volts" ;
         lv2:name "Max Volts" ;
@@ -114,8 +121,8 @@
         lv2:maximum 10.0 ;
         units:unit units:v ;
     ] , [
-        a lv2:ControlPort ,
-          lv2:InputPort ;
+        a lv2:InputPort ,
+          lv2:ControlPort ;
         lv2:index 11 ;
         lv2:symbol "curve" ;
         lv2:name "Taper Curve" ;
@@ -128,8 +135,8 @@
         lv2:scalePoint [ rdfs:label "Anti-Log (Exp)" ; rdf:value 2.0 ] ;
         lv2:scalePoint [ rdfs:label "S-Curve" ; rdf:value 3.0 ] ;
     ] , [
-        a lv2:ControlPort ,
-          lv2:InputPort ;
+        a lv2:InputPort ,
+          lv2:ControlPort ;
         lv2:index 12 ;
         lv2:symbol "smoothing" ;
         lv2:name "Glide / Smooth" ;
@@ -138,8 +145,8 @@
         lv2:maximum 200.0 ;
         units:unit units:ms ;
     ] , [
-        a lv2:ControlPort ,
-          lv2:InputPort ;
+        a lv2:InputPort ,
+          lv2:ControlPort ;
         lv2:index 13 ;
         lv2:symbol "offset" ;
         lv2:name "Volt Offset" ;

@@ -40,7 +40,7 @@
         lv2:index 3 ;
         lv2:symbol "normal_vol" ;
         lv2:name "Normal Vol" ;
-        lv2:default 5.0 ;
+        lv2:default 1.6 ;
         lv2:minimum 0.0 ;
         lv2:maximum 10.0 ;
     ] , [
@@ -48,7 +48,7 @@
         lv2:index 4 ;
         lv2:symbol "bright_vol" ;
         lv2:name "Bright Vol" ;
-        lv2:default 5.0 ;
+        lv2:default 1.6 ;
         lv2:minimum 0.0 ;
         lv2:maximum 10.0 ;
     ] , [
@@ -73,7 +73,7 @@
         lv2:index 7 ;
         lv2:symbol "middle" ;
         lv2:name "Middle" ;
-        lv2:default 6.0 ;
+        lv2:default 7.0 ;
         lv2:minimum 0.0 ;
         lv2:maximum 10.0 ;
     ] , [
@@ -81,7 +81,7 @@
         lv2:index 8 ;
         lv2:symbol "treble" ;
         lv2:name "Treble" ;
-        lv2:default 6.0 ;
+        lv2:default 7.0 ;
         lv2:minimum 0.0 ;
         lv2:maximum 10.0 ;
     ] , [
@@ -89,7 +89,7 @@
         lv2:index 9 ;
         lv2:symbol "presence" ;
         lv2:name "Presence" ;
-        lv2:default 5.0 ;
+        lv2:default 7.4 ;
         lv2:minimum 0.0 ;
         lv2:maximum 10.0 ;
     ] , [
@@ -109,7 +109,7 @@
         lv2:index 11 ;
         lv2:symbol "speaker_drive" ;
         lv2:name "Cone Stress / Drive" ;
-        lv2:default 5.0 ;
+        lv2:default 6.7 ;
         lv2:minimum 0.0 ;
         lv2:maximum 10.0 ;
     ] , [
@@ -126,7 +126,7 @@
         lv2:index 13 ;
         lv2:symbol "output_level" ;
         lv2:name "Output Level" ;
-        lv2:default 7.0 ;
+        lv2:default 4.1 ;
         lv2:minimum 0.0 ;
         lv2:maximum 10.0 ;
         rdfs:comment "Master Output Volume / Attenuator (-24dB to +6dB). Allows cranking Master for power amp saturation without blasting downstream pedals." ;

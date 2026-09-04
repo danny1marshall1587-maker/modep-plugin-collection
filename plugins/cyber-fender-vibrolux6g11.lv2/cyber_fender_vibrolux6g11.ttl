@@ -73,7 +73,7 @@
         lv2:index 7 ;
         lv2:symbol "bright_vol" ;
         lv2:name "Bright Vol" ;
-        lv2:default 5.5 ;
+        lv2:default 5.1 ;
         lv2:minimum 0.0 ;
         lv2:maximum 10.0 ;
     ] , [
@@ -81,7 +81,7 @@
         lv2:index 8 ;
         lv2:symbol "bright_bass" ;
         lv2:name "Bright Bass" ;
-        lv2:default 5.0 ;
+        lv2:default 6.5 ;
         lv2:minimum 0.0 ;
         lv2:maximum 10.0 ;
     ] , [
@@ -89,7 +89,7 @@
         lv2:index 9 ;
         lv2:symbol "bright_treble" ;
         lv2:name "Bright Treble" ;
-        lv2:default 6.0 ;
+        lv2:default 7.3 ;
         lv2:minimum 0.0 ;
         lv2:maximum 10.0 ;
     ] , [
@@ -97,7 +97,7 @@
         lv2:index 10 ;
         lv2:symbol "trem_speed" ;
         lv2:name "Tremolo Speed" ;
-        lv2:default 4.5 ;
+        lv2:default 4.4 ;
         lv2:minimum 1.0 ;
         lv2:maximum 12.0 ;
     ] , [
@@ -105,7 +105,7 @@
         lv2:index 11 ;
         lv2:symbol "trem_intensity" ;
         lv2:name "Tremolo Intensity" ;
-        lv2:default 0.0 ;
+        lv2:default 30.0 ;
         lv2:minimum 0.0 ;
         lv2:maximum 100.0 ;
     ] , [
@@ -142,7 +142,7 @@
         lv2:index 15 ;
         lv2:symbol "output_level" ;
         lv2:name "Output Level" ;
-        lv2:default 7.0 ;
+        lv2:default 4.5 ;
         lv2:minimum 0.0 ;
         lv2:maximum 10.0 ;
         rdfs:comment "Master Output Volume / Attenuator (-24dB to +6dB). Allows cranking Master for power amp saturation without blasting downstream pedals." ;

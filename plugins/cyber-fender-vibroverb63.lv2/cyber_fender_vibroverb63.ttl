@@ -73,7 +73,7 @@
         lv2:index 7 ;
         lv2:symbol "vib_vol" ;
         lv2:name "Vibrato Vol" ;
-        lv2:default 5.5 ;
+        lv2:default 6.3 ;
         lv2:minimum 0.0 ;
         lv2:maximum 10.0 ;
     ] , [
@@ -81,7 +81,7 @@
         lv2:index 8 ;
         lv2:symbol "vib_treble" ;
         lv2:name "Vibrato Treble" ;
-        lv2:default 5.5 ;
+        lv2:default 6.7 ;
         lv2:minimum 0.0 ;
         lv2:maximum 10.0 ;
     ] , [
@@ -89,7 +89,7 @@
         lv2:index 9 ;
         lv2:symbol "vib_bass" ;
         lv2:name "Vibrato Bass" ;
-        lv2:default 5.0 ;
+        lv2:default 3.4 ;
         lv2:minimum 0.0 ;
         lv2:maximum 10.0 ;
     ] , [
@@ -105,7 +105,7 @@
         lv2:index 11 ;
         lv2:symbol "trem_intensity" ;
         lv2:name "Harmonic Intensity" ;
-        lv2:default 65.0 ;
+        lv2:default 13.0 ;
         lv2:minimum 0.0 ;
         lv2:maximum 100.0 ;
     ] , [
@@ -142,7 +142,7 @@
         lv2:index 15 ;
         lv2:symbol "output_level" ;
         lv2:name "Output Level" ;
-        lv2:default 7.0 ;
+        lv2:default 5.3 ;
         lv2:minimum 0.0 ;
         lv2:maximum 10.0 ;
         rdfs:comment "Master Output Volume / Attenuator (-24dB to +6dB). Allows cranking Master for power amp saturation without blasting downstream pedals." ;

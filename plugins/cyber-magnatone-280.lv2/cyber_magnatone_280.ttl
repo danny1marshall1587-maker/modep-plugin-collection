@@ -73,7 +73,7 @@
         lv2:index 7 ;
         lv2:symbol "vib_vol" ;
         lv2:name "Vibrato Vol" ;
-        lv2:default 5.5 ;
+        lv2:default 5.6 ;
         lv2:minimum 0.0 ;
         lv2:maximum 10.0 ;
     ] , [
@@ -81,7 +81,7 @@
         lv2:index 8 ;
         lv2:symbol "vib_treble" ;
         lv2:name "Vibrato Treble" ;
-        lv2:default 5.5 ;
+        lv2:default 5.8 ;
         lv2:minimum 0.0 ;
         lv2:maximum 10.0 ;
     ] , [
@@ -97,7 +97,7 @@
         lv2:index 10 ;
         lv2:symbol "vib_speed" ;
         lv2:name "Varistor Speed" ;
-        lv2:default 4.5 ;
+        lv2:default 6.12 ;
         lv2:minimum 1.0 ;
         lv2:maximum 10.0 ;
     ] , [
@@ -105,7 +105,7 @@
         lv2:index 11 ;
         lv2:symbol "vib_depth" ;
         lv2:name "Varistor Depth" ;
-        lv2:default 75.0 ;
+        lv2:default 33.0 ;
         lv2:minimum 0.0 ;
         lv2:maximum 100.0 ;
     ] , [
@@ -124,7 +124,7 @@
         lv2:index 13 ;
         lv2:symbol "speaker_drive" ;
         lv2:name "Cone Stress / Drive" ;
-        lv2:default 4.5 ;
+        lv2:default 10.0 ;
         lv2:minimum 0.0 ;
         lv2:maximum 10.0 ;
     ] , [
@@ -141,7 +141,7 @@
         lv2:index 15 ;
         lv2:symbol "output_level" ;
         lv2:name "Output Level" ;
-        lv2:default 7.0 ;
+        lv2:default 5.2 ;
         lv2:minimum 0.0 ;
         lv2:maximum 10.0 ;
         rdfs:comment "Master Output Volume / Attenuator (-24dB to +6dB). Allows cranking Master for power amp saturation without blasting downstream pedals." ;

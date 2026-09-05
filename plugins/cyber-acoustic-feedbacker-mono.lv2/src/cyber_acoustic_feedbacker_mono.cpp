@@ -2,25 +2,20 @@
  * Cyber Acoustic Feedbacker & Natural Infinite Sustainer - LV2 Plugin
  * Copyright (c) 2026 Cyber Audio
  *
- * Physical Closed-Loop Electro-Acoustic String Feedback Simulator (Dev Edition):
+ * Physical Closed-Loop Electro-Acoustic String & Room Feedback Simulator (Dev Edition):
  *  - 100% Pristine Dry Signal Path with zero latency.
- *  - Unpitched Closed Physical Feedback Circuit:
- *    1. String Resonance & Core Dispersion (Karplus-Strong physical string model):
- *       The recirculating buffer acts directly as the vibrating guitar string,
- *       dissolving all static delay loops into an authentic physical string oscillation.
- *    2. Magnetic Pickup Saturation: Non-linear magnetic core compression as the string
- *       vibrates at maximum excursion in the pickup field.
- *    3. Speaker Distress Closed-Loop Recirculation:
- *       The string drives the speaker cone into non-linear distress and cabinet reflections,
- *       and that sound wave physically recirculates back into the string, smoothing out
- *       any loop seams into warm, living acoustic resonance.
- *    4. Acoustic Standing-Wave Air Modulation (Air Wobble LFO):
- *       Simulates the physical air space and standing wave nodes between speaker and guitar body.
- *    5. Acoustic Room Coupling & Phase Splay:
- *       Controls whether the feedback couples in-phase (fundamental bloom) or with slight phase
- *       splay (overtone singing feedback).
- *  - Smart Note-Tail Sampling with Attack Lockout & Ingress/Release Vectors.
- *  - Full suite of 14 Dev Tuner parameters exposed for exhaustive sound design.
+ *  - Integrated High-Density Acoustic Early-Reflection Room Simulator:
+ *    * Tunable from tight cabinet / small vocal booth reflection (2ms) up to studio live-room (250ms+).
+ *    * Physical wall absorption / damping.
+ *  - Room-In-Loop Routing Matrix:
+ *    * Mode A: Room at end of pedal chain (spatial room ambiance on output).
+ *    * Mode B: Room INSIDE the closed feedback loop! Injects wall reflections back into
+ *      the vibrating string and speaker distress, physically scattering and blurring
+ *      any loop boundaries into a smooth, liquid harmonic bloom.
+ *  - Closed-Loop Speaker Cone Recirculation: Drives speaker compliance & voice coil damping.
+ *  - Magnetic Pickup Saturation: Non-linear magnetic core compression.
+ *  - Acoustic Standing-Wave Air Modulation (Air Wobble LFO).
+ *  - Full suite of Dev Tuner controls for testing and calibration.
  */
 
 #include "lv2.h"
@@ -63,11 +58,19 @@ enum PortIndex {
     PORT_LOOP_RELEASE      = 18, // Seam Release Vector (5ms to 200ms, default 40ms)
     PORT_LOOP_DRIFT        = 19, // Micro-Phase Drift (0 to 100%, default 25%)
 
-    // New Physical Electro-Acoustic Coupling Controls
+    // Physical Electro-Acoustic Coupling Controls
     PORT_SPK_RECIRC        = 20, // Speaker -> String Recirculation (0% to 100%, default 60%)
     PORT_PICKUP_SAT        = 21, // Magnetic Pickup Core Saturation (0% to 100%, default 40%)
     PORT_AIR_WOBBLE_RATE   = 22, // Acoustic Standing Wave Rate (0.05Hz to 2.5Hz, default 0.45Hz)
-    PORT_AIR_WOBBLE_DEPTH  = 23  // Acoustic Standing Wave Depth (0% to 50%, default 15%)
+    PORT_AIR_WOBBLE_DEPTH  = 23, // Acoustic Standing Wave Depth (0% to 50%, default 15%)
+
+    // Room Simulation & Feedback Matrix Controls
+    PORT_ROOM_IN_LOOP      = 24, // Toggle: 0.0 = Room on Output, 1.0 = Room in Feedback Loop
+    PORT_ROOM_SIZE         = 25, // Room Size / Reflection Delay (5ms to 300ms, default 45ms)
+    PORT_ROOM_DECAY        = 26, // Room Reflection Decay (0.1s to 3.0s, default 0.8s)
+    PORT_ROOM_DAMPING      = 27, // Room Wall Damping (1000Hz to 16000Hz, default 6500Hz)
+    PORT_ROOM_MIX          = 28, // Room Level in Output (0% to 100%, default 30%)
+    PORT_ROOM_FEED         = 29  // Room Recirculation into Loop (0% to 100%, default 50%)
 };
 
 // -------------------------------------------------------------------------
@@ -149,7 +152,7 @@ public:
     }
 
     inline float process(float in, float tailSec, double sampleRate) {
-        float fb = powf(0.001f, 1500.0f / (tailSec * (float)sample_rate()));
+        float fb = powf(0.001f, 1500.0f / (tailSec * (float)sampleRate));
         if (fb > 0.88f) fb = 0.88f;
 
         float out1 = -0.5f * in + d1[idx1];
@@ -175,9 +178,96 @@ public:
 
         return (s1 + s2 + s3 + s4) * 0.25f;
     }
+};
 
+// -------------------------------------------------------------------------
+// High-Density Acoustic Early-Reflection Room Simulator & Diffuser
+// -------------------------------------------------------------------------
+class HighDensityRoomSimulator {
 private:
-    double sample_rate() { return 48000.0; } // Fallback helper
+    static const int MAX_ROOM_SAMPLES = 16384; // ~340ms at 48kHz
+    float buf_a[MAX_ROOM_SAMPLES];
+    float buf_b[MAX_ROOM_SAMPLES];
+    float buf_c[MAX_ROOM_SAMPLES];
+    float buf_d[MAX_ROOM_SAMPLES];
+
+    int write_pos;
+    float damp_a, damp_b, damp_c, damp_d;
+
+public:
+    void init() {
+        memset(buf_a, 0, sizeof(buf_a));
+        memset(buf_b, 0, sizeof(buf_b));
+        memset(buf_c, 0, sizeof(buf_c));
+        memset(buf_d, 0, sizeof(buf_d));
+        write_pos = 0;
+        damp_a = damp_b = damp_c = damp_d = 0.0f;
+    }
+
+    void reset() {
+        init();
+    }
+
+    inline void process(float in_l, float in_r,
+                        float room_size_sec, float room_decay_sec, float damping_hz,
+                        double sample_rate,
+                        float& out_room_l, float& out_room_r) {
+
+        float in_mono = 0.5f * (in_l + in_r);
+
+        // Physical room wall reflection delays (prime ratios)
+        int delay_a = (int)(room_size_sec * 0.618f * (float)sample_rate);
+        int delay_b = (int)(room_size_sec * 0.853f * (float)sample_rate);
+        int delay_c = (int)(room_size_sec * 1.000f * (float)sample_rate);
+        int delay_d = (int)(room_size_sec * 1.237f * (float)sample_rate);
+
+        delay_a = std::max(64, std::min(MAX_ROOM_SAMPLES - 1, delay_a));
+        delay_b = std::max(64, std::min(MAX_ROOM_SAMPLES - 1, delay_b));
+        delay_c = std::max(64, std::min(MAX_ROOM_SAMPLES - 1, delay_c));
+        delay_d = std::max(64, std::min(MAX_ROOM_SAMPLES - 1, delay_d));
+
+        // Wall absorption damping filter
+        float damp_w = 2.0f * (float)M_PI * damping_hz / (float)sample_rate;
+        float damp_coeff = damp_w / (1.0f + damp_w);
+
+        // Reflection decay feedback gain
+        float fb = powf(0.001f, (room_size_sec * 1.5f) / (room_decay_sec + 0.01f));
+        if (fb > 0.85f) fb = 0.85f;
+
+        // Read reflection taps
+        int read_a = (write_pos - delay_a + MAX_ROOM_SAMPLES) & (MAX_ROOM_SAMPLES - 1);
+        int read_b = (write_pos - delay_b + MAX_ROOM_SAMPLES) & (MAX_ROOM_SAMPLES - 1);
+        int read_c = (write_pos - delay_c + MAX_ROOM_SAMPLES) & (MAX_ROOM_SAMPLES - 1);
+        int read_d = (write_pos - delay_d + MAX_ROOM_SAMPLES) & (MAX_ROOM_SAMPLES - 1);
+
+        float tap_a = buf_a[read_a];
+        float tap_b = buf_b[read_b];
+        float tap_c = buf_c[read_c];
+        float tap_d = buf_d[read_d];
+
+        // Wall damping
+        damp_a += damp_coeff * (tap_a - damp_a);
+        damp_b += damp_coeff * (tap_b - damp_b);
+        damp_c += damp_coeff * (tap_c - damp_c);
+        damp_d += damp_coeff * (tap_d - damp_d);
+
+        // Cross-coupled Schroeder room matrix with soft limiting
+        float recirc_a = in_mono + damp_b * fb * 0.5f - damp_c * fb * 0.3f;
+        float recirc_b = in_mono + damp_c * fb * 0.5f - damp_d * fb * 0.3f;
+        float recirc_c = in_mono + damp_d * fb * 0.5f - damp_a * fb * 0.3f;
+        float recirc_d = in_mono + damp_a * fb * 0.5f - damp_b * fb * 0.3f;
+
+        buf_a[write_pos] = tanhf(recirc_a);
+        buf_b[write_pos] = tanhf(recirc_b);
+        buf_c[write_pos] = tanhf(recirc_c);
+        buf_d[write_pos] = tanhf(recirc_d);
+
+        write_pos = (write_pos + 1) & (MAX_ROOM_SAMPLES - 1);
+
+        // Spatial stereo early reflection output
+        out_room_l = (damp_a + damp_c - damp_b * 0.5f) * 0.55f;
+        out_room_r = (damp_b + damp_d - damp_a * 0.5f) * 0.55f;
+    }
 };
 
 // -------------------------------------------------------------------------
@@ -269,8 +359,8 @@ private:
     // String Core Dispersion Filters (1-pole lowpass damping)
     float string_damp_l, string_damp_r;
 
-    // Closed-loop speaker feedback return state
-    float spk_return_l, spk_return_r;
+    // Closed-loop acoustic return state
+    float acoustic_return_l, acoustic_return_r;
 
     // 4-Point Hermite Interpolator
     inline float read_hermite(const float* buffer, float pos) {
@@ -297,11 +387,9 @@ private:
         return ((c3 * frac + c2) * frac + c1) * frac + c0;
     }
 
-    // Magnetic Pickup Non-Linear Core Saturation
     inline float saturate_pickup(float x, float drive) {
         if (drive < 0.01f) return x;
         float scaled = x * (1.0f + drive * 1.5f);
-        // Soft asymmetric cubic saturation simulating magnetic field limit
         return tanhf(scaled) - 0.08f * drive * (scaled * scaled);
     }
 
@@ -326,17 +414,16 @@ public:
         prev_env = 0.0f;
         env_velocity = 0.0f;
         string_damp_l = string_damp_r = 0.0f;
-        spk_return_l = spk_return_r = 0.0f;
+        acoustic_return_l = acoustic_return_r = 0.0f;
     }
 
     void reset() {
         init();
     }
 
-    // Feed returning acoustic sound from the speaker back into the vibrating string
-    inline void inject_speaker_return(float returned_l, float returned_r, float recirc_amount) {
-        spk_return_l = returned_l * recirc_amount;
-        spk_return_r = returned_r * recirc_amount;
+    inline void inject_acoustic_return(float returned_l, float returned_r, float recirc_amount) {
+        acoustic_return_l = returned_l * recirc_amount;
+        acoustic_return_r = returned_r * recirc_amount;
     }
 
     inline void process(float in_l, float in_r,
@@ -349,7 +436,6 @@ public:
                         double sample_rate,
                         float& out_l, float& out_r) {
 
-        // Track derivative / direction of note envelope
         env_velocity = guitar_env - prev_env;
         prev_env = guitar_env;
 
@@ -357,27 +443,26 @@ public:
             samples_since_pluck = 0;
             is_locked = false;
             crossfade_progress = 0.0f;
-            spk_return_l = spk_return_r = 0.0f;
+            acoustic_return_l = acoustic_return_r = 0.0f;
         } else if (samples_since_pluck < 2000000) {
             samples_since_pluck++;
         }
 
-        // 1. Constantly capture guitar string + returning acoustic speaker sound in ring buffer
+        // 1. Constantly capture audio in ring buffer
         if (!is_locked) {
             buf_l[write_idx] = in_l;
             buf_r[write_idx] = in_r;
             write_idx = (write_idx + 1) & (MAX_BUF - 1);
         } else {
-            // In closed loop: gently recirculate the speaker acoustic return back into the string buffer
-            // with physical string damping to continuously refresh and soften the tone
+            // Closed-loop: softly blend returning acoustic sound wave back into the string
             float existing_l = buf_l[write_idx];
             float existing_r = buf_r[write_idx];
-            buf_l[write_idx] = existing_l * 0.70f + spk_return_l * 0.30f;
-            buf_r[write_idx] = existing_r * 0.70f + spk_return_r * 0.30f;
+            buf_l[write_idx] = existing_l * 0.70f + acoustic_return_l * 0.30f;
+            buf_r[write_idx] = existing_r * 0.70f + acoustic_return_r * 0.30f;
             write_idx = (write_idx + 1) & (MAX_BUF - 1);
         }
 
-        // 2. Continuous RMS tracking of incoming signal
+        // 2. Continuous RMS tracking
         float inst_power = 0.5f * (in_l * in_l + in_r * in_r);
         ring_rms += 0.005f * (inst_power - ring_rms);
 
@@ -387,7 +472,6 @@ public:
         bool note_is_decaying_or_flat = (env_velocity <= 0.0002f);
         bool can_latch = past_attack_phase && note_is_decaying_or_flat && (guitar_env > 0.0015f);
 
-        // Trigger logic
         bool trigger_active = (trigger_val >= takeover_threshold);
 
         if (trigger_active) {
@@ -435,12 +519,12 @@ public:
             return;
         }
 
-        // 4. Acoustic Standing-Wave Air Wobble LFO (Gentle room breathing)
+        // 4. Acoustic Standing-Wave Air Wobble LFO
         air_phase += (float)(2.0 * M_PI * air_wobble_rate / sample_rate);
         if (air_phase >= 2.0f * (float)M_PI) air_phase -= 2.0f * (float)M_PI;
         float air_wobble = 1.0f + sinf(air_phase) * air_wobble_depth;
 
-        // Micro-drift phase modulation
+        // Micro-drift
         drift_phase += (float)(2.0 * M_PI * 0.65 / sample_rate);
         if (drift_phase >= 2.0f * (float)M_PI) drift_phase -= 2.0f * (float)M_PI;
         float max_drift_samples = drift_ratio * (0.003f * (float)sample_rate);
@@ -474,11 +558,11 @@ public:
         float raw_string_l = (sample_a_l * w_a + sample_b_l * w_b) * loop_volume_gain * air_wobble;
         float raw_string_r = (sample_a_r * w_a + sample_b_r * w_b) * loop_volume_gain * air_wobble;
 
-        // 6. Magnetic Pickup Core Saturation
+        // 6. Magnetic Pickup Saturation
         float pickup_l = saturate_pickup(raw_string_l, pickup_sat_amt);
         float pickup_r = saturate_pickup(raw_string_r, pickup_sat_amt);
 
-        // 7. String Physical Damping & High-Frequency Dispersion Filter
+        // 7. String Damping Filter
         float damp_w = 2.0f * (float)M_PI * damping_hz / (float)sample_rate;
         float damp_a = damp_w / (1.0f + damp_w);
         string_damp_l += damp_a * (pickup_l - string_damp_l);
@@ -487,7 +571,7 @@ public:
         float sustained_l = string_damp_l;
         float sustained_r = string_damp_r;
 
-        // 8. Equal-power sinusoidal crossfade between live note and infinite sustain
+        // 8. Equal-power sinusoidal crossfade
         float mix_wet = sinf(crossfade_progress * (float)M_PI * 0.5f);
         float mix_dry = cosf(crossfade_progress * (float)M_PI * 0.5f);
 
@@ -497,7 +581,7 @@ public:
 };
 
 // -------------------------------------------------------------------------
-// Main CyberAcousticFeedbacker Plugin Class (Dev Tuner Edition)
+// Main CyberAcousticFeedbacker Plugin Class (Dev Edition with Room Engine)
 // -------------------------------------------------------------------------
 class CyberAcousticFeedbacker {
 private:
@@ -509,6 +593,7 @@ private:
     CabinetAcousticTail tail_diffuser_l;
     CabinetAcousticTail tail_diffuser_r;
 
+    HighDensityRoomSimulator room_sim;
     OutputCeilingLimiter output_limiter;
     PhysicalStringFeedbackSimulator string_sim;
 
@@ -552,6 +637,14 @@ private:
     const float* p_air_wobble_rate;
     const float* p_air_wobble_depth;
 
+    // Room Simulation & Routing Controls
+    const float* p_room_in_loop;
+    const float* p_room_size;
+    const float* p_room_decay;
+    const float* p_room_damping;
+    const float* p_room_mix;
+    const float* p_room_feed;
+
 public:
     CyberAcousticFeedbacker(double sr) : sample_rate(sr) {
         distress_l.init(sample_rate);
@@ -560,13 +653,14 @@ public:
         tail_diffuser_l.init();
         tail_diffuser_r.init();
 
+        room_sim.init();
         output_limiter.init(sample_rate, -6.0f);
         string_sim.init();
 
         guitar_env = 0.0f;
         fast_env = 0.0f;
-        env_atk_coeff = 1.0f - expf(-1.0f / ((float)sample_rate * 0.0030f)); // 3ms attack
-        env_rel_coeff = 1.0f - expf(-1.0f / ((float)sample_rate * 0.2500f)); // 250ms release
+        env_atk_coeff = 1.0f - expf(-1.0f / ((float)sample_rate * 0.0030f));
+        env_rel_coeff = 1.0f - expf(-1.0f / ((float)sample_rate * 0.2500f));
         is_sustaining = false;
         tail_env = 0.0f;
         smoothed_trigger = 0.0f;
@@ -598,6 +692,12 @@ public:
             case PORT_PICKUP_SAT:        p_pickup_sat = (const float*)data; break;
             case PORT_AIR_WOBBLE_RATE:   p_air_wobble_rate = (const float*)data; break;
             case PORT_AIR_WOBBLE_DEPTH:  p_air_wobble_depth = (const float*)data; break;
+            case PORT_ROOM_IN_LOOP:      p_room_in_loop = (const float*)data; break;
+            case PORT_ROOM_SIZE:         p_room_size = (const float*)data; break;
+            case PORT_ROOM_DECAY:        p_room_decay = (const float*)data; break;
+            case PORT_ROOM_DAMPING:      p_room_damping = (const float*)data; break;
+            case PORT_ROOM_MIX:          p_room_mix = (const float*)data; break;
+            case PORT_ROOM_FEED:         p_room_feed = (const float*)data; break;
         }
     }
 
@@ -609,7 +709,7 @@ public:
             return;
         }
 
-        // Primary user controls
+        // Primary controls
         float raw_trigger = (p_trigger ? *p_trigger : 0.0f);
         float target_trigger = std::max(0.0f, std::min(1.0f, raw_trigger));
         float gain_knob = (p_gain ? *p_gain : 75.0f) * 0.01f;
@@ -634,6 +734,14 @@ public:
         float pickup_sat_amt = (p_pickup_sat ? *p_pickup_sat : 40.0f) * 0.01f;
         float air_wobble_rate = std::max(0.05f, std::min(2.5f, (p_air_wobble_rate ? *p_air_wobble_rate : 0.45f)));
         float air_wobble_depth = (p_air_wobble_depth ? *p_air_wobble_depth : 15.0f) * 0.01f;
+
+        // Room Simulation Controls
+        bool room_in_loop = (p_room_in_loop && *p_room_in_loop > 0.5f);
+        float room_size_sec = (p_room_size ? *p_room_size : 45.0f) * 0.001f; // ms to sec
+        float room_decay_sec = std::max(0.1f, std::min(3.0f, (p_room_decay ? *p_room_decay : 0.8f)));
+        float room_damping_hz = std::max(1000.0f, std::min(16000.0f, (p_room_damping ? *p_room_damping : 6500.0f)));
+        float room_mix_amt = (p_room_mix ? *p_room_mix : 30.0f) * 0.01f;
+        float room_feed_amt = (p_room_feed ? *p_room_feed : 50.0f) * 0.01f;
 
         // Slew rates
         float pedal_atk_rate = 1.0f - expf(-1.0f / (0.025f * (float)sample_rate));
@@ -677,6 +785,7 @@ public:
                 is_sustaining = false;
                 tail_env = 0.0f;
                 string_sim.reset();
+                room_sim.reset();
                 float lim_l, lim_r;
                 output_limiter.process(in_l, in_r, lim_l, lim_r);
                 p_out_l[i] = lim_l;
@@ -722,24 +831,43 @@ public:
                                sample_rate,
                                string_out_l, string_out_r);
 
-            // Supercharged Speaker Distress (Driving the speaker cone from the string)
+            // Supercharged Speaker Distress
             float distressed_l = distress_l.process(string_out_l, distress_drive, asym_amount, sample_rate);
             float distressed_r = distress_r.process(string_out_r, distress_drive, asym_amount, sample_rate);
 
-            // Acoustic Room / Cabinet Reflections
+            // Cabinet Reflections
             float tailed_l = tail_diffuser_l.process(distressed_l, tail_sec, sample_rate);
             float tailed_r = tail_diffuser_r.process(distressed_r, tail_sec, sample_rate);
 
             float acoustic_feedback_l = distressed_l * 0.75f + tailed_l * 0.45f;
             float acoustic_feedback_r = distressed_r * 0.75f + tailed_r * 0.45f;
 
-            // Closed-Loop: Inject acoustic sound wave back into the vibrating string!
-            string_sim.inject_speaker_return(acoustic_feedback_l, acoustic_feedback_r, spk_recirc_amt);
+            // Room Simulator
+            float room_l, room_r;
+            room_sim.process(acoustic_feedback_l, acoustic_feedback_r,
+                             room_size_sec, room_decay_sec, room_damping_hz,
+                             sample_rate,
+                             room_l, room_r);
 
-            // Final Mix & Safety Ceiling Limiter
+            // Closed-Loop Injection: Decide if room sound recirculates in loop or just speaker
+            float total_acoustic_return_l = acoustic_feedback_l * spk_recirc_amt;
+            float total_acoustic_return_r = acoustic_feedback_r * spk_recirc_amt;
+
+            if (room_in_loop) {
+                // Room sound recirculates directly back into the vibrating string!
+                total_acoustic_return_l += room_l * room_feed_amt;
+                total_acoustic_return_r += room_r * room_feed_amt;
+            }
+
+            string_sim.inject_acoustic_return(total_acoustic_return_l, total_acoustic_return_r, 1.0f);
+
+            // Output blending
+            float processed_feedback_l = acoustic_feedback_l + room_l * room_mix_amt;
+            float processed_feedback_r = acoustic_feedback_r + room_r * room_mix_amt;
+
             float wet_amount = smoothed_trigger * mix_knob * (1.0f + gain_knob * 0.6f) * tail_env;
-            float raw_out_l = in_l + acoustic_feedback_l * wet_amount;
-            float raw_out_r = in_r + acoustic_feedback_r * wet_amount;
+            float raw_out_l = in_l + processed_feedback_l * wet_amount;
+            float raw_out_r = in_r + processed_feedback_r * wet_amount;
 
             float limited_l, limited_r;
             output_limiter.process(raw_out_l, raw_out_r, limited_l, limited_r);
@@ -754,6 +882,7 @@ public:
         distress_r.reset();
         tail_diffuser_l.init();
         tail_diffuser_r.init();
+        room_sim.reset();
         output_limiter.init(sample_rate, -6.0f);
         string_sim.reset();
         guitar_env = 0.0f;

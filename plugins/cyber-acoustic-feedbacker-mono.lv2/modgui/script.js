@@ -1,94 +1,120 @@
 function (event) {
     var pedal = event.icon;
 
-    // Rotary Dial Drag Controller
+    // Rotary Knob Drag Handling
     pedal.find('.custom-knob-dial').each(function () {
         var dial = $(this);
-        var sym = dial.attr('data-symbol');
-        var min = parseFloat(dial.attr('data-min'));
-        var max = parseFloat(dial.attr('data-max'));
-        var dflt = parseFloat(dial.attr('data-default'));
+        var symbol = dial.data('symbol');
+        var min = parseFloat(dial.data('min'));
+        var max = parseFloat(dial.data('max'));
+        var def = parseFloat(dial.data('default'));
 
-        function setRot(val) {
+        var rotor = dial.find('.knob-rotor');
+        var curVal = def;
+
+        function updateRotation(val) {
             var norm = (val - min) / (max - min);
+            norm = Math.max(0, Math.min(1, norm));
             var deg = -140 + norm * 280;
-            dial.find('.knob-rotor').css('transform', 'rotate(' + deg + 'deg)');
+            rotor.css('transform', 'rotate(' + deg + 'deg)');
         }
 
-        setRot(dflt);
+        updateRotation(curVal);
+
+        var startY = 0;
+        var startVal = curVal;
 
         dial.on('mousedown touchstart', function (e) {
             e.preventDefault();
-            var startY = e.pageY || e.originalEvent.touches[0].pageY;
-            var curVal = parseFloat(dial.attr('data-value') || dflt);
+            e.stopPropagation();
+            startY = e.pageY || (e.originalEvent.touches && e.originalEvent.touches[0].pageY);
+            startVal = curVal;
 
-            $(document).on('mousemove.fbknob touchmove.fbknob', function (me) {
-                var pageY = me.pageY || me.originalEvent.touches[0].pageY;
-                var delta = (startY - pageY) * ((max - min) / 160.0);
-                var newVal = Math.max(min, Math.min(max, curVal + delta));
+            $(document).on('mousemove.knob touchmove.knob', function (moveEvent) {
+                var curY = moveEvent.pageY || (moveEvent.originalEvent.touches && moveEvent.originalEvent.touches[0].pageY);
+                var dy = startY - curY;
+                var range = max - min;
+                var step = range / 150.0;
+                var newVal = startVal + dy * step;
+                newVal = Math.max(min, Math.min(max, newVal));
 
-                dial.attr('data-value', newVal);
-                setRot(newVal);
-                event.set_port_value(sym, newVal);
+                curVal = newVal;
+                updateRotation(curVal);
+
+                event.set_port_value(symbol, curVal);
+                pedal.find('.mod-knob-image[mod-port-symbol="' + symbol + '"]').val(curVal).trigger('change');
             });
 
-            $(document).one('mouseup touchend', function () {
-                $(document).off('.fbknob');
+            $(document).on('mouseup.knob touchend.knob', function () {
+                $(document).off('mousemove.knob touchmove.knob');
+                $(document).off('mouseup.knob touchend.knob');
             });
         });
     });
 
-    // Mode Selector Pills
-    pedal.find('.mode-pill').on('click', function () {
-        var pill = $(this);
-        var modeVal = parseFloat(pill.attr('data-mode'));
-        pedal.find('.mode-pill').removeClass('active');
-        pill.addClass('active');
-        event.set_port_value('mode', modeVal);
+    // Room Routing Toggle Switch Handling
+    var roomToggle = pedal.find('.room-toggle-switch');
+    roomToggle.on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var cur = parseFloat(roomToggle.attr('data-val') || 0);
+        var next = (cur > 0.5) ? 0.0 : 1.0;
+        roomToggle.attr('data-val', next);
+
+        if (next > 0.5) {
+            roomToggle.find('.opt-out').removeClass('active');
+            roomToggle.find('.opt-loop').addClass('active');
+        } else {
+            roomToggle.find('.opt-loop').removeClass('active');
+            roomToggle.find('.opt-out').addClass('active');
+        }
+
+        event.set_port_value('room_in_loop', next);
     });
 
-    // Feedback Trigger Footswitch (Hold / Momentary)
-    var triggerBtn = pedal.find('.trigger-footswitch-btn');
-    var triggerLed = pedal.find('#feedback-trigger-led');
+    // Hold / Stomp Trigger Button Handling
+    var triggerBtn = pedal.find('.trigger-stomp-button');
+    var isTriggerHeld = false;
 
     triggerBtn.on('mousedown touchstart', function (e) {
         e.preventDefault();
-        triggerBtn.addClass('pressed');
-        triggerLed.addClass('on');
+        e.stopPropagation();
+        isTriggerHeld = true;
+        triggerBtn.addClass('active');
         event.set_port_value('trigger', 1.0);
     });
 
-    $(document).on('mouseup.fbtrig touchend.fbtrig', function () {
-        if (triggerBtn.hasClass('pressed')) {
-            triggerBtn.removeClass('pressed');
-            triggerLed.removeClass('on');
+    $(document).on('mouseup.trigger touchend.trigger', function () {
+        if (isTriggerHeld) {
+            isTriggerHeld = false;
+            triggerBtn.removeClass('active');
             event.set_port_value('trigger', 0.0);
         }
     });
 
     // Handle Incoming Host Events
     if (event.type === 'change') {
-        if (event.symbol === 'mode') {
-            var m = Math.round(event.value);
-            pedal.find('.mode-pill').removeClass('active');
-            pedal.find('.mode-pill[data-mode="' + m + '"]').addClass('active');
-        } else if (event.symbol === 'trigger') {
-            if (event.value > 0.5) {
-                triggerBtn.addClass('pressed');
-                triggerLed.addClass('on');
+        var symbol = event.symbol;
+        var value = event.value;
+
+        var dial = pedal.find('.custom-knob-dial[data-symbol="' + symbol + '"]');
+        if (dial.length) {
+            var min = parseFloat(dial.data('min'));
+            var max = parseFloat(dial.data('max'));
+            var norm = (value - min) / (max - min);
+            norm = Math.max(0, Math.min(1, norm));
+            var deg = -140 + norm * 280;
+            dial.find('.knob-rotor').css('transform', 'rotate(' + deg + 'deg)');
+        }
+
+        if (symbol === 'room_in_loop') {
+            roomToggle.attr('data-val', value);
+            if (value > 0.5) {
+                roomToggle.find('.opt-out').removeClass('active');
+                roomToggle.find('.opt-loop').addClass('active');
             } else {
-                triggerBtn.removeClass('pressed');
-                triggerLed.removeClass('on');
-            }
-        } else {
-            var d = pedal.find('.custom-knob-dial[data-symbol="' + event.symbol + '"]');
-            if (d.length) {
-                var min = parseFloat(d.attr('data-min'));
-                var max = parseFloat(d.attr('data-max'));
-                var norm = (event.value - min) / (max - min);
-                var deg = -140 + norm * 280;
-                d.find('.knob-rotor').css('transform', 'rotate(' + deg + 'deg)');
-                d.attr('data-value', event.value);
+                roomToggle.find('.opt-loop').removeClass('active');
+                roomToggle.find('.opt-out').addClass('active');
             }
         }
     }

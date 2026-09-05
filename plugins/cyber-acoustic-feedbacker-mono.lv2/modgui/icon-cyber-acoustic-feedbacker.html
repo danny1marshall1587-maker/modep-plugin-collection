@@ -4,7 +4,7 @@
     <!-- Top Branding -->
     <div class="mod-plugin-brand"><h1>CYBER AUDIO</h1></div>
     <div class="mod-plugin-name"><h1>Acoustic Feedbacker Mono</h1></div>
-    <div class="dev-badge">ELECTRO-ACOUSTIC DEV TUNER</div>
+    <div class="dev-badge">ACOUSTIC ROOM & STRING TUNER</div>
 
     <!-- Bypass LED -->
     <div class="mod-light on" mod-role="bypass-light"></div>
@@ -45,7 +45,7 @@
         </div>
     </div>
 
-    <!-- Section: String Sampling & Envelope (Dev) -->
+    <!-- Section: String Tail Sampling (Dev) -->
     <div class="section-divider dev-divider"><span>STRING TAIL SAMPLING & ENVELOPE (DEV)</span></div>
     <div class="cyber-knobs-grid dev-grid-5">
         <div class="knob-cell">
@@ -89,7 +89,7 @@
         </div>
     </div>
 
-    <!-- Section: Closed-Loop Physical & Air Coupling (Dev) -->
+    <!-- Section: Speaker & Air Coupling (Dev) -->
     <div class="section-divider dev-divider"><span>SPEAKER & AIR COUPLING (DEV)</span></div>
     <div class="cyber-knobs-grid dev-grid-5">
         <div class="knob-cell">
@@ -133,6 +133,59 @@
         </div>
     </div>
 
+    <!-- Section: Room Simulation & Loop Blur (Dev) -->
+    <div class="section-divider dev-divider"><span>ROOM SIMULATION & LOOP BLUR (DEV)</span></div>
+    <div class="room-routing-bar">
+        <span class="routing-label">ROOM ROUTING:</span>
+        <div class="room-toggle-switch" data-symbol="room_in_loop" data-val="0">
+            <span class="toggle-opt opt-out active">OUTPUT ONLY</span>
+            <span class="toggle-opt opt-loop">IN FEEDBACK LOOP</span>
+        </div>
+        <div class="mod-control-port" mod-role="input-control-port" mod-port-symbol="room_in_loop" style="display:none;"></div>
+    </div>
+    <div class="cyber-knobs-grid dev-grid-5">
+        <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="room_size" data-min="5" data-max="300" data-default="45">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">ROOM SIZE</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="room_size" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="room_decay" data-min="0.1" data-max="3.0" data-default="0.8">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">ROOM DECAY</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="room_decay" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="room_damping" data-min="1000" data-max="16000" data-default="6500">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">ROOM DAMP</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="room_damping" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="room_mix" data-min="0" data-max="100" data-default="30">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">ROOM MIX</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="room_mix" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="room_feed" data-min="0" data-max="100" data-default="50">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">ROOM FEED</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="room_feed" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- Section: Secondary String Shaping (Dev) -->
     <div class="cyber-knobs-grid dev-grid-4">
         <div class="knob-cell">
             <div class="custom-knob-dial dev-dial" data-symbol="loop_window" data-min="20" data-max="500" data-default="120">

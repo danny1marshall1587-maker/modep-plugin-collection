@@ -89,6 +89,30 @@
             lv2:name "AIR DEPTH" ;
         ] , [
             lv2:index 18 ;
+            lv2:symbol "room_in_loop" ;
+            lv2:name "ROOM IN LOOP" ;
+        ] , [
+            lv2:index 19 ;
+            lv2:symbol "room_size" ;
+            lv2:name "ROOM SIZE" ;
+        ] , [
+            lv2:index 20 ;
+            lv2:symbol "room_decay" ;
+            lv2:name "ROOM DECAY" ;
+        ] , [
+            lv2:index 21 ;
+            lv2:symbol "room_damping" ;
+            lv2:name "ROOM DAMP" ;
+        ] , [
+            lv2:index 22 ;
+            lv2:symbol "room_mix" ;
+            lv2:name "ROOM MIX" ;
+        ] , [
+            lv2:index 23 ;
+            lv2:symbol "room_feed" ;
+            lv2:name "ROOM FEED" ;
+        ] , [
+            lv2:index 24 ;
             lv2:symbol "trigger" ;
             lv2:name "FEEDBACK" ;
         ] ;

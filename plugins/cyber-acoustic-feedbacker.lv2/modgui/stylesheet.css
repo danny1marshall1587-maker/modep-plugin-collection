@@ -6,7 +6,7 @@
 .mod-pedal.feedbacker-pedal,
 .mod-pedal.mod-cyber-feedbacker {
     width: 280px;
-    height: 530px;
+    height: 600px;
     background: radial-gradient(circle at 50% 15%, #261608 0%, #150b03 55%, #080401 100%);
     border: 2px solid #78350f;
     border-radius: 18px;
@@ -274,4 +274,45 @@
 .cyber-knobs-grid.dev-grid-4 {
     grid-template-columns: repeat(4, 1fr);
     margin-bottom: 6px;
+}
+
+/* Room Routing Bar */
+.room-routing-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin: 2px 0 6px 0;
+    width: 100%;
+}
+
+.room-routing-bar .routing-label {
+    font-size: 6.5px;
+    font-weight: 800;
+    color: #fbbf24;
+    letter-spacing: 0.5px;
+}
+
+.room-toggle-switch {
+    display: flex;
+    background: #180d04;
+    border: 1px solid #78350f;
+    border-radius: 4px;
+    padding: 1px;
+    cursor: pointer;
+}
+
+.room-toggle-switch .toggle-opt {
+    font-size: 6px;
+    font-weight: 800;
+    padding: 2px 6px;
+    color: #92400e;
+    border-radius: 3px;
+    transition: all 0.15s ease;
+}
+
+.room-toggle-switch .toggle-opt.active {
+    background: #0d9488;
+    color: #ffffff;
+    box-shadow: 0 0 6px rgba(13, 148, 136, 0.6);
 }

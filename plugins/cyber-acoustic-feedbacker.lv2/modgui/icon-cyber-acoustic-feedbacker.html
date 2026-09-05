@@ -4,7 +4,7 @@
     <!-- Top Branding -->
     <div class="mod-plugin-brand"><h1>CYBER AUDIO</h1></div>
     <div class="mod-plugin-name"><h1>Acoustic Feedbacker</h1></div>
-    <div class="dev-badge">DEV TUNER MODE</div>
+    <div class="dev-badge">ELECTRO-ACOUSTIC DEV TUNER</div>
 
     <!-- Bypass LED -->
     <div class="mod-light on" mod-role="bypass-light"></div>
@@ -45,9 +45,9 @@
         </div>
     </div>
 
-    <!-- Section: Dev Calibration & Sustainer Tuner Controls -->
-    <div class="section-divider dev-divider"><span>SUSTAINER CALIBRATION (DEV)</span></div>
-    <div class="cyber-knobs-grid dev-grid">
+    <!-- Section: String Sampling & Envelope (Dev) -->
+    <div class="section-divider dev-divider"><span>STRING TAIL SAMPLING & ENVELOPE (DEV)</span></div>
+    <div class="cyber-knobs-grid dev-grid-5">
         <div class="knob-cell">
             <div class="custom-knob-dial dev-dial" data-symbol="attack_lockout" data-min="50" data-max="800" data-default="200">
                 <div class="knob-rotor"></div>
@@ -73,14 +73,6 @@
         </div>
 
         <div class="knob-cell">
-            <div class="custom-knob-dial dev-dial" data-symbol="loop_drift" data-min="0" data-max="100" data-default="25">
-                <div class="knob-rotor"></div>
-            </div>
-            <span class="mod-knob-title dev-title">DRIFT %</span>
-            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="loop_drift" style="display:none;"></div>
-        </div>
-
-        <div class="knob-cell">
             <div class="custom-knob-dial dev-dial" data-symbol="takeover_thresh" data-min="70" data-max="100" data-default="90">
                 <div class="knob-rotor"></div>
             </div>
@@ -95,7 +87,53 @@
             <span class="mod-knob-title dev-title">FADE (ms)</span>
             <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="transition_time" style="display:none;"></div>
         </div>
+    </div>
 
+    <!-- Section: Closed-Loop Physical & Air Coupling (Dev) -->
+    <div class="section-divider dev-divider"><span>SPEAKER & AIR COUPLING (DEV)</span></div>
+    <div class="cyber-knobs-grid dev-grid-5">
+        <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="spk_recirc" data-min="0" data-max="100" data-default="60">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">SPK FEED</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="spk_recirc" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="pickup_sat" data-min="0" data-max="100" data-default="40">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">PICKUP</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="pickup_sat" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="air_wobble_rate" data-min="0.05" data-max="2.5" data-default="0.45">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">AIR RATE</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="air_wobble_rate" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="air_wobble_depth" data-min="0" data-max="50" data-default="15">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">AIR DEPTH</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="air_wobble_depth" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="loop_drift" data-min="0" data-max="100" data-default="25">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">DRIFT %</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="loop_drift" style="display:none;"></div>
+        </div>
+    </div>
+
+    <div class="cyber-knobs-grid dev-grid-4">
         <div class="knob-cell">
             <div class="custom-knob-dial dev-dial" data-symbol="loop_window" data-min="20" data-max="500" data-default="120">
                 <div class="knob-rotor"></div>

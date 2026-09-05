@@ -15,11 +15,11 @@
         foaf:name "Cyber Audio" ;
         foaf:homepage <http://cyber-audio.co.uk> ;
     ] ;
-    lv2:minorVersion 5 ;
+    lv2:minorVersion 6 ;
     lv2:microVersion 0 ;
     mod:brand "CyberAudio" ;
     mod:label "Feedbacker Mono" ;
-    rdfs:comment "Mono physically-modeled acoustic feedback and clean sustainer pedal. Features unpitched equal-power seamless loop hand-off with continuous splice release vectors, Hermite interpolation, dynamic speaker distress, and Dev Tuner controls." ;
+    rdfs:comment "Mono physical electro-acoustic string feedback & clean sustainer. Closed-loop speaker distress recirculation, Karplus string dispersion, magnetic pickup saturation, and room standing-wave wobble." ;
 
     lv2:port [
         a lv2:AudioPort , lv2:InputPort ;
@@ -116,7 +116,7 @@
         a lv2:ControlPort , lv2:InputPort ;
         lv2:index 12 ;
         lv2:symbol "loop_window" ;
-        lv2:name "Loop Window" ;
+        lv2:name "String Window" ;
         lv2:default 120.0 ;
         lv2:minimum 20.0 ;
         lv2:maximum 500.0 ;
@@ -125,7 +125,7 @@
         a lv2:ControlPort , lv2:InputPort ;
         lv2:index 13 ;
         lv2:symbol "loop_damping" ;
-        lv2:name "Loop Damping" ;
+        lv2:name "String Damping" ;
         lv2:default 7500.0 ;
         lv2:minimum 1000.0 ;
         lv2:maximum 18000.0 ;
@@ -161,7 +161,7 @@
         a lv2:ControlPort , lv2:InputPort ;
         lv2:index 17 ;
         lv2:symbol "loop_attack" ;
-        lv2:name "Loop Ingress Attack" ;
+        lv2:name "Ingress Attack Ramp" ;
         lv2:default 50.0 ;
         lv2:minimum 10.0 ;
         lv2:maximum 300.0 ;
@@ -183,5 +183,41 @@
         lv2:default 25.0 ;
         lv2:minimum 0.0 ;
         lv2:maximum 100.0 ;
+        units:unit units:pc ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 20 ;
+        lv2:symbol "spk_recirc" ;
+        lv2:name "Speaker Recirculation" ;
+        lv2:default 60.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        units:unit units:pc ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 21 ;
+        lv2:symbol "pickup_sat" ;
+        lv2:name "Pickup Saturation" ;
+        lv2:default 40.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        units:unit units:pc ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 22 ;
+        lv2:symbol "air_wobble_rate" ;
+        lv2:name "Air Wobble Rate" ;
+        lv2:default 0.45 ;
+        lv2:minimum 0.05 ;
+        lv2:maximum 2.5 ;
+        units:unit units:hz ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 23 ;
+        lv2:symbol "air_wobble_depth" ;
+        lv2:name "Air Wobble Depth" ;
+        lv2:default 15.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 50.0 ;
         units:unit units:pc ;
     ] .

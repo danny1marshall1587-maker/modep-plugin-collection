@@ -331,7 +331,8 @@ plugins = [
     'cyber-puresustain-delay.lv2', 'cyber-puresustain-delay-mono.lv2',
     'cyber-cloud-bloom.lv2', 'cyber-cloud-bloom-mono.lv2',
     'cyber-spring-reverb.lv2', 'cyber-spring-reverb-stereo.lv2',
-    'cyber-acoustic-feedbacker.lv2', 'cyber-acoustic-feedbacker-mono.lv2'
+    'cyber-acoustic-feedbacker.lv2', 'cyber-acoustic-feedbacker-mono.lv2',
+    'cyber-feedback-room.lv2', 'cyber-feedback-room-mono.lv2'
 ]
 for p in plugins:
     out_dir = os.path.join('plugins', p, 'modgui')

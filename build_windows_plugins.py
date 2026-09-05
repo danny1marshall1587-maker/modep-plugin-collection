@@ -45,6 +45,8 @@ def build_and_deploy():
         ('cyber-spring-reverb-stereo.lv2', 'src/cyber_spring_reverb_stereo.cpp', 'cyber_spring_reverb_stereo.dll'),
         ('cyber-acoustic-feedbacker.lv2', 'src/cyber_acoustic_feedbacker.cpp', 'cyber_acoustic_feedbacker.dll'),
         ('cyber-acoustic-feedbacker-mono.lv2', 'src/cyber_acoustic_feedbacker_mono.cpp', 'cyber_acoustic_feedbacker_mono.dll'),
+        ('cyber-feedback-room.lv2', 'src/cyber_feedback_room.cpp', 'cyber_feedback_room.dll'),
+        ('cyber-feedback-room-mono.lv2', 'src/cyber_feedback_room_mono.cpp', 'cyber_feedback_room_mono.dll'),
         ('cyber-cv-reverser.lv2', 'src/cyber_cv_reverser.cpp', 'cyber_cv_reverser.dll'),
         ('cyber-cv-splitter.lv2', 'src/cyber_cv_splitter.cpp', 'cyber_cv_splitter.dll')
     ]

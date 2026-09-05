@@ -1,0 +1,303 @@
+/* ==========================================================================
+   Cyber Feedback Room — MOD-UI Stylesheet
+   Deep Obsidian / Burning Copper Lava Aesthetic
+   ========================================================================== */
+
+.mod-pedal.feedback-room-pedal,
+.mod-pedal.mod-cyber-feedbacker {
+    width: 260px;
+    height: 440px;
+    background: radial-gradient(circle at 50% 15%, #2a1506 0%, #150a02 55%, #080301 100%);
+    border: 2px solid #92400e;
+    border-radius: 18px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.95), inset 0 1px 0 rgba(245, 158, 11, 0.35);
+    box-sizing: border-box;
+    padding: 12px 14px 14px 14px;
+    color: #fef3c7;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    user-select: none;
+}
+
+.mod-pedal.feedback-room-pedal .mod-plugin-brand {
+    text-align: center;
+    margin: 0;
+}
+
+.mod-pedal.feedback-room-pedal .mod-plugin-brand h1 {
+    font-size: 8.5px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: #f59e0b;
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+    margin: 0;
+    padding: 0;
+}
+
+.mod-pedal.feedback-room-pedal .mod-plugin-name {
+    text-align: center;
+    margin: 1px 0 0 0;
+}
+
+.mod-pedal.feedback-room-pedal .mod-plugin-name h1 {
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), 0 0 14px rgba(245, 158, 11, 0.5);
+    margin: 0;
+    padding: 0;
+}
+
+.mod-pedal.feedback-room-pedal .pedal-subtitle {
+    font-size: 6.5px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #d97706;
+    margin: 1px 0 4px 0;
+    text-transform: uppercase;
+}
+
+/* Bypass LED */
+.mod-pedal.feedback-room-pedal .mod-light {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #451a03;
+    border: 1px solid #78350f;
+    margin-bottom: 6px;
+    transition: all 0.1s ease;
+}
+
+.mod-pedal.feedback-room-pedal .mod-light.on {
+    background: #f59e0b;
+    box-shadow: 0 0 12px #f59e0b, 0 0 20px #f59e0b;
+}
+
+/* Master Feedback Hero Knob */
+.feedback-hero-section {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 6px;
+}
+
+.hero-knob-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.custom-knob-dial.hero-dial {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #592004 0%, #2e1002 60%, #120501 100%);
+    border: 2.5px solid #d97706;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.8), inset 0 2px 4px rgba(255, 255, 255, 0.25), 0 0 12px rgba(245, 158, 11, 0.25);
+    position: relative;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.custom-knob-dial.hero-dial:hover {
+    border-color: #fbbf24;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.8), 0 0 18px rgba(245, 158, 11, 0.6);
+}
+
+.hero-rotor {
+    width: 3px;
+    height: 22px;
+    background: #fbbf24;
+    box-shadow: 0 0 8px #fbbf24;
+    position: absolute;
+    top: 6px;
+    left: calc(50% - 1.5px);
+    transform-origin: bottom center;
+    border-radius: 2px;
+}
+
+.hero-title {
+    font-size: 8.5px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: #fbbf24;
+    margin-top: 4px;
+    text-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+}
+
+/* Section Dividers */
+.section-divider {
+    width: 100%;
+    text-align: center;
+    border-bottom: 1px solid rgba(146, 64, 14, 0.55);
+    line-height: 0.1em;
+    margin: 4px 0 6px 0;
+}
+
+.section-divider span {
+    background: #170b03;
+    padding: 0 6px;
+    font-size: 6.5px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    color: #f59e0b;
+}
+
+/* Room Routing Bar */
+.room-routing-bar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.routing-label {
+    font-size: 6.5px;
+    font-weight: 800;
+    color: #d97706;
+    letter-spacing: 0.8px;
+}
+
+.room-toggle-switch {
+    display: flex;
+    background: #000000;
+    border: 1px solid #78350f;
+    border-radius: 12px;
+    padding: 1px;
+    cursor: pointer;
+}
+
+.toggle-opt {
+    font-size: 6.5px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 10px;
+    color: #71717a;
+    transition: all 0.15s ease;
+}
+
+.toggle-opt.active {
+    background: #d97706;
+    color: #ffffff;
+    box-shadow: 0 0 8px rgba(217, 119, 6, 0.6);
+}
+
+/* Knobs Grid for Room Controls */
+.cyber-knobs-grid.room-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 10px;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.room-grid .knob-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 42px;
+}
+
+.custom-knob-dial {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #421803 0%, #240d02 60%, #0e0401 100%);
+    border: 1.5px solid #92400e;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.75), inset 0 1px 2px rgba(255, 255, 255, 0.15);
+    position: relative;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.custom-knob-dial:hover {
+    border-color: #f59e0b;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+.knob-rotor {
+    width: 2px;
+    height: 12px;
+    background: #fbbf24;
+    box-shadow: 0 0 5px #fbbf24;
+    position: absolute;
+    top: 4px;
+    left: calc(50% - 1px);
+    transform-origin: bottom center;
+    border-radius: 1px;
+}
+
+.mod-knob-title {
+    font-size: 6.5px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #fde68a;
+    margin-top: 3px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+/* Dual Footswitches Section */
+.footswitch-area {
+    width: 100%;
+    margin-top: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(146, 64, 14, 0.5);
+}
+
+.trigger-switch-box,
+.bypass-switch-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+
+.footswitch-title {
+    font-size: 6.5px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    color: #fbbf24;
+    text-align: center;
+}
+
+/* Plunger Stomp Button for Momentary Drone */
+.trigger-stomp-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #52525b 0%, #27272a 60%, #09090b 100%);
+    border: 2px solid #71717a;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.7);
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.05s ease, box-shadow 0.05s ease;
+}
+
+.trigger-stomp-button:active,
+.trigger-stomp-button.active {
+    transform: scale(0.92);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 8px #f59e0b;
+    border-color: #f59e0b;
+}
+
+.trigger-plunger {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid #a1a1aa;
+    background: radial-gradient(circle at 40% 40%, #71717a 0%, #3f3f46 100%);
+}

@@ -1,0 +1,112 @@
+<div class="mod-pedal mod-pedal-boxy{{{cns}}} feedback-room-pedal{{{c_extra}}}">
+    <div mod-role="drag-handle" class="mod-drag-handle"></div>
+
+    <!-- Top Branding -->
+    <div class="mod-plugin-brand"><h1>CYBER AUDIO</h1></div>
+    <div class="mod-plugin-name"><h1>Feedback Room</h1></div>
+    <div class="pedal-subtitle">ACOUSTIC RESONATOR & REVERB</div>
+
+    <!-- Bypass LED -->
+    <div class="mod-light on" mod-role="bypass-light"></div>
+
+    <!-- Master Feedback & Sustain Section -->
+    <div class="feedback-hero-section">
+        <div class="knob-cell hero-knob-cell">
+            <div class="custom-knob-dial hero-dial" data-symbol="trigger" data-min="0" data-max="1" data-default="0.7">
+                <div class="knob-rotor hero-rotor"></div>
+            </div>
+            <span class="mod-knob-title hero-title">FEEDBACK</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="trigger" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- Room Reverb Section Divider -->
+    <div class="section-divider"><span>ACOUSTIC ROOM REVERB</span></div>
+
+    <!-- Room Routing Switch -->
+    <div class="room-routing-bar">
+        <span class="routing-label">ROUTING:</span>
+        <div class="room-toggle-switch" data-symbol="room_in_loop" data-val="1">
+            <span class="toggle-opt opt-out">POST OUT</span>
+            <span class="toggle-opt opt-loop active">IN FEEDBACK LOOP</span>
+        </div>
+        <div class="mod-control-port" mod-role="input-control-port" mod-port-symbol="room_in_loop" style="display:none;"></div>
+    </div>
+
+    <!-- Reverb Control Knobs -->
+    <div class="cyber-knobs-grid room-grid">
+        <div class="knob-cell">
+            <div class="custom-knob-dial" data-symbol="room_size" data-min="5" data-max="300" data-default="298.8">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title">SIZE</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="room_size" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial" data-symbol="room_decay" data-min="0.1" data-max="3.0" data-default="3.0">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title">DECAY</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="room_decay" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial" data-symbol="room_damping" data-min="1000" data-max="16000" data-default="16000">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title">DAMP</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="room_damping" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial" data-symbol="room_feed" data-min="0" data-max="100" data-default="100">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title">RECIRC</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="room_feed" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial" data-symbol="room_mix" data-min="0" data-max="100" data-default="28.3">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title">ROOM MIX</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="room_mix" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- Dual Footswitches Section -->
+    <div class="footswitch-area">
+        <!-- Live Trigger / Hold Switch -->
+        <div class="trigger-switch-box">
+            <div class="trigger-stomp-button" title="Hold / Sustained Feedback Drone">
+                <div class="trigger-plunger"></div>
+            </div>
+            <span class="footswitch-title">HOLD DRONE</span>
+            <div class="mod-control-port" mod-role="input-control-port" mod-port-symbol="trigger" style="display:none;"></div>
+        </div>
+
+        <!-- Master Bypass Switch -->
+        <div class="bypass-switch-box">
+            <div class="mod-footswitch" mod-role="bypass"></div>
+            <span class="footswitch-title">ENGAGE</span>
+        </div>
+    </div>
+
+    <!-- Audio I/O Ports -->
+    <div class="mod-pedal-input">
+        {{#effect.ports.audio.input}}
+        <div class="mod-input mod-input-disconnected" title="{{name}}" mod-role="input-audio-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-input-image"></div>
+        </div>
+        {{/effect.ports.audio.input}}
+    </div>
+    <div class="mod-pedal-output">
+        {{#effect.ports.audio.output}}
+        <div class="mod-output mod-output-disconnected" title="{{name}}" mod-role="output-audio-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-output-image"></div>
+        </div>
+        {{/effect.ports.audio.output}}
+    </div>
+</div>

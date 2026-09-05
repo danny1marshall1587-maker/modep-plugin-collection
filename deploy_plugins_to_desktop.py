@@ -102,6 +102,8 @@ def deploy_to_desktop():
         ('cyber-spring-reverb-stereo.lv2', 'cyber-spring-reverb-stereo.lv2'),
         ('cyber-acoustic-feedbacker.lv2', 'cyber-acoustic-feedbacker.lv2'),
         ('cyber-acoustic-feedbacker-mono.lv2', 'cyber-acoustic-feedbacker-mono.lv2'),
+        ('cyber-feedback-room.lv2', 'cyber-feedback-room.lv2'),
+        ('cyber-feedback-room-mono.lv2', 'cyber-feedback-room-mono.lv2'),
         ('cyber-cv-reverser.lv2', 'cyber-cv-reverser.lv2'),
         ('cyber-cv-splitter.lv2', 'cyber-cv-splitter.lv2')
     ]

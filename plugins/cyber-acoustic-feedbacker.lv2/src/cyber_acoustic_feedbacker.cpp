@@ -2,19 +2,18 @@
  * Cyber Acoustic Feedbacker & Natural Infinite Sustainer - LV2 Plugin
  * Copyright (c) 2026 Cyber Audio
  *
- * Physical Closed-Loop Electro-Acoustic String Feedback Simulator (Dev Edition 8):
- *  - 100% Pristine Dry Signal Path with zero latency.
- *  - Continuous Expression-Centered Wiggle LFO:
- *    * Expression pedal sets the center bias point.
- *    * An independent, smooth LFO wiggles the trigger value above and below the center,
- *      creating an organic, rhythmic cyclic engagement/disengagement wave across the threshold.
- *  - Hold-Drone Pluck Policy (Play Over Sustained Feedback):
- *    * When fully pressed or hold-drone is enabled, new notes picked do NOT cut off
- *      the active feedback drone, allowing you to play lead/chords while the feedback
- *      loop soars underneath.
- *  - Integrated High-Density Acoustic Early-Reflection Room Simulator:
- *    * Toggle to route room sound inside the closed loop to completely blur seams.
- *  - Closed-Loop Speaker Distress Recirculation, Magnetic Pickup Saturation, Karplus String Damping.
+ * True Infinite Sustainer & Electro-Acoustic Feedback Engine:
+ *  - Fixes the low thumping beat sound:
+ *    * Added Subsonic DC & High-Pass Filter (65 Hz, 2-pole) in the recirculation loop
+ *      to eliminate cyclic low-frequency DC buildup / thumps.
+ *    * Buffer overwrite during locked state removed: When frozen/locked, the captured
+ *      buffer is HELD INFINITELY in a circular read loop so it NEVER decays or drops out.
+ *  - True Infinite Sustain:
+ *    * Once latched, sustain persists indefinitely until pedal is explicitly backed off.
+ *    * The guitar envelope follower does not kill the sustained drone as the physical string dies down.
+ *  - Speaker Distress & Cabinet Tail: Closed-loop recirculation for acoustic harmonic bloom.
+ *  - Continuous Expression-Centered Wiggle LFO.
+ *  - Integrated Early-Reflection Room Diffuser with Room-In-Loop toggle.
  */
 
 #include "lv2.h"
@@ -46,20 +45,20 @@ enum PortIndex {
     PORT_MIX               = 9,  // Feedback Mix (0 to 100%)
 
     // Dev Tuner Physical & Acoustic Calibration Ports
-    PORT_TAKEOVER_THRESH   = 10, // Takeover Threshold (70% to 100%, default 90%)
-    PORT_TRANSITION_TIME   = 11, // Transition Fade Time (50ms to 20000ms, default 500ms)
+    PORT_TAKEOVER_THRESH   = 10, // Takeover Threshold (70% to 100%, default 85%)
+    PORT_TRANSITION_TIME   = 11, // Transition Fade Time (50ms to 20000ms, default 400ms)
     PORT_LOOP_WINDOW       = 12, // String Window Length (20ms to 500ms, default 120ms)
     PORT_LOOP_DAMPING      = 13, // String High Damping (1000Hz to 18000Hz, default 7500Hz)
     PORT_VOL_MATCH         = 14, // Volume Match Ratio (50% to 150%, default 100%)
     PORT_BLOOM_RATE        = 15, // Bloom Rise Time (0.1s to 5.0s, default 0.8s)
-    PORT_ATTACK_LOCKOUT    = 16, // Attack Lockout Delay (50ms to 800ms, default 200ms)
-    PORT_LOOP_ATTACK       = 17, // Ingress Attack Ramp (10ms to 300ms, default 50ms)
+    PORT_ATTACK_LOCKOUT    = 16, // Attack Lockout Delay (50ms to 800ms, default 150ms)
+    PORT_LOOP_ATTACK       = 17, // Ingress Attack Ramp (10ms to 300ms, default 40ms)
     PORT_LOOP_RELEASE      = 18, // Seam Release Vector (5ms to 200ms, default 40ms)
-    PORT_LOOP_DRIFT        = 19, // Micro-Phase Drift (0 to 100%, default 25%)
+    PORT_LOOP_DRIFT        = 19, // Micro-Phase Drift (0 to 100%, default 20%)
 
     // Physical Electro-Acoustic Coupling Controls
-    PORT_SPK_RECIRC        = 20, // Speaker -> String Recirculation (0% to 100%, default 60%)
-    PORT_PICKUP_SAT        = 21, // Magnetic Pickup Core Saturation (0% to 100%, default 40%)
+    PORT_SPK_RECIRC        = 20, // Speaker -> String Recirculation (0% to 100%, default 50%)
+    PORT_PICKUP_SAT        = 21, // Magnetic Pickup Core Saturation (0% to 100%, default 30%)
     PORT_AIR_WOBBLE_RATE   = 22, // Acoustic Standing Wave Rate (0.05Hz to 2.5Hz, default 0.45Hz)
     PORT_AIR_WOBBLE_DEPTH  = 23, // Acoustic Standing Wave Depth (0% to 50%, default 15%)
 
@@ -69,11 +68,11 @@ enum PortIndex {
     PORT_ROOM_DECAY        = 26, // Room Reflection Decay (0.1s to 3.0s, default 0.8s)
     PORT_ROOM_DAMPING      = 27, // Room Wall Damping (1000Hz to 16000Hz, default 6500Hz)
     PORT_ROOM_MIX          = 28, // Room Level in Output (0% to 100%, default 30%)
-    PORT_ROOM_FEED         = 29, // Room Recirculation into Loop (0% to 100%, default 50%)
+    PORT_ROOM_FEED         = 29, // Room Recirculation into Loop (0% to 100%, default 40%)
 
     // Continuous Trigger Modulation & Hold-Drone Controls
-    PORT_TRIG_LFO_RATE     = 30, // Trigger Wiggle LFO Rate (0.05Hz to 5.0Hz, default 0.6Hz)
-    PORT_TRIG_LFO_DEPTH    = 31, // Trigger Wiggle LFO Depth (0% to 50%, default 20%)
+    PORT_TRIG_LFO_RATE     = 30, // Trigger Wiggle LFO Rate (0.05Hz to 5.0Hz, default 0.60Hz)
+    PORT_TRIG_LFO_DEPTH    = 31, // Trigger Wiggle LFO Depth (0% to 50%, default 15%)
     PORT_HOLD_ON_PLUCK     = 32  // Toggle: 1.0 = Keep Sustaining Drone when picking new notes
 };
 
@@ -93,9 +92,9 @@ public:
         speakerEnv = 0.0f;
         speakerThermalEnv = 0.0f;
         speakerConeHistory = 0.0f;
-        spkAtk = 1.0f - expf(-1.0f / ((float)sampleRate * 0.0015f));      // 1.5ms attack
-        spkRel = 1.0f - expf(-1.0f / ((float)sampleRate * 0.045f));       // 45ms release
-        spkThermalRel = 1.0f - expf(-1.0f / ((float)sampleRate * 0.350f));// 350ms thermal sag
+        spkAtk = 1.0f - expf(-1.0f / ((float)sampleRate * 0.0015f));
+        spkRel = 1.0f - expf(-1.0f / ((float)sampleRate * 0.045f));
+        spkThermalRel = 1.0f - expf(-1.0f / ((float)sampleRate * 0.350f));
     }
 
     void reset() {
@@ -113,17 +112,14 @@ public:
         }
         speakerThermalEnv += spkThermalRel * (speakerEnv - speakerThermalEnv);
 
-        // Compliance & thermal compression
         float comp = 1.0f / (1.0f + speakerEnv * driveAmount * 2.0f);
         float thermalComp = 1.0f / (1.0f + speakerThermalEnv * driveAmount * 0.50f);
         s = s * comp * thermalComp;
 
-        // Asymmetric cone saturation
         float coneStress = s * (1.0f + driveAmount * 1.6f);
         float t = tanhf(coneStress);
         float coneOut = t - asymAmount * (t * t);
 
-        // Dynamic voice-coil damping
         float dampingFc = 6800.0f - driveAmount * 2400.0f;
         if (dampingFc < 2400.0f) dampingFc = 2400.0f;
         float w = 2.0f * (float)M_PI * dampingFc / (float)sampleRate;
@@ -233,7 +229,7 @@ public:
         float damp_coeff = damp_w / (1.0f + damp_w);
 
         float fb = powf(0.001f, (room_size_sec * 1.5f) / (room_decay_sec + 0.01f));
-        if (fb > 0.85f) fb = 0.85f;
+        if (fb > 0.80f) fb = 0.80f;
 
         int read_a = (write_pos - delay_a + MAX_ROOM_SAMPLES) & (MAX_ROOM_SAMPLES - 1);
         int read_b = (write_pos - delay_b + MAX_ROOM_SAMPLES) & (MAX_ROOM_SAMPLES - 1);
@@ -250,10 +246,10 @@ public:
         damp_c += damp_coeff * (tap_c - damp_c);
         damp_d += damp_coeff * (tap_d - damp_d);
 
-        float recirc_a = in_mono + damp_b * fb * 0.5f - damp_c * fb * 0.3f;
-        float recirc_b = in_mono + damp_c * fb * 0.5f - damp_d * fb * 0.3f;
-        float recirc_c = in_mono + damp_d * fb * 0.5f - damp_a * fb * 0.3f;
-        float recirc_d = in_mono + damp_a * fb * 0.5f - damp_b * fb * 0.3f;
+        float recirc_a = in_mono + damp_b * fb * 0.4f - damp_c * fb * 0.25f;
+        float recirc_b = in_mono + damp_c * fb * 0.4f - damp_d * fb * 0.25f;
+        float recirc_c = in_mono + damp_d * fb * 0.4f - damp_a * fb * 0.25f;
+        float recirc_d = in_mono + damp_a * fb * 0.4f - damp_b * fb * 0.25f;
 
         buf_a[write_pos] = tanhf(recirc_a);
         buf_b[write_pos] = tanhf(recirc_b);
@@ -262,8 +258,8 @@ public:
 
         write_pos = (write_pos + 1) & (MAX_ROOM_SAMPLES - 1);
 
-        out_room_l = (damp_a + damp_c - damp_b * 0.5f) * 0.55f;
-        out_room_r = (damp_b + damp_d - damp_a * 0.5f) * 0.55f;
+        out_room_l = (damp_a + damp_c - damp_b * 0.5f) * 0.50f;
+        out_room_r = (damp_b + damp_d - damp_a * 0.5f) * 0.50f;
     }
 };
 
@@ -320,7 +316,7 @@ public:
 };
 
 // -------------------------------------------------------------------------
-// Physical Closed-Loop Vibrating String Simulator with Pluck Drone Policy
+// True Infinite Sustainer & String Simulator (No Dropouts, No Thumping)
 // -------------------------------------------------------------------------
 class PhysicalStringFeedbackSimulator {
 public:
@@ -349,6 +345,11 @@ private:
     float prev_env;
     float env_velocity;
 
+    // Subsonic DC & Thump Highpass Filters (2-pole Butterworth 65 Hz)
+    float hp_x1_l, hp_x2_l, hp_y1_l, hp_y2_l;
+    float hp_x1_r, hp_x2_r, hp_y1_r, hp_y2_r;
+
+    // String Core Damping Filter (1-pole lowpass)
     float string_damp_l, string_damp_r;
     float acoustic_return_l, acoustic_return_r;
 
@@ -382,6 +383,21 @@ private:
         return tanhf(scaled) - 0.08f * drive * (scaled * scaled);
     }
 
+    // Highpass thump filter
+    inline float filter_thump_l(float in, float b0, float b1, float b2, float a1, float a2) {
+        float out = b0 * in + b1 * hp_x1_l + b2 * hp_x2_l - a1 * hp_y1_l - a2 * hp_y2_l;
+        hp_x2_l = hp_x1_l; hp_x1_l = in;
+        hp_y2_l = hp_y1_l; hp_y1_l = out;
+        return out;
+    }
+
+    inline float filter_thump_r(float in, float b0, float b1, float b2, float a1, float a2) {
+        float out = b0 * in + b1 * hp_x1_r + b2 * hp_x2_r - a1 * hp_y1_r - a2 * hp_y2_r;
+        hp_x2_r = hp_x1_r; hp_x1_r = in;
+        hp_y2_r = hp_y1_r; hp_y1_r = out;
+        return out;
+    }
+
 public:
     void init() {
         memset(buf_l, 0, sizeof(buf_l));
@@ -404,6 +420,8 @@ public:
         env_velocity = 0.0f;
         string_damp_l = string_damp_r = 0.0f;
         acoustic_return_l = acoustic_return_r = 0.0f;
+        hp_x1_l = hp_x2_l = hp_y1_l = hp_y2_l = 0.0f;
+        hp_x1_r = hp_x2_r = hp_y1_r = hp_y2_r = 0.0f;
     }
 
     void reset() {
@@ -431,32 +449,24 @@ public:
 
         if (is_new_pluck) {
             samples_since_pluck = 0;
-            // Pluck Policy: If hold_on_pluck is true (or pedal is pushed all the way forward),
-            // do NOT unlock or kill the active sustaining loop! Continue sustaining.
-            if (!hold_on_pluck && effective_trigger < 0.95f) {
+            // Only release lock on a new pluck if hold_on_pluck is false AND pedal is backed off
+            if (!hold_on_pluck && effective_trigger < takeover_threshold) {
                 is_locked = false;
                 crossfade_progress = 0.0f;
-                acoustic_return_l = acoustic_return_r = 0.0f;
             }
         } else if (samples_since_pluck < 2000000) {
             samples_since_pluck++;
         }
 
-        // 1. Live capture buffer
+        // 1. Constantly capture guitar in circular ring buffer when UNLOCKED
+        // Once locked, DO NOT overwrite the clean sampled buffer with decaying audio!
         if (!is_locked) {
             buf_l[write_idx] = in_l;
             buf_r[write_idx] = in_r;
             write_idx = (write_idx + 1) & (MAX_BUF - 1);
-        } else {
-            // Closed-loop: softly blend returning acoustic sound wave back into the string
-            float existing_l = buf_l[write_idx];
-            float existing_r = buf_r[write_idx];
-            buf_l[write_idx] = existing_l * 0.70f + acoustic_return_l * 0.30f;
-            buf_r[write_idx] = existing_r * 0.70f + acoustic_return_r * 0.30f;
-            write_idx = (write_idx + 1) & (MAX_BUF - 1);
         }
 
-        // 2. RMS tracking
+        // 2. Continuous RMS tracking
         float inst_power = 0.5f * (in_l * in_l + in_r * in_r);
         ring_rms += 0.005f * (inst_power - ring_rms);
 
@@ -464,12 +474,13 @@ public:
         uint32_t lockout_samples = (uint32_t)(attack_lockout_sec * (float)sample_rate);
         bool past_attack_phase = (samples_since_pluck >= lockout_samples);
         bool note_is_decaying_or_flat = (env_velocity <= 0.0002f);
-        bool can_latch = past_attack_phase && note_is_decaying_or_flat && (guitar_env > 0.0015f);
+        bool can_latch = past_attack_phase && note_is_decaying_or_flat && (guitar_env > 0.0012f);
 
         bool trigger_active = (effective_trigger >= takeover_threshold);
 
         if (trigger_active) {
             if (!is_locked && can_latch) {
+                // FREEZE THE CLEAN NOTE TAIL PERMANENTLY INTO THE RECIRCULATING STRING
                 is_locked = true;
                 current_loop_len = (int)(loop_sec * (float)sample_rate);
                 if (current_loop_len < 384) current_loop_len = 384;
@@ -496,11 +507,13 @@ public:
             }
 
             if (is_locked) {
+                // Crossfade in smoothly to 100% held drone
                 float fade_rate = 1.0f / (transition_sec * (float)sample_rate + 1.0f);
                 crossfade_progress = std::min(1.0f, crossfade_progress + fade_rate);
             }
         } else {
-            float fade_rate = 1.0f / (0.060f * (float)sample_rate + 1.0f);
+            // Pedal backed off below takeover: smooth release out
+            float fade_rate = 1.0f / (0.080f * (float)sample_rate + 1.0f);
             crossfade_progress = std::max(0.0f, crossfade_progress - fade_rate);
             if (crossfade_progress <= 0.0f) {
                 is_locked = false;
@@ -552,11 +565,33 @@ public:
         float raw_string_l = (sample_a_l * w_a + sample_b_l * w_b) * loop_volume_gain * air_wobble;
         float raw_string_r = (sample_a_r * w_a + sample_b_r * w_b) * loop_volume_gain * air_wobble;
 
-        // 6. Magnetic Pickup Saturation
-        float pickup_l = saturate_pickup(raw_string_l, pickup_sat_amt);
-        float pickup_r = saturate_pickup(raw_string_r, pickup_sat_amt);
+        // 6. Anti-Thump Subsonic High-Pass Filter (65 Hz 2-pole Butterworth)
+        // Eliminates the cyclic low-frequency thumping beat entirely
+        float w0 = 2.0f * (float)M_PI * 65.0f / (float)sample_rate;
+        float cos_w0 = cosf(w0);
+        float alpha = sinf(w0) * 0.7071f;
+        float b0 = (1.0f + cos_w0) * 0.5f;
+        float b1 = -(1.0f + cos_w0);
+        float b2 = (1.0f + cos_w0) * 0.5f;
+        float a0 = 1.0f + alpha;
+        float a1 = -2.0f * cos_w0;
+        float a2 = 1.0f - alpha;
 
-        // 7. String Damping Filter
+        float nb0 = b0 / a0; float nb1 = b1 / a0; float nb2 = b2 / a0;
+        float na1 = a1 / a0; float na2 = a2 / a0;
+
+        float dethump_l = filter_thump_l(raw_string_l, nb0, nb1, nb2, na1, na2);
+        float dethump_r = filter_thump_r(raw_string_r, nb0, nb1, nb2, na1, na2);
+
+        // Add soft acoustic feedback recirculation from speaker/room
+        dethump_l += acoustic_return_l * 0.25f;
+        dethump_r += acoustic_return_r * 0.25f;
+
+        // 7. Magnetic Pickup Saturation
+        float pickup_l = saturate_pickup(dethump_l, pickup_sat_amt);
+        float pickup_r = saturate_pickup(dethump_r, pickup_sat_amt);
+
+        // 8. String Damping Filter
         float damp_w = 2.0f * (float)M_PI * damping_hz / (float)sample_rate;
         float damp_a = damp_w / (1.0f + damp_w);
         string_damp_l += damp_a * (pickup_l - string_damp_l);
@@ -565,7 +600,7 @@ public:
         float sustained_l = string_damp_l;
         float sustained_r = string_damp_r;
 
-        // 8. Equal-power sinusoidal crossfade
+        // 9. Equal-power sinusoidal crossfade between live note and infinite sustain
         float mix_wet = sinf(crossfade_progress * (float)M_PI * 0.5f);
         float mix_dry = cosf(crossfade_progress * (float)M_PI * 0.5f);
 
@@ -600,7 +635,6 @@ private:
     float env_atk_coeff;
     float env_rel_coeff;
     bool is_sustaining;
-    float tail_env;
 
     float smoothed_trigger;
 
@@ -665,7 +699,6 @@ public:
         env_atk_coeff = 1.0f - expf(-1.0f / ((float)sample_rate * 0.0030f));
         env_rel_coeff = 1.0f - expf(-1.0f / ((float)sample_rate * 0.2500f));
         is_sustaining = false;
-        tail_env = 0.0f;
         smoothed_trigger = 0.0f;
     }
 
@@ -724,20 +757,20 @@ public:
         float mix_knob = (p_mix ? *p_mix : 50.0f) * 0.01f;
 
         // Dev Tuner parameters
-        float takeover_threshold = (p_takeover_thresh ? *p_takeover_thresh : 90.0f) * 0.01f;
-        float transition_sec = std::max(0.05f, std::min(20.0f, (p_transition_time ? *p_transition_time : 500.0f) * 0.001f));
+        float takeover_threshold = (p_takeover_thresh ? *p_takeover_thresh : 85.0f) * 0.01f;
+        float transition_sec = std::max(0.05f, std::min(20.0f, (p_transition_time ? *p_transition_time : 400.0f) * 0.001f));
         float loop_sec = (p_loop_window ? *p_loop_window : 120.0f) * 0.001f;
         float damping_hz = std::max(1000.0f, std::min(18000.0f, (p_loop_damping ? *p_loop_damping : 7500.0f)));
         float vol_match_ratio = (p_vol_match ? *p_vol_match : 100.0f) * 0.01f;
         float bloom_sec = std::max(0.1f, std::min(5.0f, (p_bloom_rate ? *p_bloom_rate : 0.8f)));
-        float attack_lockout_sec = (p_attack_lockout ? *p_attack_lockout : 200.0f) * 0.001f;
-        float loop_attack_sec = (p_loop_attack ? *p_loop_attack : 50.0f) * 0.001f;
+        float attack_lockout_sec = (p_attack_lockout ? *p_attack_lockout : 150.0f) * 0.001f;
+        float loop_attack_sec = (p_loop_attack ? *p_loop_attack : 40.0f) * 0.001f;
         float loop_release_sec = (p_loop_release ? *p_loop_release : 40.0f) * 0.001f;
-        float loop_drift = (p_loop_drift ? *p_loop_drift : 25.0f) * 0.01f;
+        float loop_drift = (p_loop_drift ? *p_loop_drift : 20.0f) * 0.01f;
 
         // Electro-Acoustic Coupling Controls
-        float spk_recirc_amt = (p_spk_recirc ? *p_spk_recirc : 60.0f) * 0.01f;
-        float pickup_sat_amt = (p_pickup_sat ? *p_pickup_sat : 40.0f) * 0.01f;
+        float spk_recirc_amt = (p_spk_recirc ? *p_spk_recirc : 50.0f) * 0.01f;
+        float pickup_sat_amt = (p_pickup_sat ? *p_pickup_sat : 30.0f) * 0.01f;
         float air_wobble_rate = std::max(0.05f, std::min(2.5f, (p_air_wobble_rate ? *p_air_wobble_rate : 0.45f)));
         float air_wobble_depth = (p_air_wobble_depth ? *p_air_wobble_depth : 15.0f) * 0.01f;
 
@@ -747,18 +780,16 @@ public:
         float room_decay_sec = std::max(0.1f, std::min(3.0f, (p_room_decay ? *p_room_decay : 0.8f)));
         float room_damping_hz = std::max(1000.0f, std::min(16000.0f, (p_room_damping ? *p_room_damping : 6500.0f)));
         float room_mix_amt = (p_room_mix ? *p_room_mix : 30.0f) * 0.01f;
-        float room_feed_amt = (p_room_feed ? *p_room_feed : 50.0f) * 0.01f;
+        float room_feed_amt = (p_room_feed ? *p_room_feed : 40.0f) * 0.01f;
 
         // Trigger Modulation & Hold-Drone Controls
-        float trig_lfo_rate = std::max(0.05f, std::min(5.0f, (p_trig_lfo_rate ? *p_trig_lfo_rate : 0.6f)));
-        float trig_lfo_depth = (p_trig_lfo_depth ? *p_trig_lfo_depth : 20.0f) * 0.01f;
+        float trig_lfo_rate = std::max(0.05f, std::min(5.0f, (p_trig_lfo_rate ? *p_trig_lfo_rate : 0.60f)));
+        float trig_lfo_depth = (p_trig_lfo_depth ? *p_trig_lfo_depth : 15.0f) * 0.01f;
         bool hold_on_pluck = (p_hold_on_pluck && *p_hold_on_pluck > 0.5f);
 
         // Slew rates
         float pedal_atk_rate = 1.0f - expf(-1.0f / (0.025f * (float)sample_rate));
         float pedal_rel_rate = 1.0f - expf(-1.0f / (0.040f * (float)sample_rate));
-        float tail_atk_rate = 1.0f - expf(-1.0f / (0.05f * (float)sample_rate));
-        float tail_rel_rate = 1.0f - expf(-1.0f / (tail_sec * (float)sample_rate));
 
         float distress_drive = distress_knob * 1.8f + 0.6f;
         float asym_amount = 0.15f + distress_knob * 0.25f;
@@ -784,28 +815,25 @@ public:
             if (in_rect > fast_env) fast_env += 0.15f * (in_rect - fast_env);
             else fast_env += 0.002f * (in_rect - fast_env);
 
-            // Continuous Trigger Wiggle LFO (modulates around user pedal position)
+            // Trigger Wiggle LFO
             trig_lfo_phase += (float)(2.0 * M_PI * trig_lfo_rate / sample_rate);
             if (trig_lfo_phase >= 2.0f * (float)M_PI) trig_lfo_phase -= 2.0f * (float)M_PI;
 
             float lfo_offset = sinf(trig_lfo_phase) * trig_lfo_depth;
-            // Modulated trigger: pedal acts as center bias
             float modulated_trigger = target_trigger;
             if (target_trigger > 0.05f && trig_lfo_depth > 0.001f) {
                 modulated_trigger = std::max(0.0f, std::min(1.0f, target_trigger + lfo_offset));
             }
 
-            // Slew tracking of effective trigger
             if (modulated_trigger > smoothed_trigger) {
                 smoothed_trigger += (modulated_trigger - smoothed_trigger) * pedal_atk_rate;
             } else {
                 smoothed_trigger += (modulated_trigger - smoothed_trigger) * pedal_rel_rate;
             }
 
-            // Heel-down cleanup
+            // Heel-down cleanup only when pedal is genuinely released
             if (smoothed_trigger < 0.005f && target_trigger < 0.01f) {
                 is_sustaining = false;
-                tail_env = 0.0f;
                 string_sim.reset();
                 room_sim.reset();
                 float lim_l, lim_r;
@@ -815,20 +843,7 @@ public:
                 continue;
             }
 
-            // Sustaining state
-            if (guitar_env > 0.0015f) {
-                is_sustaining = true;
-            } else if (smoothed_trigger >= takeover_threshold && is_sustaining) {
-                is_sustaining = true;
-            } else if (guitar_env < 0.00015f) {
-                is_sustaining = false;
-            }
-
-            float target_tail_env = (is_sustaining && smoothed_trigger > 0.02f) ? 1.0f : 0.0f;
-            if (target_tail_env > tail_env) tail_env += (target_tail_env - tail_env) * tail_atk_rate;
-            else tail_env += (target_tail_env - tail_env) * tail_rel_rate;
-
-            // Pure Unpitched Acoustic Leveler
+            // Acoustic Leveler for pre-takeover bloom
             float max_leveler_gain = 30.0f + smoothed_trigger * 220.0f * (0.8f + gain_knob * 0.4f);
             float floor_offset = 0.010f * (1.0f - smoothed_trigger * 0.90f);
 
@@ -838,10 +853,10 @@ public:
                 if (sustain_gain > max_leveler_gain) sustain_gain = max_leveler_gain;
             }
 
-            float sustained_l = in_l * sustain_gain * tail_env;
-            float sustained_r = in_r * sustain_gain * tail_env;
+            float sustained_l = in_l * sustain_gain;
+            float sustained_r = in_r * sustain_gain;
 
-            // Physical String Vibration Process
+            // Physical String Vibration Process (Infinite Circular Sustainer)
             float string_out_l, string_out_r;
             string_sim.process(sustained_l, sustained_r,
                                smoothed_trigger, guitar_env, is_new_pluck,
@@ -883,11 +898,11 @@ public:
 
             string_sim.inject_acoustic_return(total_acoustic_return_l, total_acoustic_return_r, 1.0f);
 
-            // Output blending
+            // Output blending: wet amount tied strictly to expression pedal engagement
             float processed_feedback_l = acoustic_feedback_l + room_l * room_mix_amt;
             float processed_feedback_r = acoustic_feedback_r + room_r * room_mix_amt;
 
-            float wet_amount = smoothed_trigger * mix_knob * (1.0f + gain_knob * 0.6f) * tail_env;
+            float wet_amount = smoothed_trigger * mix_knob * (1.0f + gain_knob * 0.6f);
             float raw_out_l = in_l + processed_feedback_l * wet_amount;
             float raw_out_r = in_r + processed_feedback_r * wet_amount;
 
@@ -911,7 +926,6 @@ public:
         guitar_env = 0.0f;
         fast_env = 0.0f;
         is_sustaining = false;
-        tail_env = 0.0f;
         smoothed_trigger = 0.0f;
     }
 };

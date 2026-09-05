@@ -1,0 +1,7 @@
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://cyber-audio.co.uk/plugins/cyber-acoustic-feedbacker-mono>
+    a lv2:Plugin ;
+    lv2:binary <cyber_acoustic_feedbacker_mono.dll> , <cyber_acoustic_feedbacker_mono.so> ;
+    rdfs:seeAlso <cyber-acoustic-feedbacker-mono.ttl> , <modgui.ttl> .

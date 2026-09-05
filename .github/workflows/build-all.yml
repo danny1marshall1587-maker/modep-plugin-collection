@@ -52,53 +52,60 @@ jobs:
           dir="$1"
           src="$2"
           so_name="$3"
-          echo "Compiling $dir -> $so_name..."
-          $CXX -O3 -fPIC -shared -static-libstdc++ -static-libgcc \
-               -I plugins/include -I plugins/$dir/src \
-               plugins/$dir/$src -o plugins/$dir/$so_name
+          if [ -f "plugins/$dir/$src" ]; then
+            echo "Compiling $dir -> $so_name..."
+            $CXX -O3 -fPIC -shared -static-libstdc++ -static-libgcc \
+                 -I plugins/include -I plugins/include/lv2 -I include -I include/lv2 \
+                 -I plugins/$dir/src -I plugins/$dir/include \
+                 plugins/$dir/$src -o plugins/$dir/$so_name || exit 1
+          else
+            echo "Skipping $dir ($src not found)"
+          fi
         }
 
-        compile_plugin "harmonic-tremolo" "src/harmonic_tremolo_lv2.cpp" "harmonic_tremolo.so"
         compile_plugin "cyber-denoiser" "src/cyber_denoiser_lv2.cpp" "cyber_denoiser.so"
+        compile_plugin "cyber-denoiser-mono.lv2" "src/cyber_denoiser_mono_lv2.cpp" "cyber_denoiser_mono.so"
         compile_plugin "galaxy-strobe-tune" "src/galaxy_strobe_tune_lv2.cpp" "galaxy_strobe_tune.so"
-        compile_plugin "dimension-c" "src/dimension_c_lv2.cpp" "dimension_c.so"
-        compile_plugin "Dimension_IV.lv2" "src/dimension_iv_lv2.cpp" "Dimension_IV_dsp.so"
-        compile_plugin "Dearmondo610.lv2" "src/dearmondo610_lv2.cpp" "DeArmondo610_dsp.so"
         compile_plugin "guitar-midi" "src/guitar_midi_lv2.cpp" "guitar_midi.so"
-        compile_plugin "bluesbreaker.lv2" "src/bluesbreaker_lv2.cpp" "bluesbreaker.so"
-        compile_plugin "aether.lv2" "src/aether_lv2.cpp" "aether_dsp.so"
         compile_plugin "nam-loader.lv2" "src/nam_loader_lv2.cpp" "nam_loader.so"
         compile_plugin "cyber-hum-killer.lv2" "src/cyber_hum_killer_lv2.cpp" "cyber_hum_killer.so"
+        compile_plugin "cyber-hum-killer-mono.lv2" "src/cyber_hum_killer_mono_lv2.cpp" "cyber_hum_killer_mono.so"
         compile_plugin "smart-fizz-killer.lv2" "src/smart_fizz_killer_lv2.cpp" "smart_fizz_killer.so"
-        compile_plugin "cyber-expression-cv.lv2" "src/cyber_expression_cv_lv2.cpp" "cyber_expression_cv.so"
+        compile_plugin "smart-fizz-killer-mono.lv2" "src/smart_fizz_killer_mono.cpp" "smart_fizz_killer_mono.so"
         compile_plugin "aelapse.lv2" "src/aelapse_lv2.cpp" "aelapse_dsp.so"
+        compile_plugin "aelapse-mono.lv2" "src/aelapse_mono_lv2.cpp" "aelapse_mono_dsp.so"
+        compile_plugin "cyber-stomp-box.lv2" "src/cyber_stomp_box_lv2.cpp" "cyber_stomp_box.so"
+        compile_plugin "cyber-puresustain-delay.lv2" "src/cyber_puresustain_delay.cpp" "cyber_puresustain_delay.so"
+        compile_plugin "cyber-puresustain-delay-mono.lv2" "src/cyber_puresustain_delay_mono.cpp" "cyber_puresustain_delay_mono.so"
+        compile_plugin "cyber-cloud-bloom.lv2" "src/cyber_cloud_bloom.cpp" "cyber_cloud_bloom.so"
+        compile_plugin "cyber-cloud-bloom-mono.lv2" "src/cyber_cloud_bloom_mono.cpp" "cyber_cloud_bloom_mono.so"
+        compile_plugin "cyber-spring-reverb.lv2" "src/cyber_spring_reverb.cpp" "cyber_spring_reverb.so"
+        compile_plugin "cyber-spring-reverb-stereo.lv2" "src/cyber_spring_reverb_stereo.cpp" "cyber_spring_reverb_stereo.so"
+        compile_plugin "cyber-acoustic-feedbacker.lv2" "src/cyber_acoustic_feedbacker.cpp" "cyber_acoustic_feedbacker.so"
+        compile_plugin "cyber-acoustic-feedbacker-mono.lv2" "src/cyber_acoustic_feedbacker_mono.cpp" "cyber_acoustic_feedbacker_mono.so"
+        compile_plugin "cyber-cv-reverser.lv2" "src/cyber_cv_reverser.cpp" "cyber_cv_reverser.so"
+        compile_plugin "cyber-cv-splitter.lv2" "src/cyber_cv_splitter.cpp" "cyber_cv_splitter.so"
 
     - name: Package Bundle for ${{ matrix.arch }}
       run: |
         mkdir -p dist_${{ matrix.pkg_suffix }}
-        
-        copy_bundle() {
-          src=$1
-          dest=$2
-          mkdir -p dist_${{ matrix.pkg_suffix }}/$dest
-          cp -r plugins/$src/* dist_${{ matrix.pkg_suffix }}/$dest/ 2>/dev/null || true
-          rm -f dist_${{ matrix.pkg_suffix }}/$dest/*.dll dist_${{ matrix.pkg_suffix }}/$dest/*.o
-        }
 
-        copy_bundle "harmonic-tremolo" "harmonic-tremolo.lv2"
-        copy_bundle "cyber-denoiser" "cyber-denoiser.lv2"
-        copy_bundle "galaxy-strobe-tune" "galaxy-strobe-tune.lv2"
-        copy_bundle "dimension-c" "dimension-c.lv2"
-        copy_bundle "Dimension_IV.lv2" "Dimension_IV.lv2"
-        copy_bundle "Dearmondo610.lv2" "Dearmondo610.lv2"
-        copy_bundle "guitar-midi" "guitar-midi.lv2"
-        copy_bundle "bluesbreaker.lv2" "bluesbreaker.lv2"
-        copy_bundle "aether.lv2" "aether.lv2"
-        copy_bundle "nam-loader.lv2" "nam-loader.lv2"
-        copy_bundle "cyber-hum-killer.lv2" "cyber-hum-killer.lv2"
-        copy_bundle "smart-fizz-killer.lv2" "smart-fizz-killer.lv2"
-        copy_bundle "cyber-expression-cv.lv2" "cyber-expression-cv.lv2"
-        copy_bundle "aelapse.lv2" "aelapse.lv2"
+        for b in plugins/*; do
+          if [ -d "$b" ]; then
+            bname=$(basename "$b")
+            if [ "$bname" = "cyber-expression-cv.lv2" ] || [ "$bname" = "mains-hum-killer.lv2" ] || [ "$bname" = "include" ] || [ "$bname" = "tests" ]; then
+              continue
+            fi
+            if [[ "$bname" != *.lv2 ]]; then
+              dest="${bname}.lv2"
+            else
+              dest="$bname"
+            fi
+            mkdir -p dist_${{ matrix.pkg_suffix }}/$dest
+            cp -r $b/* dist_${{ matrix.pkg_suffix }}/$dest/ 2>/dev/null || true
+            rm -f dist_${{ matrix.pkg_suffix }}/$dest/*.dll dist_${{ matrix.pkg_suffix }}/$dest/*.o
+          fi
+        done
 
         cd dist_${{ matrix.pkg_suffix }}
         tar -czvf ../modep_plugins_${{ matrix.pkg_suffix }}.tar.gz *

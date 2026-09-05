@@ -1,0 +1,225 @@
+﻿@prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix doap:  <http://usefulinc.com/ns/doap#> .
+@prefix units: <http://lv2plug.in/ns/extensions/units#> .
+@prefix atom:  <http://lv2plug.in/ns/ext/atom#> .
+@prefix midi:  <http://lv2plug.in/ns/ext/midi#> .
+@prefix mod:   <http://moddevices.com/ns/mod#> .
+@prefix patch: <http://lv2plug.in/ns/ext/patch#> .
+@prefix state: <http://lv2plug.in/ns/ext/state#> .
+@prefix urid:  <http://lv2plug.in/ns/ext/urid#> .
+
+<http://moddevices.com/plugins/danny/cyber-stomp-box#sample>
+    a lv2:Parameter ;
+    mod:fileTypes "audiosample" ;
+    rdfs:label "Sample File (.wav/.mp3)" ;
+    rdfs:range atom:Path .
+
+<http://moddevices.com/plugins/danny/cyber-stomp-box>
+    a lv2:Plugin ,
+      lv2:InstrumentPlugin ;
+    doap:name "Cyber-Stompbox One-Shot Sample Player" ;
+    doap:license <http://opensource.org/licenses/mit> ;
+    mod:brand "CyberAudio" ;
+    mod:label "CyberStomp" ;
+    rdfs:comment "Pro low-latency one-shot .wav/.mp3 foot percussion stompbox for solo guitarists. Load custom kick/cajon/stomp samples or choose factory sounds. Triggerable via Nektar Pacer / MIDI pedals (Note/CC) or MOD-UI footswitch." ;
+
+    lv2:requiredFeature urid:map ;
+    lv2:extensionData state:interface ;
+    patch:writable <http://moddevices.com/plugins/danny/cyber-stomp-box#sample> ;
+
+    lv2:port [
+        a lv2:AudioPort ,
+          lv2:InputPort ;
+        lv2:index 0 ;
+        lv2:symbol "in_l" ;
+        lv2:name "Guitar In L" ;
+    ] , [
+        a lv2:AudioPort ,
+          lv2:InputPort ;
+        lv2:index 1 ;
+        lv2:symbol "in_r" ;
+        lv2:name "Guitar In R" ;
+    ] , [
+        a lv2:AudioPort ,
+          lv2:OutputPort ;
+        lv2:index 2 ;
+        lv2:symbol "out_l" ;
+        lv2:name "Audio Out L" ;
+    ] , [
+        a lv2:AudioPort ,
+          lv2:OutputPort ;
+        lv2:index 3 ;
+        lv2:symbol "out_r" ;
+        lv2:name "Audio Out R" ;
+    ] , [
+        a atom:AtomPort ,
+          lv2:InputPort ;
+        lv2:index 4 ;
+        lv2:symbol "control" ;
+        lv2:name "Control (Patch / MIDI)" ;
+        atom:bufferType atom:Sequence ;
+        atom:supports patch:Message ;
+        atom:supports midi:MidiEvent ;
+        lv2:designation lv2:control ;
+    ] , [
+        a atom:AtomPort ,
+          lv2:OutputPort ;
+        lv2:index 5 ;
+        lv2:symbol "notify" ;
+        lv2:name "Notify" ;
+        atom:bufferType atom:Sequence ;
+        atom:supports patch:Message ;
+        lv2:designation lv2:control ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 6 ;
+        lv2:symbol "bypass" ;
+        lv2:name "Bypass" ;
+        lv2:default 1.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 1.0 ;
+        lv2:portProperty lv2:toggled , lv2:integer ;
+        lv2:designation lv2:enabled ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 7 ;
+        lv2:symbol "trigger" ;
+        lv2:name "Foot Stomp (MIDI Learn)" ;
+        lv2:default 0.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 1.0 ;
+        lv2:portProperty lv2:toggled , lv2:integer ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 8 ;
+        lv2:symbol "sample_slot" ;
+        lv2:name "Sample Sound" ;
+        lv2:default 0 ;
+        lv2:minimum 0 ;
+        lv2:maximum 6 ;
+        lv2:portProperty lv2:enumeration , lv2:integer ;
+        lv2:scalePoint [
+            rdfs:label "Acoustic Cajon" ;
+            rdf:value 0
+        ] , [
+            rdfs:label "Deep Wood Stomp" ;
+            rdf:value 1
+        ] , [
+            rdfs:label "Punchy Studio Kick" ;
+            rdf:value 2
+        ] , [
+            rdfs:label "Vintage Boom Kick" ;
+            rdf:value 3
+        ] , [
+            rdfs:label "Foot Tambourine" ;
+            rdf:value 4
+        ] , [
+            rdfs:label "Foot Snare" ;
+            rdf:value 5
+        ] , [
+            rdfs:label "Custom User File" ;
+            rdf:value 6
+        ] ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 9 ;
+        lv2:symbol "pitch" ;
+        lv2:name "Tuning" ;
+        lv2:default 0.0 ;
+        lv2:minimum -12.0 ;
+        lv2:maximum 12.0 ;
+        units:unit units:semitone12TET ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 10 ;
+        lv2:symbol "decay" ;
+        lv2:name "Decay" ;
+        lv2:default 0.6 ;
+        lv2:minimum 0.05 ;
+        lv2:maximum 4.0 ;
+        units:unit units:s ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 11 ;
+        lv2:symbol "punch" ;
+        lv2:name "Punch" ;
+        lv2:default 0.6 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 1.0 ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 12 ;
+        lv2:symbol "sub_thump" ;
+        lv2:name "Sub Thump" ;
+        lv2:default 3.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 15.0 ;
+        units:unit units:db ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 13 ;
+        lv2:symbol "tone" ;
+        lv2:name "Tone" ;
+        lv2:default 0.6 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 1.0 ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 14 ;
+        lv2:symbol "fixed_vel" ;
+        lv2:name "Fixed Velocity" ;
+        lv2:default 1.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 1.0 ;
+        lv2:portProperty lv2:toggled , lv2:integer ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 15 ;
+        lv2:symbol "guitar_vol" ;
+        lv2:name "Guitar Level" ;
+        lv2:default 0.0 ;
+        lv2:minimum -60.0 ;
+        lv2:maximum 6.0 ;
+        units:unit units:db ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 16 ;
+        lv2:symbol "stomp_vol" ;
+        lv2:name "Stomp Level" ;
+        lv2:default 0.0 ;
+        lv2:minimum -60.0 ;
+        lv2:maximum 12.0 ;
+        units:unit units:db ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:InputPort ;
+        lv2:index 17 ;
+        lv2:symbol "output_mode" ;
+        lv2:name "Split Out (PA)" ;
+        lv2:default 0.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 1.0 ;
+        lv2:portProperty lv2:toggled , lv2:integer ;
+    ] , [
+        a lv2:ControlPort ,
+          lv2:OutputPort ;
+        lv2:index 18 ;
+        lv2:symbol "led_activity" ;
+        lv2:name "Hit Activity LED" ;
+        lv2:default 0.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 1.0 ;
+    ] .

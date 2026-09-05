@@ -7,12 +7,15 @@
         modgui:resourcesDirectory <modgui> ;
         modgui:iconTemplate <modgui/icon-aelapse.html> ;
         modgui:stylesheet <modgui/stylesheet.css> ;
+        modgui:screenshot <modgui/screenshot.png> ;
+        modgui:thumbnail <modgui/thumbnail.png> ;
         modgui:javascript <modgui/script.js> ;
         modgui:brand "Smiarx / Cyber" ;
         modgui:label "Aelapse" ;
         modgui:model "boxy" ;
-        modgui:panel "custom" ;
-        modgui:color "#201815" ;
+        modgui:panel "7-knobs" ;
+        modgui:color "black" ;
+        modgui:knob "black" ;
         modgui:port [
             lv2:index 5 ;
             lv2:symbol "delay_drywet" ;

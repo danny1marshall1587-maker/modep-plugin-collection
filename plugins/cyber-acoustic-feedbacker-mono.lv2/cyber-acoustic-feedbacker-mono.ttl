@@ -1,0 +1,95 @@
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix units: <http://lv2plug.in/ns/extensions/units#> .
+@prefix mod: <http://moddevices.com/ns/mod#> .
+
+<http://cyber-audio.co.uk/plugins/cyber-acoustic-feedbacker-mono>
+    a lv2:Plugin ,
+      lv2:GeneratorPlugin ;
+    doap:name "Cyber Acoustic Feedbacker Mono" ;
+    doap:license <http://opensource.org/licenses/mit> ;
+    mod:brand "CyberAudio" ;
+    mod:label "Feedbacker Mono" ;
+    rdfs:comment "Mono physically-modeled acoustic feedback and clean sustainer pedal. Features silent pitch tracking, high-string energy compensation, and -6dB ceiling limiter." ;
+
+    lv2:port [
+        a lv2:AudioPort , lv2:InputPort ;
+        lv2:index 0 ;
+        lv2:symbol "in" ;
+        lv2:name "Audio In" ;
+    ] , [
+        a lv2:AudioPort , lv2:OutputPort ;
+        lv2:index 1 ;
+        lv2:symbol "out" ;
+        lv2:name "Audio Out" ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 2 ;
+        lv2:symbol "bypass" ;
+        lv2:name "Bypass" ;
+        lv2:default 1.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 1.0 ;
+        lv2:portProperty lv2:toggled ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 3 ;
+        lv2:symbol "feedback" ;
+        lv2:name "Feedback / Sustain" ;
+        lv2:default 0.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        units:unit units:pc ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 4 ;
+        lv2:symbol "pitch_target" ;
+        lv2:name "Harmonic Target" ;
+        lv2:default 0 ;
+        lv2:minimum 0 ;
+        lv2:maximum 4 ;
+        lv2:portProperty lv2:enumeration , lv2:integer ;
+        lv2:scalePoint [ rdfs:label "Fundamental (Unison)" ; rdf:value 0 ] ,
+                       [ rdfs:label "5th Harmonic (Fifth)" ; rdf:value 1 ] ,
+                       [ rdfs:label "Octave 1 (+12st)" ; rdf:value 2 ] ,
+                       [ rdfs:label "Octave 1 + 5th (+19st)" ; rdf:value 3 ] ,
+                       [ rdfs:label "Octave 2 (+24st)" ; rdf:value 4 ] ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 5 ;
+        lv2:symbol "gain" ;
+        lv2:name "Pedal Gain" ;
+        lv2:default 100.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        units:unit units:pc ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 6 ;
+        lv2:symbol "gate_thresh" ;
+        lv2:name "Gate Threshold" ;
+        lv2:default -55.0 ;
+        lv2:minimum -80.0 ;
+        lv2:maximum -20.0 ;
+        units:unit units:db ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 7 ;
+        lv2:symbol "warmth" ;
+        lv2:name "Speaker Warmth" ;
+        lv2:default 50.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        units:unit units:pc ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 8 ;
+        lv2:symbol "mix" ;
+        lv2:name "Dry/Wet Mix" ;
+        lv2:default 100.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        units:unit units:pc ;
+    ] .

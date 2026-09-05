@@ -1,0 +1,177 @@
+/* STYLES FOR THE BOXY PEDAL -- REPURPOSED MODULAY ARCHITECTURE FOR PURESUSTAIN */
+
+@import url(/fonts/nexa/stylesheet.css);
+@import url(/fonts/questrial/stylesheet.css);
+
+/* = CONTAINER
+================================================ */
+.mod-pedal-boxy{{{cns}}} {
+    background-color: #1a082b !important; /* Solid fallback guarantees ZERO transparency */
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 364px 431px;
+    height: 431px;
+    position: absolute;
+    width: 364px;
+    border-radius: 21px;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.95);
+}
+
+.mod-pedal-boxy{{{cns}}}.mod-boxy85 {
+    background-size: 364px 431px;
+    width: 364px;
+    height: 431px;
+}
+
+/* = BACKGROUND IMAGES
+================================================ */
+.mod-pedal-boxy{{{cns}}}.mod-purple,
+.mod-pedal-boxy{{{cns}}}.mod-boxy85.mod-purple,
+.mod-pedal-boxy{{{cns}}}.mod-boxy85 {
+    background-image: url(/resources/pedals/boxy85/purple.png{{{ns}}});
+}
+
+.mod-pedal-boxy{{{cns}}}.mod-racing {
+    background-image: url(/resources/pedals/boxy85/purple.png{{{ns}}});
+}
+
+/* = PLUGIN'S AUTHOR / BRAND
+================================================ */
+.mod-pedal-boxy{{{cns}}} .mod-plugin-brand {
+    left: 0;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    text-transform: uppercase;
+    top: 15px;
+}
+
+.mod-pedal-boxy{{{cns}}} .mod-plugin-brand h1 {
+    border-color: #e9d5ff;
+    border-radius: 8px;
+    border-style: solid;
+    border-width: 2px;
+    display: inline-block;
+    font-family: "Nexa", sans-serif;
+    font-size: 13px;
+    letter-spacing: 2.5px;
+    padding: 2px 12px 1px;
+    color: #e9d5ff;
+    text-shadow: 0 0 6px rgba(168, 85, 247, 0.6);
+    background: rgba(30, 10, 50, 0.4);
+    margin: 0;
+}
+
+/* = PLUGIN'S NAME
+================================================ */
+.mod-pedal-boxy{{{cns}}} .mod-plugin-name {
+    left: 20px;
+    overflow: hidden;
+    position: absolute;
+    right: 20px;
+    text-align: center;
+    top: 394px;
+}
+
+.mod-pedal-boxy{{{cns}}} .mod-plugin-name h1 {
+    font-family: "Questrial", sans-serif;
+    font-size: 21px;
+    line-height: 1;
+    color: #e9d5ff;
+    letter-spacing: 3px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9), 0 0 10px rgba(168, 85, 247, 0.5);
+    margin: 0;
+}
+
+/* = LIGHT ON/OFF
+================================================ */
+.mod-pedal-boxy{{{cns}}} .mod-light {
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 28px;
+    left: 0;
+    right: 0;
+    position: absolute;
+    top: 288px;
+    margin: auto;
+}
+
+/* = FOOTSWITCH
+================================================ */
+.mod-pedal-boxy{{{cns}}} .mod-footswitch {
+    background-image: url(/resources/pedals/footswitch.png{{{ns}}});
+    background-position: bottom center;
+    background-repeat: no-repeat;
+    background-size: auto 132px;
+    cursor: pointer;
+    height: 66px;
+    width: 66px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    position: absolute !important;
+    top: 318px;
+}
+
+.mod-pedal-boxy{{{cns}}} .mod-footswitch.on {
+    background-position-y: top !important;
+}
+
+/* = KNOBS & CONTROL GROUP
+================================================ */
+.mod-pedal-boxy{{{cns}}} .mod-control-group {
+    margin: 0 auto !important;
+    position: absolute;
+    top: 48px;
+    left: 12px;
+    right: 12px;
+    width: 340px;
+    text-align: center;
+    z-index: 30;
+}
+
+.mod-pedal-boxy{{{cns}}} .mod-control-group .mod-knob {
+    display: inline-block;
+    float: left;
+    width: 85px;
+    height: 75px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 2px;
+}
+
+.mod-pedal-boxy{{{cns}}} .mod-control-group .mod-knob .mod-knob-image {
+    background-image: url(/resources/knobs/boxy/black.png{{{ns}}});
+    background-repeat: no-repeat;
+    background-size: auto 54px;
+    height: 54px;
+    width: 54px;
+    margin: 0 auto;
+    cursor: pointer;
+}
+
+.mod-pedal-boxy{{{cns}}} .mod-control-group .mod-knob > span.mod-knob-title {
+    bottom: 2px;
+    display: block;
+    font-size: 10px;
+    font-weight: bold;
+    height: 12px;
+    line-height: 12px;
+    left: 0;
+    right: 0;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    text-transform: uppercase;
+    color: #f3e8ff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+    font-family: "Questrial", sans-serif;
+    letter-spacing: 0.5px;
+}
+
+/* = KNOB COLOR MAPPINGS
+================================================ */
+.mod-pedal-boxy{{{cns}}} .mod-control-group.mod-black .mod-knob .mod-knob-image {
+    background-image: url(/resources/knobs/boxy/black.png{{{ns}}});
+}

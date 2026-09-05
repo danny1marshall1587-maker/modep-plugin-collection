@@ -1,0 +1,150 @@
+<div class="mod-pedal mod-pedal-boxy{{{cns}}} mod-black black aelapse-pedal{{{c_extra}}}">
+    <div mod-role="drag-handle" class="mod-drag-handle"></div>
+
+    <div class="mod-plugin-brand"><h1>SMIARX / CYBER</h1></div>
+    <div class="mod-plugin-name"><h1>ÆLAPSE TAPE & SPRINGS</h1></div>
+
+    <div class="mod-light on" mod-role="bypass-light"></div>
+
+    <!-- OLED Dual Visualizer (Tape Reels + Spring Tank) -->
+    <div class="aelapse-display clearfix">
+        <div class="aelapse-disp-header">
+            <span class="disp-badge-tape">📼 TAPE DELAY</span>
+            <span class="disp-title-center">ANALOG ECHO & SPRING REVERB</span>
+            <span class="disp-badge-spring">🌀 SPRING TANK</span>
+        </div>
+
+        <div class="aelapse-disp-body">
+            <!-- Tape Reels Visual -->
+            <div class="disp-tape-unit">
+                <div class="tape-reel reel-left" mod-role="reel_left"></div>
+                <div class="tape-path"></div>
+                <div class="tape-reel reel-right" mod-role="reel_right"></div>
+                <span class="tape-time-val" mod-role="delay_time_val">350 ms</span>
+            </div>
+
+            <!-- Spring Coils Visual -->
+            <div class="disp-spring-unit">
+                <div class="spring-coil-line spring-1"></div>
+                <div class="spring-coil-line spring-2"></div>
+                <div class="spring-coil-line spring-3"></div>
+                <div class="spring-coil-line spring-4"></div>
+                <span class="spring-decay-val" mod-role="spring_decay_val">DECAY: 65%</span>
+            </div>
+        </div>
+
+        <div class="aelapse-disp-footer">
+            <span class="disp-mode-tag" mod-role="delay_mode_tag">MODE: NORMAL TAPE</span>
+            <span class="disp-sat-tag" mod-role="sat_tag">SAT: 35%</span>
+            <span class="disp-width-tag" mod-role="width_tag">WIDTH: 100%</span>
+        </div>
+    </div>
+
+    <!-- Row 1: Tape Time, Repeats, Tape Sat, Spring Mix, Decay, Tone -->
+    <div class="mod-control-group row-1 clearfix">
+        <div class="mod-knob" title="Tape Delay Time (0.01s - 2.50s)">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="delay_time"></div>
+            <span class="mod-knob-title">D-TIME</span>
+        </div>
+        <div class="mod-knob" title="Delay Repeats / Feedback">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="delay_feedback"></div>
+            <span class="mod-knob-title">REPEATS</span>
+        </div>
+        <div class="mod-knob" title="Tape Saturation Drive">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="delay_saturation"></div>
+            <span class="mod-knob-title">TAPE SAT</span>
+        </div>
+        <div class="mod-knob" title="Spring Reverb Mix">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="springs_drywet"></div>
+            <span class="mod-knob-title">S-MIX</span>
+        </div>
+        <div class="mod-knob" title="Spring Tank Decay Time">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="springs_decay"></div>
+            <span class="mod-knob-title">DECAY</span>
+        </div>
+        <div class="mod-knob" title="Spring Tank Resonant Tone">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="springs_tone"></div>
+            <span class="mod-knob-title">TONE</span>
+        </div>
+    </div>
+
+    <!-- Row 2: Delay Mix, Wow/Drift, High Cut, Spring Damp, Shape, Width -->
+    <div class="mod-control-group row-2 clearfix">
+        <div class="mod-knob" title="Delay Dry/Wet Mix">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="delay_drywet"></div>
+            <span class="mod-knob-title">D-MIX</span>
+        </div>
+        <div class="mod-knob" title="Wow & Flutter Tape Drift">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="delay_drift"></div>
+            <span class="mod-knob-title">DRIFT</span>
+        </div>
+        <div class="mod-knob" title="Tape Low-Pass / High Cut Filter">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="delay_cut_hi"></div>
+            <span class="mod-knob-title">HI CUT</span>
+        </div>
+        <div class="mod-knob" title="Spring High Frequency Damping">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="springs_damp"></div>
+            <span class="mod-knob-title">DAMP</span>
+        </div>
+        <div class="mod-knob" title="Spring Dispersion Shape">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="springs_shape"></div>
+            <span class="mod-knob-title">SHAPE</span>
+        </div>
+        <div class="mod-knob" title="Spring Stereo Width">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="springs_width"></div>
+            <span class="mod-knob-title">WIDTH</span>
+        </div>
+    </div>
+
+    <!-- Row 3: Master Output & Bypass -->
+    <div class="mod-control-group row-3 clearfix">
+        <div class="mod-knob" title="Master Dry/Wet Blend">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="master_mix"></div>
+            <span class="mod-knob-title">MASTER MIX</span>
+        </div>
+        <div class="mod-knob" title="Master Output Volume">
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="master_gain"></div>
+            <span class="mod-knob-title">OUTPUT</span>
+        </div>
+    </div>
+
+    <div class="mod-footswitch" mod-role="bypass" title="Footswitch (Engage / Bypass)"></div>
+
+    <!-- MOD SDK Standard Input Connectors (Audio / MIDI / CV) -->
+    <div class="mod-pedal-input">
+        {{#effect.ports.audio.input}}
+        <div class="mod-input mod-input-disconnected" title="{{name}}" mod-role="input-audio-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-input-image"></div>
+        </div>
+        {{/effect.ports.audio.input}}
+        {{#effect.ports.midi.input}}
+        <div class="mod-input mod-input-disconnected" title="{{name}}" mod-role="input-midi-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-input-image"></div>
+        </div>
+        {{/effect.ports.midi.input}}
+        {{#effect.ports.cv.input}}
+        <div class="mod-input mod-input-disconnected" title="{{name}}" mod-role="input-cv-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-input-image"></div>
+        </div>
+        {{/effect.ports.cv.input}}
+    </div>
+
+    <!-- MOD SDK Standard Output Connectors (Audio / MIDI / CV) -->
+    <div class="mod-pedal-output">
+        {{#effect.ports.audio.output}}
+        <div class="mod-output mod-output-disconnected" title="{{name}}" mod-role="output-audio-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-output-image"></div>
+        </div>
+        {{/effect.ports.audio.output}}
+        {{#effect.ports.midi.output}}
+        <div class="mod-output mod-output-disconnected" title="{{name}}" mod-role="output-midi-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-output-image"></div>
+        </div>
+        {{/effect.ports.midi.output}}
+        {{#effect.ports.cv.output}}
+        <div class="mod-output mod-output-disconnected" title="{{name}}" mod-role="output-cv-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-output-image"></div>
+        </div>
+        {{/effect.ports.cv.output}}
+    </div>
+</div>

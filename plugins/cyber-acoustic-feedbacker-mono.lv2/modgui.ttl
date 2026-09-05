@@ -1,0 +1,34 @@
+@prefix modgui: <http://moddevices.com/ns/modgui#> .
+@prefix lv2:    <http://lv2plug.in/ns/lv2core#> .
+
+<http://cyber-audio.co.uk/plugins/cyber-acoustic-feedbacker-mono>
+    modgui:gui [
+        modgui:resourcesDirectory <modgui> ;
+        modgui:iconTemplate <modgui/icon-cyber-acoustic-feedbacker.html> ;
+        modgui:stylesheet <modgui/stylesheet.css> ;
+        modgui:javascript <modgui/script.js> ;
+        modgui:screenshot <modgui/screenshot.png> ;
+        modgui:thumbnail <modgui/thumbnail.png> ;
+        modgui:brand "CyberAudio" ;
+        modgui:label "Feedbacker Mono" ;
+        modgui:model "boxy" ;
+        modgui:panel "custom" ;
+        modgui:color "red" ;
+        modgui:port [
+            lv2:index 0 ;
+            lv2:symbol "feedback" ;
+            lv2:name "FEEDBACK" ;
+        ] , [
+            lv2:index 1 ;
+            lv2:symbol "pitch_target" ;
+            lv2:name "TARGET" ;
+        ] , [
+            lv2:index 2 ;
+            lv2:symbol "warmth" ;
+            lv2:name "DISTRESS" ;
+        ] , [
+            lv2:index 3 ;
+            lv2:symbol "gain" ;
+            lv2:name "LEVEL" ;
+        ]
+    ] .

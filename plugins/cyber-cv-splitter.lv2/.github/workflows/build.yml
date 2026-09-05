@@ -1,0 +1,129 @@
+name: Build All Platforms (ARM64, ARM32, Linux, Windows, macOS)
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-linux-arm-windows:
+    name: Build Linux x86_64, ARM64 (Pi 5), ARM32 & Windows
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Compilers & Cross-Toolchains
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            g++ \
+            gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
+            gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
+            mingw-w64 \
+            zip tar
+
+      - name: Compile All Architectures
+        run: |
+          CPP_FILES=$(find src -name "*.cpp" 2>/dev/null || echo "")
+          if [ -z "$CPP_FILES" ]; then
+            CPP_FILES=$(find . -maxdepth 2 -name "*.cpp")
+          fi
+          echo "Found C++ sources: $CPP_FILES"
+
+          # 1. Linux x86_64 (.so)
+          g++ -shared -O3 -fPIC -static-libgcc -static-libstdc++ -I./include -I./include/lv2 -I./src $CPP_FILES -o cyber_cv_splitter_x86_64.so || true
+          
+          # 2. Linux ARM64 / aarch64 (Raspberry Pi 5 & 64-bit MODEP)
+          aarch64-linux-gnu-g++ -shared -O3 -fPIC -static-libgcc -static-libstdc++ -I./include -I./include/lv2 -I./src $CPP_FILES -o cyber_cv_splitter_arm64.so || true
+
+          # 3. Linux ARM32 / armhf (Raspberry Pi 3/4 32-bit MODEP)
+          arm-linux-gnueabihf-g++ -shared -O3 -fPIC -static-libgcc -static-libstdc++ -I./include -I./include/lv2 -I./src $CPP_FILES -o cyber_cv_splitter_armhf.so || true
+
+          # 4. Windows x64 (.dll)
+          x86_64-w64-mingw32-g++ -shared -O3 -fPIC -static-libgcc -static-libstdc++ -I./include -I./include/lv2 -I./src $CPP_FILES -o cyber_cv_splitter.dll || true
+
+      - name: Upload Binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-arm-windows-binaries
+          path: cyber_cv_splitter*
+
+  build-macos:
+    name: Build macOS Universal (.dylib)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Compile macOS Universal
+        run: |
+          CPP_FILES=$(find src -name "*.cpp" 2>/dev/null || echo "")
+          if [ -z "$CPP_FILES" ]; then
+            CPP_FILES=$(find . -maxdepth 2 -name "*.cpp")
+          fi
+          clang++ -shared -O3 -fPIC -arch arm64 -arch x86_64 -I./include -I./include/lv2 -I./src $CPP_FILES -o cyber_cv_splitter.dylib || true
+
+      - name: Upload macOS Binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-binary
+          path: cyber_cv_splitter.dylib
+
+  package-and-release:
+    name: Package Bundles & Publish Release
+    needs: [build-linux-arm-windows, build-macos]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download all built binaries
+        uses: actions/download-artifact@v4
+
+      - name: Assemble Platform Bundles
+        run: |
+          mkdir -p dist/cyber-cv-splitter.lv2
+          # Copy TTL and modgui assets
+          cp -r modgui* *.ttl README* dist/cyber-cv-splitter.lv2/ 2>/dev/null || true
+          
+          # Copy binaries
+          cp linux-arm-windows-binaries/cyber_cv_splitter.dll dist/cyber-cv-splitter.lv2/ 2>/dev/null || true
+          cp linux-arm-windows-binaries/cyber_cv_splitter_x86_64.so dist/cyber-cv-splitter.lv2/cyber_cv_splitter.so 2>/dev/null || true
+          cp linux-arm-windows-binaries/cyber_cv_splitter_arm64.so dist/cyber-cv-splitter.lv2/cyber_cv_splitter_arm64.so 2>/dev/null || true
+          cp linux-arm-windows-binaries/cyber_cv_splitter_armhf.so dist/cyber-cv-splitter.lv2/cyber_cv_splitter_armhf.so 2>/dev/null || true
+          cp macos-binary/cyber_cv_splitter.dylib dist/cyber-cv-splitter.lv2/cyber_cv_splitter.dylib 2>/dev/null || true
+          
+          # 1. Dedicated Raspberry Pi 5 / ARM64 Bundle
+          mkdir -p dist-pi5/cyber-cv-splitter.lv2
+          cp -r dist/cyber-cv-splitter.lv2/* dist-pi5/cyber-cv-splitter.lv2/
+          cp linux-arm-windows-binaries/cyber_cv_splitter_arm64.so dist-pi5/cyber-cv-splitter.lv2/cyber_cv_splitter.so
+          
+          # 2. Dedicated Windows x64 Bundle
+          mkdir -p dist-win/cyber-cv-splitter.lv2
+          cp -r dist/cyber-cv-splitter.lv2/* dist-win/cyber-cv-splitter.lv2/
+          
+          # Package Archives
+          tar -czvf cyber-cv-splitter-raspberrypi-arm64.tar.gz -C dist-pi5 cyber-cv-splitter.lv2
+          zip -r cyber-cv-splitter-raspberrypi-arm64.zip dist-pi5/cyber-cv-splitter.lv2
+          
+          zip -r cyber-cv-splitter-windows-x64.zip dist-win/cyber-cv-splitter.lv2
+          
+          tar -czvf cyber-cv-splitter-multiplatform.tar.gz -C dist cyber-cv-splitter.lv2
+          zip -r cyber-cv-splitter-multiplatform.zip dist/cyber-cv-splitter.lv2
+
+      - name: Upload Release Assets
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            cyber-cv-splitter-raspberrypi-arm64.tar.gz
+            cyber-cv-splitter-raspberrypi-arm64.zip
+            cyber-cv-splitter-windows-x64.zip
+            cyber-cv-splitter-multiplatform.tar.gz
+            cyber-cv-splitter-multiplatform.zip

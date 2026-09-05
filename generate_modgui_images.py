@@ -23,7 +23,7 @@ def create_pedal_graphic(plugin_type, width, height):
         sub_text = "VINTAGE TRI-VERB"
         knob_color = (245, 235, 200, 255)
         accent_color = (212, 175, 55, 255)
-    elif plugin_type == 'cyber-denoiser':
+    elif plugin_type in ('cyber-denoiser', 'cyber-denoiser-mono.lv2'):
         bg_color = (26, 10, 38, 255)
         border_color = (212, 0, 255, 255)
         led_color = (212, 0, 255, 255)
@@ -68,7 +68,7 @@ def create_pedal_graphic(plugin_type, width, height):
         sub_text = "TONE 3000 ENGINE"
         knob_color = (240, 200, 120, 255)
         accent_color = (255, 180, 50, 255)
-    elif plugin_type == 'cyber-hum-killer.lv2':
+    elif plugin_type in ('cyber-hum-killer.lv2', 'cyber-hum-killer-mono.lv2'):
         bg_color = (20, 12, 4, 255)
         border_color = (255, 170, 0, 255)
         led_color = (255, 170, 0, 255)
@@ -77,7 +77,7 @@ def create_pedal_graphic(plugin_type, width, height):
         sub_text = "DC & MAINS SUPPRESSOR"
         knob_color = (255, 190, 80, 255)
         accent_color = (255, 170, 0, 255)
-    elif plugin_type == 'smart-fizz-killer.lv2':
+    elif plugin_type in ('smart-fizz-killer.lv2', 'smart-fizz-killer-mono.lv2'):
         bg_color = (32, 18, 8, 255)
         border_color = (205, 127, 50, 255)
         led_color = (255, 140, 0, 255)
@@ -86,6 +86,62 @@ def create_pedal_graphic(plugin_type, width, height):
         sub_text = "DIGITAL SMOOTHER"
         knob_color = (220, 160, 100, 255)
         accent_color = (230, 150, 60, 255)
+        knob_color = (166, 255, 204, 255)
+        accent_color = (0, 255, 136, 255)
+    elif plugin_type in ('aelapse.lv2', 'aelapse-mono.lv2'):
+        bg_color = (25, 16, 12, 255)
+        border_color = (200, 110, 30, 255)
+        led_color = (255, 153, 51, 255)
+        title_text = "AELAPSE"
+        brand_text = "SMIARX / CYBER"
+        sub_text = "TAPE & SPRINGS"
+        knob_color = (255, 200, 140, 255)
+        accent_color = (51, 204, 187, 255)
+    elif plugin_type == 'cyber-stomp-box.lv2':
+        bg_color = (32, 16, 8, 255)
+        border_color = (230, 150, 60, 255)
+        led_color = (255, 170, 0, 255)
+        title_text = "CYBER STOMP"
+        brand_text = "CYBER AUDIO"
+        sub_text = "ONE-SHOT PERCUSSION"
+        knob_color = (235, 195, 130, 255)
+        accent_color = (255, 170, 0, 255)
+    elif plugin_type in ('cyber-puresustain-delay.lv2', 'cyber-puresustain-delay-mono.lv2'):
+        bg_color = (28, 20, 14, 255)
+        border_color = (255, 170, 0, 255)
+        led_color = (255, 170, 0, 255)
+        title_text = "PURESUSTAIN"
+        brand_text = "CYBER AUDIO"
+        sub_text = "SEAMLESS PAD DELAY"
+        knob_color = (250, 210, 140, 255)
+        accent_color = (255, 170, 0, 255)
+    elif plugin_type in ('cyber-cloud-bloom.lv2', 'cyber-cloud-bloom-mono.lv2'):
+        bg_color = (12, 24, 34, 255)
+        border_color = (0, 229, 255, 255)
+        led_color = (0, 229, 255, 255)
+        title_text = "CLOUD BLOOM"
+        brand_text = "CYBER AUDIO"
+        sub_text = "AMBIENT SWELL DIFFUSE"
+        knob_color = (160, 230, 245, 255)
+        accent_color = (0, 229, 255, 255)
+    elif plugin_type in ('cyber-spring-reverb.lv2', 'cyber-spring-reverb-stereo.lv2'):
+        bg_color = (18, 18, 18, 255)
+        border_color = (220, 220, 220, 255)
+        led_color = (255, 0, 0, 255)
+        title_text = "'63 SPRING REVERB"
+        brand_text = "CYBER AUDIO"
+        sub_text = "TUBE TANK SURF DRIP"
+        knob_color = (230, 230, 230, 255)
+        accent_color = (200, 200, 200, 255)
+    elif plugin_type in ('cyber-acoustic-feedbacker.lv2', 'cyber-acoustic-feedbacker-mono.lv2'):
+        bg_color = (36, 12, 12, 255)
+        border_color = (255, 50, 50, 255)
+        led_color = (255, 30, 30, 255)
+        title_text = "ACOUSTIC FEEDBACK"
+        brand_text = "CYBER AUDIO"
+        sub_text = "PITCH SUSTAIN & DISTRESS"
+        knob_color = (255, 180, 180, 255)
+        accent_color = (255, 80, 80, 255)
     else: # galaxy-strobe-tune
         bg_color = (5, 11, 20, 255)
         border_color = (0, 229, 255, 255)
@@ -208,6 +264,30 @@ def create_pedal_graphic(plugin_type, width, height):
                 ky = pad_y + int((155 + row * 45) * scale)
                 kr = int(12 * scale)
                 draw.ellipse([kx - kr, ky - kr, kx + kr, ky + kr], fill=knob_color, outline=(80, 50, 10, 255), width=int(1.5 * scale))
+    elif plugin_type == 'cyber-stomp-box.lv2':
+        # LCD Screen
+        sw = int(220 * scale)
+        sh = int(60 * scale)
+        sx = pad_x + (body_w - sw) // 2
+        sy = pad_y + int(50 * scale)
+        draw.rounded_rectangle([sx, sy, sx + sw, sy + sh], radius=int(6 * scale), fill=(10, 16, 10, 255), outline=(40, 80, 40, 255), width=int(2 * scale))
+        draw.text((sx + sw // 2, sy + int(20 * scale)), "SUB STOMP BOX", fill=(160, 255, 170, 255), anchor="mm")
+        draw.text((sx + sw // 2, sy + int(42 * scale)), "NEKTAR PACER READY", fill=(100, 180, 110, 255), anchor="mm")
+        
+        # Rubber Stomp Pad
+        pw = int(200 * scale)
+        ph = int(50 * scale)
+        px = pad_x + (body_w - pw) // 2
+        py = pad_y + int(120 * scale)
+        draw.rounded_rectangle([px, py, px + pw, py + ph], radius=int(6 * scale), fill=(30, 30, 32, 255), outline=(70, 70, 75, 255), width=int(2 * scale))
+        draw.text((px + pw // 2, py + ph // 2), "STOMP PAD", fill=(210, 200, 185, 255), anchor="mm")
+        
+        # Knobs Row
+        for col in range(5):
+            kx = pad_x + int((35 + col * 45) * scale)
+            ky = pad_y + int(190 * scale)
+            kr = int(12 * scale)
+            draw.ellipse([kx - kr, ky - kr, kx + kr, ky + kr], fill=knob_color, outline=(80, 50, 10, 255), width=int(1.5 * scale))
     else: # galaxy-strobe-tune
         sw = int(200 * scale)
         sh = int(100 * scale)
@@ -243,7 +323,16 @@ def create_pedal_graphic(plugin_type, width, height):
     
     return img
 
-plugins = ['harmonic-tremolo', 'cyber-denoiser', 'galaxy-strobe-tune', 'dimension-c', 'guitar-midi', 'bluesbreaker.lv2', 'nam-loader.lv2', 'cyber-hum-killer.lv2', 'smart-fizz-killer.lv2']
+plugins = [
+    'harmonic-tremolo', 'cyber-denoiser', 'cyber-denoiser-mono.lv2', 'galaxy-strobe-tune',
+    'dimension-c', 'guitar-midi', 'bluesbreaker.lv2', 'nam-loader.lv2',
+    'cyber-hum-killer.lv2', 'cyber-hum-killer-mono.lv2', 'smart-fizz-killer.lv2', 'smart-fizz-killer-mono.lv2',
+    'aelapse.lv2', 'aelapse-mono.lv2', 'cyber-stomp-box.lv2',
+    'cyber-puresustain-delay.lv2', 'cyber-puresustain-delay-mono.lv2',
+    'cyber-cloud-bloom.lv2', 'cyber-cloud-bloom-mono.lv2',
+    'cyber-spring-reverb.lv2', 'cyber-spring-reverb-stereo.lv2',
+    'cyber-acoustic-feedbacker.lv2', 'cyber-acoustic-feedbacker-mono.lv2'
+]
 for p in plugins:
     out_dir = os.path.join('plugins', p, 'modgui')
     os.makedirs(out_dir, exist_ok=True)

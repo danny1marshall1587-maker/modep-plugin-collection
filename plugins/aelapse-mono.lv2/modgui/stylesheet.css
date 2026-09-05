@@ -1,0 +1,277 @@
+/* Aelapse Tape Delay & Spring Reverb Stylesheet */
+
+.aelapse-pedal {
+    position: absolute;
+    width: 380px;
+    height: 520px;
+    background: radial-gradient(circle at 50% 20%, #2a1f1b 0%, #150f0d 60%, #080605 100%);
+    border-radius: 26px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.95), inset 0 1px 3px rgba(255, 170, 80, 0.5), inset 0 -4px 8px rgba(0, 0, 0, 0.95);
+    border: 3px solid #b36b20;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    user-select: none;
+    overflow: hidden;
+    z-index: 10;
+}
+
+.aelapse-pedal .mod-drag-handle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 28px;
+    cursor: move;
+    z-index: 20;
+}
+
+.aelapse-pedal .mod-plugin-brand {
+    text-align: center;
+    margin-top: 8px;
+}
+
+.aelapse-pedal .mod-plugin-brand h1 {
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    color: #ff9933;
+    font-weight: 800;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px rgba(255, 153, 51, 0.8);
+    margin: 0;
+}
+
+.aelapse-pedal .mod-plugin-name {
+    text-align: center;
+    border-bottom: 1.5px solid rgba(255, 153, 51, 0.3);
+    padding-bottom: 3px;
+    margin: 2px 25px 6px 25px;
+}
+
+.aelapse-pedal .mod-plugin-name h1 {
+    font-size: 14.5px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    color: #ffffff;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 153, 51, 0.9);
+    margin: 0;
+}
+
+/* ========================================================
+   OLED DUAL VISUALIZER (TAPE & SPRINGS)
+======================================================== */
+.aelapse-pedal .aelapse-display {
+    width: 93%;
+    height: 120px;
+    margin: 2px auto 6px auto;
+    background: #080605;
+    border-radius: 12px;
+    border: 2px solid #8c4e13;
+    box-shadow: inset 0 0 20px rgba(255, 153, 51, 0.25), 0 3px 10px rgba(0,0,0,0.85);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    box-sizing: border-box;
+}
+
+.aelapse-pedal .aelapse-disp-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 8px;
+    font-weight: 800;
+}
+
+.aelapse-pedal .disp-badge-tape {
+    color: #ffaa33;
+    background: rgba(255, 170, 51, 0.15);
+    padding: 1px 5px;
+    border-radius: 3px;
+    border: 1px solid rgba(255, 170, 51, 0.4);
+}
+
+.aelapse-pedal .disp-title-center {
+    font-size: 7px;
+    color: #cca37a;
+    letter-spacing: 0.5px;
+}
+
+.aelapse-pedal .disp-badge-spring {
+    color: #33ccbb;
+    background: rgba(51, 204, 187, 0.15);
+    padding: 1px 5px;
+    border-radius: 3px;
+    border: 1px solid rgba(51, 204, 187, 0.4);
+}
+
+.aelapse-pedal .aelapse-disp-body {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 2px 0;
+}
+
+/* Tape Reels */
+.aelapse-pedal .disp-tape-unit {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,0,0,0.5);
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid #59330d;
+}
+
+.aelapse-pedal .tape-reel {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid #ffaa33;
+    background: radial-gradient(circle, #ffaa33 20%, #261608 40%, #59330d 80%);
+    box-shadow: 0 0 6px rgba(255, 170, 51, 0.5);
+}
+
+.aelapse-pedal .tape-path {
+    width: 20px;
+    height: 2px;
+    background: #ffcc80;
+    box-shadow: 0 0 4px #ffaa33;
+}
+
+.aelapse-pedal .tape-time-val {
+    font-size: 11px;
+    font-weight: 900;
+    color: #ffffff;
+    text-shadow: 0 0 8px #ffaa33;
+    margin-left: 4px;
+}
+
+/* Springs */
+.aelapse-pedal .disp-spring-unit {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    background: rgba(0,0,0,0.5);
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid #135952;
+}
+
+.aelapse-pedal .spring-coil-line {
+    width: 65px;
+    height: 3px;
+    background: repeating-linear-gradient(90deg, #33ccbb, #33ccbb 3px, #0b2623 3px, #0b2623 6px);
+    border-radius: 2px;
+    box-shadow: 0 0 4px rgba(51, 204, 187, 0.5);
+}
+
+.aelapse-pedal .spring-decay-val {
+    font-size: 9px;
+    font-weight: 900;
+    color: #80ffe6;
+    text-align: right;
+    margin-top: 1px;
+}
+
+.aelapse-pedal .aelapse-disp-footer {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 7.5px;
+    font-weight: 800;
+    color: #e6b88a;
+}
+
+.aelapse-pedal .disp-mode-tag {
+    color: #ffcc66;
+}
+
+.aelapse-pedal .disp-sat-tag {
+    color: #ff9955;
+}
+
+.aelapse-pedal .disp-width-tag {
+    color: #80ffe6;
+}
+
+/* ========================================================
+   CONTROLS ROWS
+======================================================== */
+.aelapse-pedal .mod-control-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    margin: 3px 0 !important;
+}
+
+.aelapse-pedal .mod-knob {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 54px;
+    margin: 0;
+}
+
+.aelapse-pedal .mod-knob-title {
+    font-size: 8px;
+    font-weight: 800;
+    color: #ffd199;
+    letter-spacing: 0.7px;
+    margin-top: 3px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+}
+
+.aelapse-pedal .row-3 {
+    justify-content: center !important;
+    gap: 40px;
+    margin-top: 6px !important;
+}
+
+/* ========================================================
+   FOOTSWITCH & LIGHT
+======================================================== */
+.aelapse-pedal .mod-light {
+    position: absolute;
+    bottom: 95px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: #261608;
+    border: 2px solid #8c4e13;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+    cursor: pointer;
+    z-index: 50;
+}
+
+.aelapse-pedal .mod-light.on,
+.aelapse-pedal.mod-pedal-on .mod-light {
+    background-color: #ff9933;
+    box-shadow: 0 0 14px #ff9933, 0 0 25px #ff6600, inset 0 1px 2px #ffffff;
+    border-color: #ffe0b3;
+}
+
+.aelapse-pedal .mod-footswitch {
+    position: absolute !important;
+    bottom: 16px;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 66px !important;
+    height: 66px !important;
+    background-image: url(/resources/pedals/footswitch.png) !important;
+    background-position: bottom center !important;
+    background-repeat: no-repeat !important;
+    background-size: auto 132px !important;
+    cursor: pointer !important;
+    z-index: 60 !important;
+}
+
+.aelapse-pedal .mod-footswitch.on {
+    background-position-y: top !important;
+}

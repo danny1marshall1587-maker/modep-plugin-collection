@@ -21,7 +21,9 @@ def package_plugin_bundles():
         ('aether.lv2', 'aether.lv2'),
         ('nam-loader.lv2', 'nam-loader.lv2'),
         ('cyber-hum-killer.lv2', 'cyber-hum-killer.lv2'),
-        ('smart-fizz-killer.lv2', 'smart-fizz-killer.lv2')
+        ('smart-fizz-killer.lv2', 'smart-fizz-killer.lv2'),
+        ('cyber-expression-cv.lv2', 'cyber-expression-cv.lv2'),
+        ('aelapse.lv2', 'aelapse.lv2')
     ]
 
     print("================================================================")

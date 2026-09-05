@@ -44,9 +44,15 @@ def safe_copy_tree(src, dst):
                 shutil.copy2(src_file, dest_file)
             except Exception:
                 try:
-                    tmp = dest_file + '.tmp'
-                    shutil.copy2(src_file, tmp)
-                    os.replace(tmp, dest_file)
+                    # On Windows, locked running DLLs can be renamed to .old then overwritten
+                    old_file = dest_file + '.old'
+                    if os.path.exists(old_file):
+                        try:
+                            os.remove(old_file)
+                        except Exception:
+                            pass
+                    os.rename(dest_file, old_file)
+                    shutil.copy2(src_file, dest_file)
                 except Exception:
                     pass
 
@@ -72,6 +78,7 @@ def deploy_to_desktop():
     plugins = [
         ('harmonic-tremolo', 'harmonic-tremolo.lv2'),
         ('cyber-denoiser', 'cyber-denoiser.lv2'),
+        ('cyber-denoiser-mono.lv2', 'cyber-denoiser-mono.lv2'),
         ('galaxy-strobe-tune', 'galaxy-strobe-tune.lv2'),
         ('dimension-c', 'dimension-c.lv2'),
         ('Dimension_IV.lv2', 'Dimension_IV.lv2'),
@@ -81,7 +88,22 @@ def deploy_to_desktop():
         ('aether.lv2', 'aether.lv2'),
         ('nam-loader.lv2', 'nam-loader.lv2'),
         ('cyber-hum-killer.lv2', 'cyber-hum-killer.lv2'),
-        ('smart-fizz-killer.lv2', 'smart-fizz-killer.lv2')
+        ('cyber-hum-killer-mono.lv2', 'cyber-hum-killer-mono.lv2'),
+        ('smart-fizz-killer.lv2', 'smart-fizz-killer.lv2'),
+        ('smart-fizz-killer-mono.lv2', 'smart-fizz-killer-mono.lv2'),
+        ('aelapse.lv2', 'aelapse.lv2'),
+        ('aelapse-mono.lv2', 'aelapse-mono.lv2'),
+        ('cyber-stomp-box.lv2', 'cyber-stomp-box.lv2'),
+        ('cyber-puresustain-delay.lv2', 'cyber-puresustain-delay.lv2'),
+        ('cyber-puresustain-delay-mono.lv2', 'cyber-puresustain-delay-mono.lv2'),
+        ('cyber-cloud-bloom.lv2', 'cyber-cloud-bloom.lv2'),
+        ('cyber-cloud-bloom-mono.lv2', 'cyber-cloud-bloom-mono.lv2'),
+        ('cyber-spring-reverb.lv2', 'cyber-spring-reverb.lv2'),
+        ('cyber-spring-reverb-stereo.lv2', 'cyber-spring-reverb-stereo.lv2'),
+        ('cyber-acoustic-feedbacker.lv2', 'cyber-acoustic-feedbacker.lv2'),
+        ('cyber-acoustic-feedbacker-mono.lv2', 'cyber-acoustic-feedbacker-mono.lv2'),
+        ('cyber-cv-reverser.lv2', 'cyber-cv-reverser.lv2'),
+        ('cyber-cv-splitter.lv2', 'cyber-cv-splitter.lv2')
     ]
 
     for target_base in target_dirs:

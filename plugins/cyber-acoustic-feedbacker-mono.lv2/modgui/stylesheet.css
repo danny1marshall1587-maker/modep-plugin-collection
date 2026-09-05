@@ -5,8 +5,8 @@
 
 .mod-pedal.feedbacker-pedal,
 .mod-pedal.mod-cyber-feedbacker {
-    width: 250px;
-    height: 460px;
+    width: 270px;
+    height: 470px;
     background: radial-gradient(circle at 50% 15%, #261608 0%, #150b03 55%, #080401 100%);
     border: 2px solid #78350f;
     border-radius: 18px;
@@ -117,7 +117,7 @@
 }
 
 .cyber-knobs-grid.dev-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     margin-bottom: 6px;
 }
 

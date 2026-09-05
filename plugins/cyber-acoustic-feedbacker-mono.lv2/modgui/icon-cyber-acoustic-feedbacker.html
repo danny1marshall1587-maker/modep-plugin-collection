@@ -49,7 +49,7 @@
     <div class="section-divider dev-divider"><span>SUSTAINER CALIBRATION (DEV)</span></div>
     <div class="cyber-knobs-grid dev-grid">
         <div class="knob-cell">
-            <div class="custom-knob-dial dev-dial" data-symbol="attack_lockout" data-min="50" data-max="600" data-default="200">
+            <div class="custom-knob-dial dev-dial" data-symbol="attack_lockout" data-min="50" data-max="800" data-default="200">
                 <div class="knob-rotor"></div>
             </div>
             <span class="mod-knob-title dev-title">GUARD (ms)</span>
@@ -57,11 +57,27 @@
         </div>
 
         <div class="knob-cell">
-            <div class="custom-knob-dial dev-dial" data-symbol="loop_attack" data-min="10" data-max="200" data-default="40">
+            <div class="custom-knob-dial dev-dial" data-symbol="loop_attack" data-min="10" data-max="300" data-default="50">
                 <div class="knob-rotor"></div>
             </div>
             <span class="mod-knob-title dev-title">RAMP (ms)</span>
             <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="loop_attack" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="loop_release" data-min="5" data-max="200" data-default="40">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">SEAM REL</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="loop_release" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="loop_drift" data-min="0" data-max="100" data-default="25">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">DRIFT %</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="loop_drift" style="display:none;"></div>
         </div>
 
         <div class="knob-cell">
@@ -73,7 +89,7 @@
         </div>
 
         <div class="knob-cell">
-            <div class="custom-knob-dial dev-dial" data-symbol="transition_time" data-min="50" data-max="1500" data-default="350">
+            <div class="custom-knob-dial dev-dial" data-symbol="transition_time" data-min="50" data-max="20000" data-default="500">
                 <div class="knob-rotor"></div>
             </div>
             <span class="mod-knob-title dev-title">FADE (ms)</span>
@@ -81,7 +97,7 @@
         </div>
 
         <div class="knob-cell">
-            <div class="custom-knob-dial dev-dial" data-symbol="loop_window" data-min="20" data-max="400" data-default="80">
+            <div class="custom-knob-dial dev-dial" data-symbol="loop_window" data-min="20" data-max="500" data-default="120">
                 <div class="knob-rotor"></div>
             </div>
             <span class="mod-knob-title dev-title">WINDOW</span>
@@ -105,7 +121,7 @@
         </div>
 
         <div class="knob-cell">
-            <div class="custom-knob-dial dev-dial" data-symbol="bloom_rate" data-min="0.1" data-max="3.0" data-default="0.8">
+            <div class="custom-knob-dial dev-dial" data-symbol="bloom_rate" data-min="0.1" data-max="5.0" data-default="0.8">
                 <div class="knob-rotor"></div>
             </div>
             <span class="mod-knob-title dev-title">BLOOM (s)</span>

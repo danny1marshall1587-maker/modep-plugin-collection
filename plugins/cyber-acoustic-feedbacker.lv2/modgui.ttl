@@ -58,13 +58,21 @@
         ] , [
             lv2:index 10 ;
             lv2:symbol "attack_lockout" ;
-            lv2:name "ATK GUARD" ;
+            lv2:name "GUARD" ;
         ] , [
             lv2:index 11 ;
             lv2:symbol "loop_attack" ;
-            lv2:name "LOOP ATK" ;
+            lv2:name "RAMP" ;
         ] , [
             lv2:index 12 ;
+            lv2:symbol "loop_release" ;
+            lv2:name "SEAM REL" ;
+        ] , [
+            lv2:index 13 ;
+            lv2:symbol "loop_drift" ;
+            lv2:name "DRIFT" ;
+        ] , [
+            lv2:index 14 ;
             lv2:symbol "trigger" ;
             lv2:name "FEEDBACK" ;
         ] ;

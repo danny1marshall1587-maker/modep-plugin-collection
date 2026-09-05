@@ -48,7 +48,8 @@ def build_and_deploy():
         ('cyber-feedback-room.lv2', 'src/cyber_feedback_room.cpp', 'cyber_feedback_room.dll'),
         ('cyber-feedback-room-mono.lv2', 'src/cyber_feedback_room_mono.cpp', 'cyber_feedback_room_mono.dll'),
         ('cyber-cv-reverser.lv2', 'src/cyber_cv_reverser.cpp', 'cyber_cv_reverser.dll'),
-        ('cyber-cv-splitter.lv2', 'src/cyber_cv_splitter.cpp', 'cyber_cv_splitter.dll')
+        ('cyber-cv-splitter.lv2', 'src/cyber_cv_splitter.cpp', 'cyber_cv_splitter.dll'),
+        ('cyber-ycv40.lv2', 'src/cyber_ycv40_lv2.cpp', 'cyber_ycv40.dll')
     ]
 
     print("================================================================")

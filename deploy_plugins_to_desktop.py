@@ -105,7 +105,8 @@ def deploy_to_desktop():
         ('cyber-feedback-room.lv2', 'cyber-feedback-room.lv2'),
         ('cyber-feedback-room-mono.lv2', 'cyber-feedback-room-mono.lv2'),
         ('cyber-cv-reverser.lv2', 'cyber-cv-reverser.lv2'),
-        ('cyber-cv-splitter.lv2', 'cyber-cv-splitter.lv2')
+        ('cyber-cv-splitter.lv2', 'cyber-cv-splitter.lv2'),
+        ('cyber-ycv40.lv2', 'cyber-ycv40.lv2')
     ]
 
     for target_base in target_dirs:

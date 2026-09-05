@@ -5,7 +5,7 @@
 <http://cyber-audio.co.uk/plugins/cyber-acoustic-feedbacker-mono>
     modgui:gui [
         modgui:resourcesDirectory <modgui> ;
-        modgui:iconTemplate <modgui/icon-cyber-acoustic-feedbacker.html> ;
+        modgui:iconTemplate <modgui/icon-cyber-acoustic-feedbacker-mono.html> ;
         modgui:stylesheet <modgui/stylesheet.css> ;
         modgui:javascript <modgui/script.js> ;
         modgui:screenshot <modgui/screenshot.png> ;
@@ -57,6 +57,14 @@
             lv2:name "BLOOM" ;
         ] , [
             lv2:index 10 ;
+            lv2:symbol "attack_lockout" ;
+            lv2:name "ATK GUARD" ;
+        ] , [
+            lv2:index 11 ;
+            lv2:symbol "loop_attack" ;
+            lv2:name "LOOP ATK" ;
+        ] , [
+            lv2:index 12 ;
             lv2:symbol "trigger" ;
             lv2:name "FEEDBACK" ;
         ] ;

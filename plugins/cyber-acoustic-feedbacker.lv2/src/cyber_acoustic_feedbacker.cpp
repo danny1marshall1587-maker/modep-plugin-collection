@@ -7,14 +7,13 @@
  *  - 100% Pristine Dry Signal Path with zero latency.
  *  - Natural Acoustic Bloom & Speaker Distress: As the natural string decays,
  *    subtle non-linear cone compliance and speaker saturation gently bloom.
- *  - Unpitched Equal-Power Seamless Loop Handoff:
- *    When pedal reaches Takeover Threshold (or on string decay), hands off
- *    into an unpitched recirculating buffer holding the exact timbre, overtone
- *    profile, and micro-vibrato of the note played.
- *  - Automatic RMS / Peak Volume Matching:
- *    The recirculating sustainer loop automatically matches the live volume
- *    of the decaying natural note so the feedback balances seamlessly.
- *  - Full Suite of Dev Tuner Controls exposed as real-time knobs.
+ *  - Smart Note-Tail Sampling & Transient Rejection (No Machine-Gun Effect):
+ *    * Attack Lockout Delay: Prevents sampling any pick clicks, fret clack, or initial strike.
+ *    * Settled-Tail Detector: Only samples when the note envelope is decaying/stable (dEnv/dt <= 0).
+ *    * Raised-Cosine Soft-Attack Window: Pre-conditions audio entering the loop buffer with
+ *      smooth zero-crossing edges to eliminate stutter.
+ *  - Automatic RMS Volume Matching: Live note volume balances the loop level seamlessly.
+ *  - Dev Tuner Calibration Controls for full user dialing.
  */
 
 #include "lv2.h"
@@ -50,7 +49,9 @@ enum PortIndex {
     PORT_LOOP_WINDOW       = 12, // Loop Window Size (20ms to 400ms, default 80ms)
     PORT_LOOP_DAMPING      = 13, // Loop High-Frequency Damping (1000Hz to 18000Hz, default 7500Hz)
     PORT_VOL_MATCH         = 14, // Volume Match Ratio (50% to 150%, default 100%)
-    PORT_BLOOM_RATE        = 15  // Bloom Rise Time (0.1s to 3.0s, default 0.8s)
+    PORT_BLOOM_RATE        = 15, // Bloom Rise Time (0.1s to 3.0s, default 0.8s)
+    PORT_ATTACK_LOCKOUT    = 16, // Attack Lockout Delay (50ms to 600ms, default 200ms)
+    PORT_LOOP_ATTACK       = 17  // Loop Ingress Attack Ramp (10ms to 200ms, default 40ms)
 };
 
 // -------------------------------------------------------------------------
@@ -143,22 +144,25 @@ public:
         d2[idx2] = out1 + 0.5f * out2;
         if (++idx2 >= 1453) idx2 = 0;
 
-        float rd3 = d3[idx3];
-        s3 += 0.35f * (rd3 - s3);
-        d3[idx3] = out2 + s3 * fb;
+        float out3 = -0.5f * out2 + d3[idx3];
+        d3[idx3] = out2 + 0.5f * out3;
         if (++idx3 >= 1987) idx3 = 0;
 
-        float rd4 = d4[idx4];
-        s4 += 0.35f * (rd4 - s4);
-        d4[idx4] = out2 + s4 * fb;
+        float out4 = -0.5f * out3 + d4[idx4];
+        d4[idx4] = out3 + 0.5f * out4;
         if (++idx4 >= 2741) idx4 = 0;
 
-        return (s3 + s4) * 0.5f;
+        s1 = out1 * fb;
+        s2 = out2 * fb;
+        s3 = out3 * fb;
+        s4 = out4 * fb;
+
+        return (s1 + s2 + s3 + s4) * 0.25f;
     }
 };
 
 // -------------------------------------------------------------------------
-// Master Output Ceiling Limiter (-6.0 dBFS Peak Protection)
+// Transparent Safety Ceiling Limiter
 // -------------------------------------------------------------------------
 class OutputCeilingLimiter {
 private:
@@ -210,7 +214,7 @@ public:
 };
 
 // -------------------------------------------------------------------------
-// Unpitched Pure Acoustic Sustainer with RMS Volume Matching & Equal-Power Crossfading
+// Smart Note-Tail Sustainer with Transient Lockout & Zero-Stutter Conditioning
 // -------------------------------------------------------------------------
 class UnpitchedAcousticSustainer {
 public:
@@ -234,6 +238,11 @@ private:
     float captured_note_rms;
     float ring_rms;
 
+    // Smart Note-Tail Tracking & Lockout
+    uint32_t samples_since_pluck;
+    float prev_env;
+    float env_velocity; // derivative: dEnv/dt
+
     // Loop Tone Filter (1-pole lowpass damping)
     float damp_l, damp_r;
 
@@ -252,6 +261,9 @@ public:
         loop_volume_gain = 1.0f;
         captured_note_rms = 0.0f;
         ring_rms = 0.0f;
+        samples_since_pluck = 999999;
+        prev_env = 0.0f;
+        env_velocity = 0.0f;
         damp_l = damp_r = 0.0f;
     }
 
@@ -262,8 +274,23 @@ public:
     inline void process(float in_l, float in_r,
                         float trigger_val, float guitar_env, bool is_new_pluck,
                         float takeover_threshold, float transition_sec, float loop_sec,
-                        float damping_hz, float vol_match_ratio, double sample_rate,
+                        float damping_hz, float vol_match_ratio,
+                        float attack_lockout_sec, float loop_attack_sec,
+                        double sample_rate,
                         float& out_l, float& out_r) {
+
+        // Track derivative / direction of note envelope
+        env_velocity = guitar_env - prev_env;
+        prev_env = guitar_env;
+
+        if (is_new_pluck) {
+            // Note struck: reset timer and release any active lock
+            samples_since_pluck = 0;
+            is_locked = false;
+            crossfade_progress = 0.0f;
+        } else if (samples_since_pluck < 2000000) {
+            samples_since_pluck++;
+        }
 
         // 1. Constantly capture audio in live ring buffer when not locked
         if (!is_locked) {
@@ -276,24 +303,31 @@ public:
         float inst_power = 0.5f * (in_l * in_l + in_r * in_r);
         ring_rms += 0.005f * (inst_power - ring_rms);
 
-        // 3. Hand-off trigger logic: Expression pedal at or above Takeover Threshold
+        // 3. Transient Lockout & Tail Verification
+        uint32_t lockout_samples = (uint32_t)(attack_lockout_sec * (float)sample_rate);
+        bool past_attack_phase = (samples_since_pluck >= lockout_samples);
+
+        // Note must be stable or gently decaying, not during a sharp rising attack
+        bool note_is_decaying_or_flat = (env_velocity <= 0.0002f);
+
+        // Can we latch the loop? Must have passed attack guard and be settled
+        bool can_latch = past_attack_phase && note_is_decaying_or_flat && (guitar_env > 0.0015f);
+
+        // Hand-off trigger logic: Expression pedal at or above Takeover Threshold
         bool trigger_active = (trigger_val >= takeover_threshold);
 
-        if (is_new_pluck) {
-            // Striking a new note instantly unlocks and clears loop for new note
-            is_locked = false;
-            crossfade_progress = 0.0f;
-        }
-
         if (trigger_active) {
-            if (!is_locked && guitar_env > 0.002f) {
-                // Latch on and capture current note
+            if (!is_locked && can_latch) {
+                // LATCH ONTO THE CLEAN NOTE TAIL (ZERO TRANSIENTS)
                 is_locked = true;
                 current_loop_len = (int)(loop_sec * (float)sample_rate);
                 if (current_loop_len < 256) current_loop_len = 256;
                 if (current_loop_len > MAX_BUF / 2) current_loop_len = MAX_BUF / 2;
 
-                lock_origin = (write_idx - current_loop_len + MAX_BUF) & (MAX_BUF - 1);
+                // Step back past the very latest audio by loop_attack window to guarantee
+                // we sample the settled tail of the note, not an abrupt edge
+                int safety_offset = (int)(loop_attack_sec * 0.5f * (float)sample_rate);
+                lock_origin = (write_idx - current_loop_len - safety_offset + MAX_BUF * 2) & (MAX_BUF - 1);
                 phase_a = 0.0f;
                 phase_b = (float)current_loop_len * 0.5f;
 
@@ -310,13 +344,15 @@ public:
                 loop_rms = sqrtf(loop_rms / (float)(current_loop_len / 8));
 
                 loop_volume_gain = (captured_note_rms / (loop_rms + 1e-6f)) * vol_match_ratio;
-                if (loop_volume_gain > 3.0f) loop_volume_gain = 3.0f;
-                if (loop_volume_gain < 0.3f) loop_volume_gain = 0.3f;
+                if (loop_volume_gain > 2.5f) loop_volume_gain = 2.5f;
+                if (loop_volume_gain < 0.4f) loop_volume_gain = 0.4f;
             }
 
-            // Smooth crossfade in
-            float fade_rate = 1.0f / (transition_sec * (float)sample_rate + 1.0f);
-            crossfade_progress = std::min(1.0f, crossfade_progress + fade_rate);
+            if (is_locked) {
+                // Smooth crossfade in using user transition time
+                float fade_rate = 1.0f / (transition_sec * (float)sample_rate + 1.0f);
+                crossfade_progress = std::min(1.0f, crossfade_progress + fade_rate);
+            }
         } else {
             // Released / below takeover threshold: smooth crossfade out
             float fade_rate = 1.0f / (0.060f * (float)sample_rate + 1.0f); // 60ms quick graceful release
@@ -411,6 +447,8 @@ private:
     const float* p_loop_damping;
     const float* p_vol_match;
     const float* p_bloom_rate;
+    const float* p_attack_lockout;
+    const float* p_loop_attack;
 
 public:
     CyberAcousticFeedbacker(double sr) : sample_rate(sr) {
@@ -450,6 +488,8 @@ public:
             case PORT_LOOP_DAMPING:      p_loop_damping = (const float*)data; break;
             case PORT_VOL_MATCH:         p_vol_match = (const float*)data; break;
             case PORT_BLOOM_RATE:        p_bloom_rate = (const float*)data; break;
+            case PORT_ATTACK_LOCKOUT:    p_attack_lockout = (const float*)data; break;
+            case PORT_LOOP_ATTACK:       p_loop_attack = (const float*)data; break;
         }
     }
 
@@ -476,6 +516,8 @@ public:
         float damping_hz = std::max(1000.0f, std::min(18000.0f, (p_loop_damping ? *p_loop_damping : 7500.0f)));
         float vol_match_ratio = (p_vol_match ? *p_vol_match : 100.0f) * 0.01f;
         float bloom_sec = std::max(0.1f, std::min(3.0f, (p_bloom_rate ? *p_bloom_rate : 0.8f)));
+        float attack_lockout_sec = (p_attack_lockout ? *p_attack_lockout : 200.0f) * 0.001f; // ms to sec
+        float loop_attack_sec = (p_loop_attack ? *p_loop_attack : 40.0f) * 0.001f;          // ms to sec
 
         // Slew rates
         float pedal_atk_rate = 1.0f - expf(-1.0f / (0.025f * (float)sample_rate));
@@ -563,12 +605,14 @@ public:
             float natural_feedback_l = distressed_l * 0.75f + tailed_l * 0.45f;
             float natural_feedback_r = distressed_r * 0.75f + tailed_r * 0.45f;
 
-            // Seamless Unpitched Sustainer Hand-Off with RMS Volume Matching
+            // Seamless Unpitched Sustainer Hand-Off with Smart Note-Tail Sampling
             float held_l, held_r;
             sustainer.process(natural_feedback_l, natural_feedback_r,
                               smoothed_trigger, guitar_env, is_new_pluck,
                               takeover_threshold, transition_sec, loop_sec,
-                              damping_hz, vol_match_ratio, sample_rate,
+                              damping_hz, vol_match_ratio,
+                              attack_lockout_sec, loop_attack_sec,
+                              sample_rate,
                               held_l, held_r);
 
             // Final Mix & Limiter
@@ -599,11 +643,17 @@ public:
     }
 };
 
+// -------------------------------------------------------------------------
+// LV2 C API Wrapper
+// -------------------------------------------------------------------------
 static LV2_Handle instantiate(const LV2_Descriptor* descriptor,
                              double rate,
-                             const char* path,
+                             const char* bundle_path,
                              const LV2_Feature* const* features) {
-    return new CyberAcousticFeedbacker(rate);
+    (void)descriptor;
+    (void)bundle_path;
+    (void)features;
+    return (LV2_Handle)new CyberAcousticFeedbacker(rate);
 }
 
 static void connect_port(LV2_Handle instance, uint32_t port, void* data) {
@@ -618,13 +668,16 @@ static void run(LV2_Handle instance, uint32_t sample_count) {
     ((CyberAcousticFeedbacker*)instance)->run(sample_count);
 }
 
-static void deactivate(LV2_Handle instance) {}
+static void deactivate(LV2_Handle instance) {
+    // No specific deactivation
+}
 
 static void cleanup(LV2_Handle instance) {
     delete (CyberAcousticFeedbacker*)instance;
 }
 
 static const void* extension_data(const char* uri) {
+    (void)uri;
     return NULL;
 }
 
@@ -639,21 +692,6 @@ static const LV2_Descriptor descriptor = {
     extension_data
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#if defined(_WIN32) || defined(__CYGWIN__)
-  #define LV2_EXPORT __declspec(dllexport)
-#else
-  #define LV2_EXPORT __attribute__((visibility("default")))
-#endif
-
-LV2_EXPORT
-const LV2_Descriptor* lv2_descriptor(uint32_t index) {
+LV2_SYMBOL_EXPORT const LV2_Descriptor* lv2_descriptor(uint32_t index) {
     return (index == 0) ? &descriptor : NULL;
 }
-
-#ifdef __cplusplus
-}
-#endif

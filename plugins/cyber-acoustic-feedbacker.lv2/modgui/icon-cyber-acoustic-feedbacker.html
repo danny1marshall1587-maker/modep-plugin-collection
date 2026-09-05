@@ -49,6 +49,22 @@
     <div class="section-divider dev-divider"><span>SUSTAINER CALIBRATION (DEV)</span></div>
     <div class="cyber-knobs-grid dev-grid">
         <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="attack_lockout" data-min="50" data-max="600" data-default="200">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">GUARD (ms)</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="attack_lockout" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="loop_attack" data-min="10" data-max="200" data-default="40">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">RAMP (ms)</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="loop_attack" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
             <div class="custom-knob-dial dev-dial" data-symbol="takeover_thresh" data-min="70" data-max="100" data-default="90">
                 <div class="knob-rotor"></div>
             </div>
@@ -98,59 +114,36 @@
     </div>
 
     <!-- Dual Footswitches Section -->
-    <div class="pedal-bottom-section">
-        <!-- Trigger / Hold Feedback Switch -->
-        <div class="footswitch-block feedback-switch-block">
-            <div class="trigger-led" id="feedback-trigger-led"></div>
-            <button type="button" class="trigger-footswitch-btn" title="Hold or map MIDI/Expression to trigger singing feedback">
-                <div class="footswitch-ring"></div>
-            </button>
-            <span class="switch-title">FEEDBACK / EXP</span>
-            <div class="mod-switch-image" mod-role="input-control-port" mod-port-symbol="trigger" style="display:none;"></div>
+    <div class="footswitch-area">
+        <!-- Live Trigger / Hold Switch -->
+        <div class="trigger-switch-box">
+            <div class="trigger-stomp-button" title="Hold / Toggle Sustained Feedback">
+                <div class="trigger-plunger"></div>
+            </div>
+            <span class="footswitch-title">HOLD FEEDBACK</span>
+            <div class="mod-control-port" mod-role="input-control-port" mod-port-symbol="trigger" style="display:none;"></div>
         </div>
 
         <!-- Master Bypass Switch -->
-        <div class="footswitch-block bypass-switch-block">
-            <div class="mod-footswitch" mod-role="bypass" title="Bypass / Engage"></div>
-            <span class="switch-title">BYPASS</span>
+        <div class="bypass-switch-box">
+            <div class="mod-footswitch" mod-role="bypass"></div>
+            <span class="footswitch-title">ENGAGE</span>
         </div>
     </div>
 
-    <!-- Standard Input Connectors -->
+    <!-- Audio I/O Ports -->
     <div class="mod-pedal-input">
         {{#effect.ports.audio.input}}
         <div class="mod-input mod-input-disconnected" title="{{name}}" mod-role="input-audio-port" mod-port-symbol="{{symbol}}">
             <div class="mod-pedal-input-image"></div>
         </div>
         {{/effect.ports.audio.input}}
-        {{#effect.ports.midi.input}}
-        <div class="mod-input mod-input-disconnected" title="{{name}}" mod-role="input-midi-port" mod-port-symbol="{{symbol}}">
-            <div class="mod-pedal-input-image"></div>
-        </div>
-        {{/effect.ports.midi.input}}
-        {{#effect.ports.cv.input}}
-        <div class="mod-input mod-input-disconnected" title="{{name}}" mod-role="input-cv-port" mod-port-symbol="{{symbol}}">
-            <div class="mod-pedal-input-image"></div>
-        </div>
-        {{/effect.ports.cv.input}}
     </div>
-
-    <!-- Standard Output Connectors -->
     <div class="mod-pedal-output">
         {{#effect.ports.audio.output}}
         <div class="mod-output mod-output-disconnected" title="{{name}}" mod-role="output-audio-port" mod-port-symbol="{{symbol}}">
             <div class="mod-pedal-output-image"></div>
         </div>
         {{/effect.ports.audio.output}}
-        {{#effect.ports.midi.output}}
-        <div class="mod-output mod-output-disconnected" title="{{name}}" mod-role="output-midi-port" mod-port-symbol="{{symbol}}">
-            <div class="mod-pedal-output-image"></div>
-        </div>
-        {{/effect.ports.midi.output}}
-        {{#effect.ports.cv.output}}
-        <div class="mod-output mod-output-disconnected" title="{{name}}" mod-role="output-cv-port" mod-port-symbol="{{symbol}}">
-            <div class="mod-pedal-output-image"></div>
-        </div>
-        {{/effect.ports.cv.output}}
     </div>
 </div>

@@ -4,29 +4,46 @@
 @prefix doap: <http://usefulinc.com/ns/doap#> .
 @prefix units: <http://lv2plug.in/ns/extensions/units#> .
 @prefix mod: <http://moddevices.com/ns/mod#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
 <http://cyber-audio.co.uk/plugins/cyber-acoustic-feedbacker-mono>
     a lv2:Plugin ,
       lv2:GeneratorPlugin ;
     doap:name "Cyber Acoustic Feedbacker Mono" ;
     doap:license <http://opensource.org/licenses/mit> ;
+    doap:developer [
+        foaf:name "Cyber Audio" ;
+        foaf:homepage <http://cyber-audio.co.uk> ;
+    ] ;
+    lv2:minorVersion 3 ;
+    lv2:microVersion 0 ;
     mod:brand "CyberAudio" ;
     mod:label "Feedbacker Mono" ;
-    rdfs:comment "Mono physically-modeled acoustic feedback and clean sustainer pedal. Features silent pitch tracking, high-string energy compensation, and -6dB ceiling limiter." ;
+    rdfs:comment "Mono physically-modeled acoustic feedback and clean sustainer pedal. Features unpitched equal-power seamless loop hand-off, dynamic speaker distress, and RMS volume matching with Dev Tuner controls." ;
 
     lv2:port [
         a lv2:AudioPort , lv2:InputPort ;
         lv2:index 0 ;
-        lv2:symbol "in" ;
-        lv2:name "Audio In" ;
+        lv2:symbol "in_l" ;
+        lv2:name "Audio In L" ;
+    ] , [
+        a lv2:AudioPort , lv2:InputPort ;
+        lv2:index 1 ;
+        lv2:symbol "in_r" ;
+        lv2:name "Audio In R" ;
     ] , [
         a lv2:AudioPort , lv2:OutputPort ;
-        lv2:index 1 ;
-        lv2:symbol "out" ;
-        lv2:name "Audio Out" ;
+        lv2:index 2 ;
+        lv2:symbol "out_l" ;
+        lv2:name "Audio Out L" ;
+    ] , [
+        a lv2:AudioPort , lv2:OutputPort ;
+        lv2:index 3 ;
+        lv2:symbol "out_r" ;
+        lv2:name "Audio Out R" ;
     ] , [
         a lv2:ControlPort , lv2:InputPort ;
-        lv2:index 2 ;
+        lv2:index 4 ;
         lv2:symbol "bypass" ;
         lv2:name "Bypass" ;
         lv2:default 1.0 ;
@@ -35,50 +52,26 @@
         lv2:portProperty lv2:toggled ;
     ] , [
         a lv2:ControlPort , lv2:InputPort ;
-        lv2:index 3 ;
-        lv2:symbol "feedback" ;
-        lv2:name "Feedback / Sustain" ;
+        lv2:index 5 ;
+        lv2:symbol "trigger" ;
+        lv2:name "Feedback / Expression" ;
         lv2:default 0.0 ;
         lv2:minimum 0.0 ;
-        lv2:maximum 100.0 ;
-        units:unit units:pc ;
-    ] , [
-        a lv2:ControlPort , lv2:InputPort ;
-        lv2:index 4 ;
-        lv2:symbol "pitch_target" ;
-        lv2:name "Harmonic Target" ;
-        lv2:default 0 ;
-        lv2:minimum 0 ;
-        lv2:maximum 4 ;
-        lv2:portProperty lv2:enumeration , lv2:integer ;
-        lv2:scalePoint [ rdfs:label "Fundamental (Unison)" ; rdf:value 0 ] ,
-                       [ rdfs:label "5th Harmonic (Fifth)" ; rdf:value 1 ] ,
-                       [ rdfs:label "Octave 1 (+12st)" ; rdf:value 2 ] ,
-                       [ rdfs:label "Octave 1 + 5th (+19st)" ; rdf:value 3 ] ,
-                       [ rdfs:label "Octave 2 (+24st)" ; rdf:value 4 ] ;
-    ] , [
-        a lv2:ControlPort , lv2:InputPort ;
-        lv2:index 5 ;
-        lv2:symbol "gain" ;
-        lv2:name "Pedal Gain" ;
-        lv2:default 100.0 ;
-        lv2:minimum 0.0 ;
-        lv2:maximum 100.0 ;
-        units:unit units:pc ;
+        lv2:maximum 1.0 ;
     ] , [
         a lv2:ControlPort , lv2:InputPort ;
         lv2:index 6 ;
-        lv2:symbol "gate_thresh" ;
-        lv2:name "Gate Threshold" ;
-        lv2:default -55.0 ;
-        lv2:minimum -80.0 ;
-        lv2:maximum -20.0 ;
-        units:unit units:db ;
+        lv2:symbol "gain" ;
+        lv2:name "Feedback Gain" ;
+        lv2:default 75.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        units:unit units:pc ;
     ] , [
         a lv2:ControlPort , lv2:InputPort ;
         lv2:index 7 ;
-        lv2:symbol "warmth" ;
-        lv2:name "Speaker Warmth" ;
+        lv2:symbol "distress" ;
+        lv2:name "Speaker Distress" ;
         lv2:default 50.0 ;
         lv2:minimum 0.0 ;
         lv2:maximum 100.0 ;
@@ -86,10 +79,73 @@
     ] , [
         a lv2:ControlPort , lv2:InputPort ;
         lv2:index 8 ;
+        lv2:symbol "tail" ;
+        lv2:name "Tail Decay" ;
+        lv2:default 1.8 ;
+        lv2:minimum 0.1 ;
+        lv2:maximum 5.0 ;
+        units:unit units:s ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 9 ;
         lv2:symbol "mix" ;
-        lv2:name "Dry/Wet Mix" ;
-        lv2:default 100.0 ;
+        lv2:name "Feedback Mix" ;
+        lv2:default 50.0 ;
         lv2:minimum 0.0 ;
         lv2:maximum 100.0 ;
         units:unit units:pc ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 10 ;
+        lv2:symbol "takeover_thresh" ;
+        lv2:name "Takeover Point" ;
+        lv2:default 90.0 ;
+        lv2:minimum 70.0 ;
+        lv2:maximum 100.0 ;
+        units:unit units:pc ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 11 ;
+        lv2:symbol "transition_time" ;
+        lv2:name "Fade Time" ;
+        lv2:default 350.0 ;
+        lv2:minimum 50.0 ;
+        lv2:maximum 1500.0 ;
+        units:unit units:ms ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 12 ;
+        lv2:symbol "loop_window" ;
+        lv2:name "Loop Window" ;
+        lv2:default 80.0 ;
+        lv2:minimum 20.0 ;
+        lv2:maximum 400.0 ;
+        units:unit units:ms ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 13 ;
+        lv2:symbol "loop_damping" ;
+        lv2:name "Loop Damping" ;
+        lv2:default 7500.0 ;
+        lv2:minimum 1000.0 ;
+        lv2:maximum 18000.0 ;
+        units:unit units:hz ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 14 ;
+        lv2:symbol "vol_match" ;
+        lv2:name "Volume Match" ;
+        lv2:default 100.0 ;
+        lv2:minimum 50.0 ;
+        lv2:maximum 150.0 ;
+        units:unit units:pc ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 15 ;
+        lv2:symbol "bloom_rate" ;
+        lv2:name "Bloom Speed" ;
+        lv2:default 0.8 ;
+        lv2:minimum 0.1 ;
+        lv2:maximum 3.0 ;
+        units:unit units:s ;
     ] .

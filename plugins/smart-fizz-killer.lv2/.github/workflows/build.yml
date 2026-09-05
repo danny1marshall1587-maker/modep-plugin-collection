@@ -1,0 +1,129 @@
+name: Build All Platforms (ARM64, ARM32, Linux, Windows, macOS)
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-linux-arm-windows:
+    name: Build Linux x86_64, ARM64 (Pi 5), ARM32 & Windows
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Compilers & Cross-Toolchains
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            g++ \
+            gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
+            gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
+            mingw-w64 \
+            zip tar
+
+      - name: Compile All Architectures
+        run: |
+          CPP_FILES=$(find src -name "*.cpp" 2>/dev/null || echo "")
+          if [ -z "$CPP_FILES" ]; then
+            CPP_FILES=$(find . -maxdepth 2 -name "*.cpp")
+          fi
+          echo "Found C++ sources: $CPP_FILES"
+
+          # 1. Linux x86_64 (.so)
+          g++ -shared -O3 -fPIC -static-libgcc -static-libstdc++ -I./include -I./include/lv2 -I./src $CPP_FILES -o smart_fizz_killer_x86_64.so || true
+          
+          # 2. Linux ARM64 / aarch64 (Raspberry Pi 5 & 64-bit MODEP)
+          aarch64-linux-gnu-g++ -shared -O3 -fPIC -static-libgcc -static-libstdc++ -I./include -I./include/lv2 -I./src $CPP_FILES -o smart_fizz_killer_arm64.so || true
+
+          # 3. Linux ARM32 / armhf (Raspberry Pi 3/4 32-bit MODEP)
+          arm-linux-gnueabihf-g++ -shared -O3 -fPIC -static-libgcc -static-libstdc++ -I./include -I./include/lv2 -I./src $CPP_FILES -o smart_fizz_killer_armhf.so || true
+
+          # 4. Windows x64 (.dll)
+          x86_64-w64-mingw32-g++ -shared -O3 -fPIC -static-libgcc -static-libstdc++ -I./include -I./include/lv2 -I./src $CPP_FILES -o smart_fizz_killer.dll || true
+
+      - name: Upload Binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-arm-windows-binaries
+          path: smart_fizz_killer*
+
+  build-macos:
+    name: Build macOS Universal (.dylib)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Compile macOS Universal
+        run: |
+          CPP_FILES=$(find src -name "*.cpp" 2>/dev/null || echo "")
+          if [ -z "$CPP_FILES" ]; then
+            CPP_FILES=$(find . -maxdepth 2 -name "*.cpp")
+          fi
+          clang++ -shared -O3 -fPIC -arch arm64 -arch x86_64 -I./include -I./include/lv2 -I./src $CPP_FILES -o smart_fizz_killer.dylib || true
+
+      - name: Upload macOS Binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-binary
+          path: smart_fizz_killer.dylib
+
+  package-and-release:
+    name: Package Bundles & Publish Release
+    needs: [build-linux-arm-windows, build-macos]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download all built binaries
+        uses: actions/download-artifact@v4
+
+      - name: Assemble Platform Bundles
+        run: |
+          mkdir -p dist/smart-fizz-killer.lv2
+          # Copy TTL and modgui assets
+          cp -r modgui* *.ttl README* dist/smart-fizz-killer.lv2/ 2>/dev/null || true
+          
+          # Copy binaries
+          cp linux-arm-windows-binaries/smart_fizz_killer.dll dist/smart-fizz-killer.lv2/ 2>/dev/null || true
+          cp linux-arm-windows-binaries/smart_fizz_killer_x86_64.so dist/smart-fizz-killer.lv2/smart_fizz_killer.so 2>/dev/null || true
+          cp linux-arm-windows-binaries/smart_fizz_killer_arm64.so dist/smart-fizz-killer.lv2/smart_fizz_killer_arm64.so 2>/dev/null || true
+          cp linux-arm-windows-binaries/smart_fizz_killer_armhf.so dist/smart-fizz-killer.lv2/smart_fizz_killer_armhf.so 2>/dev/null || true
+          cp macos-binary/smart_fizz_killer.dylib dist/smart-fizz-killer.lv2/smart_fizz_killer.dylib 2>/dev/null || true
+          
+          # 1. Dedicated Raspberry Pi 5 / ARM64 Bundle
+          mkdir -p dist-pi5/smart-fizz-killer.lv2
+          cp -r dist/smart-fizz-killer.lv2/* dist-pi5/smart-fizz-killer.lv2/
+          cp linux-arm-windows-binaries/smart_fizz_killer_arm64.so dist-pi5/smart-fizz-killer.lv2/smart_fizz_killer.so
+          
+          # 2. Dedicated Windows x64 Bundle
+          mkdir -p dist-win/smart-fizz-killer.lv2
+          cp -r dist/smart-fizz-killer.lv2/* dist-win/smart-fizz-killer.lv2/
+          
+          # Package Archives
+          tar -czvf smart-fizz-killer-raspberrypi-arm64.tar.gz -C dist-pi5 smart-fizz-killer.lv2
+          zip -r smart-fizz-killer-raspberrypi-arm64.zip dist-pi5/smart-fizz-killer.lv2
+          
+          zip -r smart-fizz-killer-windows-x64.zip dist-win/smart-fizz-killer.lv2
+          
+          tar -czvf smart-fizz-killer-multiplatform.tar.gz -C dist smart-fizz-killer.lv2
+          zip -r smart-fizz-killer-multiplatform.zip dist/smart-fizz-killer.lv2
+
+      - name: Upload Release Assets
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            smart-fizz-killer-raspberrypi-arm64.tar.gz
+            smart-fizz-killer-raspberrypi-arm64.zip
+            smart-fizz-killer-windows-x64.zip
+            smart-fizz-killer-multiplatform.tar.gz
+            smart-fizz-killer-multiplatform.zip

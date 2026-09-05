@@ -1,17 +1,20 @@
 /*
- * Cyber Acoustic Feedbacker & Polyphonic Sustainer - LV2 Plugin
+ * Cyber Acoustic Feedbacker & Natural Infinite Sustainer - LV2 Plugin
  * Copyright (c) 2026 Cyber Audio
  *
- * Physically-Modeled Acoustic String Feedback & Supercharged Speaker Distress:
- *  - 100% Pristine Dry Signal Path (Path A) with zero latency.
- *  - Infinite Toe-Down Sustain: When Expression Pedal is Toe Down (>= 80%),
- *    acoustic regeneration keeps the feedback singing indefinitely as long as you like.
- *  - Expression Heel Control: Pulling the pedal back to Heel gracefully fades
- *    out the feedback through the adjustable TAIL length to dead silence.
- *  - Instant Note Overwrite: Striking a new note instantly overpowers the old sustain.
- *  - Supercharged Speaker Distress Emulation: Pushed hard into non-linear cone
- *    compliance compression, voice-coil thermal sag, and asymmetric cone excursion
- *    to naturally blossom the guitar notes into singing 2nd/3rd harmonics.
+ * Dev Tuner Version:
+ *  - Stripped all pitch shifting & pitch tracking artifacts from feedback loop.
+ *  - 100% Pristine Dry Signal Path with zero latency.
+ *  - Natural Acoustic Bloom & Speaker Distress: As the natural string decays,
+ *    subtle non-linear cone compliance and speaker saturation gently bloom.
+ *  - Unpitched Equal-Power Seamless Loop Handoff:
+ *    When pedal reaches Takeover Threshold (or on string decay), hands off
+ *    into an unpitched recirculating buffer holding the exact timbre, overtone
+ *    profile, and micro-vibrato of the note played.
+ *  - Automatic RMS / Peak Volume Matching:
+ *    The recirculating sustainer loop automatically matches the live volume
+ *    of the decaying natural note so the feedback balances seamlessly.
+ *  - Full Suite of Dev Tuner Controls exposed as real-time knobs.
  */
 
 #include "lv2.h"
@@ -26,94 +29,32 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+#ifndef PLUGIN_URI
 #define PLUGIN_URI "http://cyber-audio.co.uk/plugins/cyber-acoustic-feedbacker"
-#define GRAIN_BUF_SIZE 4096
+#endif
 
 enum PortIndex {
-    PORT_AUDIO_IN_L    = 0,
-    PORT_AUDIO_IN_R    = 1,
-    PORT_AUDIO_OUT_L   = 2,
-    PORT_AUDIO_OUT_R   = 3,
-    PORT_BYPASS        = 4,
-    PORT_TRIGGER       = 5,
-    PORT_MODE          = 6,
-    PORT_BLOOM         = 7,
-    PORT_GAIN          = 8,
-    PORT_HARMONIC      = 9,
-    PORT_WARMTH        = 10,
-    PORT_TAIL          = 11,
-    PORT_MIX           = 12
-};
-
-
-// -------------------------------------------------------------------------
-// Dual-Head Granular Harmonic Pitch Shifter (Feed-Forward, Zero-Estimate)
-// -------------------------------------------------------------------------
-class GranularPitchShifter {
-private:
-    float buffer[GRAIN_BUF_SIZE];
-    int write_idx;
-    float phase;
-
-public:
-    void init() {
-        memset(buffer, 0, sizeof(buffer));
-        write_idx = 0;
-        phase = 0.0f;
-    }
-
-    inline float process(float in, float pitch_ratio) {
-        buffer[write_idx] = in;
-
-        // Unison optimization: clean low-delay tap
-        if (fabsf(pitch_ratio - 1.0f) < 0.005f) {
-            int read_idx = (write_idx - 64 + GRAIN_BUF_SIZE) & (GRAIN_BUF_SIZE - 1);
-            write_idx = (write_idx + 1) & (GRAIN_BUF_SIZE - 1);
-            return buffer[read_idx];
-        }
-
-        const int window_len = 1024; // ~21.3ms window at 48kHz
-        float delta_phase = (1.0f - pitch_ratio) / (float)window_len;
-        phase += delta_phase;
-        while (phase < 0.0f) phase += 1.0f;
-        while (phase >= 1.0f) phase -= 1.0f;
-
-        float phase1 = phase;
-        float phase2 = phase + 0.5f;
-        if (phase2 >= 1.0f) phase2 -= 1.0f;
-
-        // Raised-cosine crossfade windows (w1 + w2 == 1.0f)
-        float w1 = 0.5f * (1.0f - cosf(2.0f * (float)M_PI * phase1));
-        float w2 = 0.5f * (1.0f - cosf(2.0f * (float)M_PI * phase2));
-
-        float delay1 = 64.0f + phase1 * (float)window_len;
-        float delay2 = 64.0f + phase2 * (float)window_len;
-
-        // Linear interpolation read for head 1
-        float r1 = (float)write_idx - delay1;
-        while (r1 < 0.0f) r1 += (float)GRAIN_BUF_SIZE;
-        int i1 = (int)r1;
-        float frac1 = r1 - (float)i1;
-        int i1_next = (i1 + 1) & (GRAIN_BUF_SIZE - 1);
-        float samp1 = buffer[i1] + frac1 * (buffer[i1_next] - buffer[i1]);
-
-        // Linear interpolation read for head 2
-        float r2 = (float)write_idx - delay2;
-        while (r2 < 0.0f) r2 += (float)GRAIN_BUF_SIZE;
-        int i2 = (int)r2;
-        float frac2 = r2 - (float)i2;
-        int i2_next = (i2 + 1) & (GRAIN_BUF_SIZE - 1);
-        float samp2 = buffer[i2] + frac2 * (buffer[i2_next] - buffer[i2]);
-
-        write_idx = (write_idx + 1) & (GRAIN_BUF_SIZE - 1);
-
-        return (w1 * samp1 + w2 * samp2);
-    }
+    PORT_AUDIO_IN_L        = 0,
+    PORT_AUDIO_IN_R        = 1,
+    PORT_AUDIO_OUT_L       = 2,
+    PORT_AUDIO_OUT_R       = 3,
+    PORT_BYPASS            = 4,
+    PORT_TRIGGER           = 5, // Feedback / Expression Pedal (0.0 to 1.0)
+    PORT_GAIN              = 6, // Feedback Gain (0 to 100%)
+    PORT_DISTRESS          = 7, // Speaker Distress (0 to 100%)
+    PORT_TAIL              = 8, // Tail Decay Time (0.1 to 5.0 s)
+    PORT_MIX               = 9, // Feedback Mix (0 to 100%)
+    // Dev Tuner Controls
+    PORT_TAKEOVER_THRESH   = 10, // Takeover Threshold (70% to 100%, default 90%)
+    PORT_TRANSITION_TIME   = 11, // Transition Crossfade Time (50ms to 1500ms, default 350ms)
+    PORT_LOOP_WINDOW       = 12, // Loop Window Size (20ms to 400ms, default 80ms)
+    PORT_LOOP_DAMPING      = 13, // Loop High-Frequency Damping (1000Hz to 18000Hz, default 7500Hz)
+    PORT_VOL_MATCH         = 14, // Volume Match Ratio (50% to 150%, default 100%)
+    PORT_BLOOM_RATE        = 15  // Bloom Rise Time (0.1s to 3.0s, default 0.8s)
 };
 
 // -------------------------------------------------------------------------
-// Supercharged Speaker Distress & Cone Compliance Engine
-// (Ported and maximized from Cyber Audio Dumble/Matchless Dynamic Speaker Circuit)
+// Supercharged Speaker Distress & Cone Compliance Engine (Unpitched)
 // -------------------------------------------------------------------------
 class SuperchargedSpeakerDistress {
 public:
@@ -128,9 +69,9 @@ public:
         speakerEnv = 0.0f;
         speakerThermalEnv = 0.0f;
         speakerConeHistory = 0.0f;
-        spkAtk = 1.0f - expf(-1.0f / ((float)sampleRate * 0.0015f));      // 1.5ms excursion attack
-        spkRel = 1.0f - expf(-1.0f / ((float)sampleRate * 0.045f));       // 45ms excursion release
-        spkThermalRel = 1.0f - expf(-1.0f / ((float)sampleRate * 0.350f));// 350ms thermal sag release
+        spkAtk = 1.0f - expf(-1.0f / ((float)sampleRate * 0.0015f));      // 1.5ms attack
+        spkRel = 1.0f - expf(-1.0f / ((float)sampleRate * 0.045f));       // 45ms release
+        spkThermalRel = 1.0f - expf(-1.0f / ((float)sampleRate * 0.350f));// 350ms thermal sag
     }
 
     void reset() {
@@ -148,31 +89,31 @@ public:
         }
         speakerThermalEnv += spkThermalRel * (speakerEnv - speakerThermalEnv);
 
-        // Dynamic compliance compression & thermal compression
-        float comp = 1.0f / (1.0f + speakerEnv * driveAmount * 2.2f);
-        float thermalComp = 1.0f / (1.0f + speakerThermalEnv * driveAmount * 0.55f);
+        // Compliance & thermal compression
+        float comp = 1.0f / (1.0f + speakerEnv * driveAmount * 2.0f);
+        float thermalComp = 1.0f / (1.0f + speakerThermalEnv * driveAmount * 0.50f);
         s = s * comp * thermalComp;
 
-        // Asymmetrical physical cone stress non-linearity
-        float coneStress = s * (1.0f + driveAmount * 1.8f);
+        // Asymmetric cone saturation
+        float coneStress = s * (1.0f + driveAmount * 1.6f);
         float t = tanhf(coneStress);
         float coneOut = t - asymAmount * (t * t);
 
-        // Dynamic voice-coil HF mechanical damping as cone excursion grows
-        float dampingFc = 6400.0f - driveAmount * 2600.0f;
-        if (dampingFc < 2200.0f) dampingFc = 2200.0f;
+        // Dynamic voice-coil damping
+        float dampingFc = 6800.0f - driveAmount * 2400.0f;
+        if (dampingFc < 2400.0f) dampingFc = 2400.0f;
         float w = 2.0f * (float)M_PI * dampingFc / (float)sampleRate;
         float a0 = w / (1.0f + w);
         speakerConeHistory += a0 * (coneOut - speakerConeHistory);
 
-        s = (1.0f - driveAmount * 0.70f) * coneOut + (driveAmount * 0.70f) * speakerConeHistory;
-        s *= (1.0f + driveAmount * 0.20f);
+        s = (1.0f - driveAmount * 0.65f) * coneOut + (driveAmount * 0.65f) * speakerConeHistory;
+        s *= (1.0f + driveAmount * 0.15f);
         return s;
     }
 };
 
 // -------------------------------------------------------------------------
-// Acoustic Cabinet Decay Diffuser (Natural Tail Decay, Zero Comb Whistle)
+// Acoustic Cabinet Decay Diffuser (Natural Tail Decay, Zero Comb Filter)
 // -------------------------------------------------------------------------
 class CabinetAcousticTail {
 private:
@@ -217,8 +158,7 @@ public:
 };
 
 // -------------------------------------------------------------------------
-// Master Output Ceiling Limiter (-6.0 dBFS Peak Clamping & Protection)
-// Guarantees output bus never blasts past -6.0 dBFS (0.501187) with soft-knee transparency
+// Master Output Ceiling Limiter (-6.0 dBFS Peak Protection)
 // -------------------------------------------------------------------------
 class OutputCeilingLimiter {
 private:
@@ -231,12 +171,12 @@ private:
 
 public:
     void init(double sampleRate, float ceilingDb = -6.0f) {
-        ceiling = powf(10.0f, ceilingDb / 20.0f); // 0.501187f for -6.0 dBFS
-        knee_threshold = ceiling * 0.85f;         // 0.4260f (~ -7.4 dBFS)
-        margin = ceiling - knee_threshold;        // 0.07518f
+        ceiling = powf(10.0f, ceilingDb / 20.0f); // 0.501187f
+        knee_threshold = ceiling * 0.85f;
+        margin = ceiling - knee_threshold;
         gain_env = 1.0f;
-        atk_coeff = 1.0f - expf(-1.0f / ((float)sampleRate * 0.0005f)); // 0.5ms fast attack
-        rel_coeff = 1.0f - expf(-1.0f / ((float)sampleRate * 0.0600f)); // 60ms smooth release
+        atk_coeff = 1.0f - expf(-1.0f / ((float)sampleRate * 0.0005f));
+        rel_coeff = 1.0f - expf(-1.0f / ((float)sampleRate * 0.0600f));
     }
 
     inline void process(float in_l, float in_r, float& out_l, float& out_r) {
@@ -247,7 +187,6 @@ public:
             if (target_gain > 1.0f) target_gain = 1.0f;
         }
 
-        // Fast attack, smooth release
         if (target_gain < gain_env) {
             gain_env += atk_coeff * (target_gain - gain_env);
         } else {
@@ -257,16 +196,13 @@ public:
         float scaled_l = in_l * gain_env;
         float scaled_r = in_r * gain_env;
 
-        // Zero-overshoot soft-knee saturation clamp
         out_l = shape_sample(scaled_l);
         out_r = shape_sample(scaled_r);
     }
 
     inline float shape_sample(float x) {
         float ax = fabsf(x);
-        if (ax <= knee_threshold) {
-            return x; // 100% linear transparency below knee
-        }
+        if (ax <= knee_threshold) return x;
         float excess = ax - knee_threshold;
         float compressed = knee_threshold + margin * tanhf(excess / margin);
         return (x < 0.0f) ? -compressed : compressed;
@@ -274,381 +210,210 @@ public:
 };
 
 // -------------------------------------------------------------------------
-// Silent Guitar Pitch Detector & Energy Compensation Engine
-// Completely silent sidechain analysis - generates ZERO audio!
-// Uses Normalized Square Difference Function (NSDF / McLeod Pitch Method)
-// with zero-crossing gating and sub-sample parabolic interpolation.
-// Tracks fundamental frequency f0 to provide dynamic energy boost for thin strings.
+// Unpitched Pure Acoustic Sustainer with RMS Volume Matching & Equal-Power Crossfading
 // -------------------------------------------------------------------------
-class SilentGuitarPitchTracker {
+class UnpitchedAcousticSustainer {
 public:
-    static const int HISTORY_SIZE = 2048;
-    static const int DEC_SIZE = 1024;
-    static const int CORR_WINDOW = 384;
+    static const int MAX_BUF = 32768; // ~680ms at 48kHz
 
 private:
-    double sample_rate;
-    double dec_sample_rate;
-    float history[HISTORY_SIZE];
+    float buf_l[MAX_BUF];
+    float buf_r[MAX_BUF];
     int write_idx;
-    int sample_count;
-    int analysis_interval;
 
-    float dec_buf[DEC_SIZE];
-    float nsdf[400];
-
-    float dc_x1, dc_y1;
-    float detected_freq;
-    float smoothed_freq;
-    float energy_boost;
-    float smoothed_boost;
-
-    int min_lag;
-    int max_lag;
-
-public:
-    void init(double sr) {
-        sample_rate = sr > 0.0 ? sr : 48000.0;
-        dec_sample_rate = sample_rate * 0.5; // Decimate by 2 (24 kHz)
-        
-        memset(history, 0, sizeof(history));
-        write_idx = 0;
-        sample_count = 0;
-        // Fast ~10ms analysis update rate (100 Hz refresh rate)
-        analysis_interval = (int)(sample_rate * 0.010);
-        if (analysis_interval < 256) analysis_interval = 256;
-
-        // Freq range: 65 Hz to 1450 Hz
-        min_lag = (int)(dec_sample_rate / 1450.0);
-        max_lag = (int)(dec_sample_rate / 65.0);
-        if (max_lag > 390) max_lag = 390;
-
-        dc_x1 = dc_y1 = 0.0f;
-        detected_freq = 0.0f;
-        smoothed_freq = 110.0f; // Default A2
-        energy_boost = 1.0f;
-        smoothed_boost = 1.0f;
-    }
-
-    inline void process_sample(float in) {
-        history[write_idx] = in;
-        write_idx = (write_idx + 1) & (HISTORY_SIZE - 1);
-
-        sample_count++;
-        if (sample_count >= analysis_interval) {
-            sample_count = 0;
-            analyze();
-        }
-
-        // Smooth energy boost with 30ms time constant for silky smooth gain modulation
-        float boost_coeff = 1.0f - expf(-1.0f / ((float)sample_rate * 0.030f));
-        smoothed_boost += boost_coeff * (energy_boost - smoothed_boost);
-    }
-
-    inline float get_energy_boost() const {
-        return smoothed_boost;
-    }
-
-    inline float get_detected_freq() const {
-        return smoothed_freq;
-    }
-
-private:
-    void analyze() {
-        const int raw_len = 1536;
-        float raw[raw_len];
-        int start_idx = (write_idx - raw_len + HISTORY_SIZE) & (HISTORY_SIZE - 1);
-        for (int i = 0; i < raw_len; ++i) {
-            raw[i] = history[(start_idx + i) & (HISTORY_SIZE - 1)];
-        }
-
-        // 1. DC Blocker, Peak Measurement & 2x Decimation
-        int dec_len = raw_len / 2; // 768 samples
-        float peak = 0.0f;
-        const float R = 0.995f;
-
-        for (int i = 0; i < dec_len; ++i) {
-            float x1 = raw[2 * i];
-            float y1 = x1 - dc_x1 + R * dc_y1;
-            dc_x1 = x1; dc_y1 = y1;
-            if (fabsf(y1) > peak) peak = fabsf(y1);
-
-            float x2 = raw[2 * i + 1];
-            float y2 = x2 - dc_x1 + R * dc_y1;
-            dc_x1 = x2; dc_y1 = y2;
-            if (fabsf(y2) > peak) peak = fabsf(y2);
-
-            dec_buf[i] = 0.5f * (y1 + y2);
-        }
-
-        // Silence / quiet check: fade boost smoothly to 1.0
-        if (peak < 0.0008f) {
-            energy_boost = 1.0f;
-            return;
-        }
-
-        // 2. Normalized Square Difference Function (NSDF)
-        for (int lag = 0; lag < max_lag; ++lag) {
-            float dot = 0.0f, e1 = 0.0f, e2 = 0.0f;
-            for (int j = 0; j < CORR_WINDOW; j += 2) {
-                float a0 = dec_buf[j];
-                float b0 = dec_buf[j + lag];
-                float a1 = dec_buf[j + 1];
-                float b1 = dec_buf[j + 1 + lag];
-
-                dot += a0 * b0 + a1 * b1;
-                e1  += a0 * a0 + a1 * a1;
-                e2  += b0 * b0 + b1 * b1;
-            }
-            nsdf[lag] = (2.0f * dot) / (e1 + e2 + 1e-12f);
-        }
-
-        // 3. Peak Detection after the first zero-crossing
-        bool crossed_zero = false;
-        float global_max = 0.0f;
-        int best_lag = 0;
-
-        for (int lag = 1; lag < max_lag - 1; ++lag) {
-            if (!crossed_zero) {
-                if (nsdf[lag] < 0.0f) {
-                    crossed_zero = true;
-                }
-            } else {
-                if (nsdf[lag] > nsdf[lag - 1] && nsdf[lag] >= nsdf[lag + 1] && nsdf[lag] > 0.20f) {
-                    if (nsdf[lag] > global_max) {
-                        global_max = nsdf[lag];
-                    }
-                }
-            }
-        }
-
-        if (global_max < 0.25f) {
-            energy_boost = 1.0f;
-            return;
-        }
-
-        crossed_zero = false;
-        for (int lag = 1; lag < max_lag - 1; ++lag) {
-            if (!crossed_zero) {
-                if (nsdf[lag] < 0.0f) crossed_zero = true;
-            } else {
-                if (nsdf[lag] > nsdf[lag - 1] && nsdf[lag] >= nsdf[lag + 1]) {
-                    if (nsdf[lag] >= 0.70f * global_max && nsdf[lag] > 0.25f) {
-                        best_lag = lag;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (best_lag == 0) {
-            energy_boost = 1.0f;
-            return;
-        }
-
-        // 4. Parabolic Interpolation for Sub-Sample Precision
-        float y_prev = nsdf[best_lag - 1];
-        float y_curr = nsdf[best_lag];
-        float y_next = nsdf[best_lag + 1];
-        float denom = y_prev - 2.0f * y_curr + y_next;
-        float delta = (fabsf(denom) > 1e-9f) ? 0.5f * (y_prev - y_next) / denom : 0.0f;
-        float refined_lag = (float)best_lag + delta;
-
-        if (refined_lag > 1.0f) {
-            detected_freq = (float)(dec_sample_rate / refined_lag);
-        } else {
-            detected_freq = 0.0f;
-        }
-
-        if (detected_freq >= 65.0f && detected_freq <= 1600.0f) {
-            smoothed_freq = 0.70f * smoothed_freq + 0.30f * detected_freq;
-        }
-
-        // 5. Musical High-String Energy Compensation Curve
-        // - Heavy wound strings (E2 ~ 82Hz, A2 ~ 110Hz) and full chords: 1.0x (0 dB boost)
-        // - D3 ~ 147Hz, G3 ~ 196Hz: 1.4x - 1.9x (+3 to +6 dB)
-        // - Plain steel B string (B3 ~ 247Hz): ~2.3x (+7.3 dB)
-        // - High E string (E4 ~ 330Hz): ~2.8x (+8.9 dB)
-        // - Upper solo frets (12th to 24th fret, 500-1320 Hz): ~3.5x - 3.8x (+10.8 to +11.6 dB)
-        float freq_norm = smoothed_freq / 110.0f;
-        if (freq_norm < 1.0f) {
-            energy_boost = 1.0f;
-        } else {
-            float octaves_above_a2 = log2f(freq_norm);
-            energy_boost = 1.0f + 1.15f * octaves_above_a2;
-            if (energy_boost > 3.8f) energy_boost = 3.8f;
-            if (energy_boost < 1.0f) energy_boost = 1.0f;
-        }
-    }
-};
-
-// -------------------------------------------------------------------------
-// Seamless Infinite Feedback Hold Engine (Zero-Decay Looper at 100% Toe Down)
-// Captures live mature guitar + speaker distress audio in a circular ring buffer
-// and uses dual-head raised-cosine crossfading to hold the note forever with zero click
-// and zero interpolation loss when the guitar string stops vibrating.
-// -------------------------------------------------------------------------
-class InfiniteFeedbackHold {
-public:
-    static const int RING_SIZE = 4096;
-private:
-    float ring_l[RING_SIZE];
-    float ring_r[RING_SIZE];
-    int write_idx;
-    int loop_len;
-    int lock_start_idx;
-    float read_phase1, read_phase2;
+    // Sustainer State
     bool is_locked;
-    float lock_crossfade;
-    float note_peak;
+    float crossfade_progress;
+    int lock_origin;
+    float phase_a, phase_b;
+    int current_loop_len;
+
+    // Volume Matching Tracker
+    float target_volume;
+    float loop_volume_gain;
+    float captured_note_rms;
+    float ring_rms;
+
+    // Loop Tone Filter (1-pole lowpass damping)
+    float damp_l, damp_r;
 
 public:
     void init() {
-        reset();
+        memset(buf_l, 0, sizeof(buf_l));
+        memset(buf_r, 0, sizeof(buf_r));
+        write_idx = 0;
+        is_locked = false;
+        crossfade_progress = 0.0f;
+        lock_origin = 0;
+        phase_a = 0.0f;
+        phase_b = 0.0f;
+        current_loop_len = 3840; // ~80ms default at 48kHz
+        target_volume = 1.0f;
+        loop_volume_gain = 1.0f;
+        captured_note_rms = 0.0f;
+        ring_rms = 0.0f;
+        damp_l = damp_r = 0.0f;
     }
 
     void reset() {
-        memset(ring_l, 0, sizeof(ring_l));
-        memset(ring_r, 0, sizeof(ring_r));
-        write_idx = 0; loop_len = 256; lock_start_idx = 0;
-        read_phase1 = 0.0f; read_phase2 = 128.0f;
-        is_locked = false; lock_crossfade = 0.0f; note_peak = 0.0f;
+        init();
     }
 
-    void set_pitch(float freq, double sample_rate) {
-        if (freq >= 65.0f && freq <= 1500.0f && !is_locked) {
-            int len = (int)std::round(sample_rate / freq);
-            if (len < 64) len *= 4;
-            else if (len < 128) len *= 2;
-            if (len > RING_SIZE / 2) len = RING_SIZE / 2;
-            loop_len = len;
-        }
-    }
-
-    inline void process(float in_l, float in_r, float trigger, float guitar_env, bool is_new_pluck,
+    inline void process(float in_l, float in_r,
+                        float trigger_val, float guitar_env, bool is_new_pluck,
+                        float takeover_threshold, float transition_sec, float loop_sec,
+                        float damping_hz, float vol_match_ratio, double sample_rate,
                         float& out_l, float& out_r) {
-        bool is_toe_down = (trigger >= 0.96f);
 
-        if (is_new_pluck || guitar_env > note_peak) {
-            if (guitar_env > note_peak) note_peak = guitar_env;
-            if (is_new_pluck && guitar_env > 0.02f) {
-                is_locked = false;
-                note_peak = guitar_env;
-            }
-        }
-
+        // 1. Constantly capture audio in live ring buffer when not locked
         if (!is_locked) {
-            ring_l[write_idx] = in_l;
-            ring_r[write_idx] = in_r;
-            write_idx = (write_idx + 1) & (RING_SIZE - 1);
+            buf_l[write_idx] = in_l;
+            buf_r[write_idx] = in_r;
+            write_idx = (write_idx + 1) & (MAX_BUF - 1);
         }
 
-        if (is_toe_down) {
-            bool should_lock = (!is_locked && note_peak > 0.015f && guitar_env < note_peak * 0.60f && guitar_env > 0.0005f);
-            if (should_lock) {
-                is_locked = true;
-                lock_start_idx = (write_idx - loop_len + RING_SIZE) & (RING_SIZE - 1);
-                read_phase1 = 0.0f;
-                read_phase2 = (float)loop_len * 0.5f;
-            }
+        // 2. Continuous RMS tracking of incoming signal
+        float inst_power = 0.5f * (in_l * in_l + in_r * in_r);
+        ring_rms += 0.005f * (inst_power - ring_rms);
 
-            if (is_locked) {
-                lock_crossfade += 0.020f * (1.0f - lock_crossfade);
-            } else {
-                lock_crossfade += 0.030f * (0.0f - lock_crossfade);
-            }
-        } else {
+        // 3. Hand-off trigger logic: Expression pedal at or above Takeover Threshold
+        bool trigger_active = (trigger_val >= takeover_threshold);
+
+        if (is_new_pluck) {
+            // Striking a new note instantly unlocks and clears loop for new note
             is_locked = false;
-            note_peak = guitar_env;
-            lock_crossfade += 0.030f * (0.0f - lock_crossfade);
+            crossfade_progress = 0.0f;
         }
 
-        if (lock_crossfade < 0.001f) {
+        if (trigger_active) {
+            if (!is_locked && guitar_env > 0.002f) {
+                // Latch on and capture current note
+                is_locked = true;
+                current_loop_len = (int)(loop_sec * (float)sample_rate);
+                if (current_loop_len < 256) current_loop_len = 256;
+                if (current_loop_len > MAX_BUF / 2) current_loop_len = MAX_BUF / 2;
+
+                lock_origin = (write_idx - current_loop_len + MAX_BUF) & (MAX_BUF - 1);
+                phase_a = 0.0f;
+                phase_b = (float)current_loop_len * 0.5f;
+
+                // Capture note RMS for exact volume matching
+                captured_note_rms = sqrtf(std::max(ring_rms, 0.0001f));
+
+                // Calculate loop normalization gain
+                float loop_rms = 0.0001f;
+                for (int s = 0; s < current_loop_len; s += 8) {
+                    int idx = (lock_origin + s) & (MAX_BUF - 1);
+                    float s_mono = 0.5f * (buf_l[idx] + buf_r[idx]);
+                    loop_rms += s_mono * s_mono;
+                }
+                loop_rms = sqrtf(loop_rms / (float)(current_loop_len / 8));
+
+                loop_volume_gain = (captured_note_rms / (loop_rms + 1e-6f)) * vol_match_ratio;
+                if (loop_volume_gain > 3.0f) loop_volume_gain = 3.0f;
+                if (loop_volume_gain < 0.3f) loop_volume_gain = 0.3f;
+            }
+
+            // Smooth crossfade in
+            float fade_rate = 1.0f / (transition_sec * (float)sample_rate + 1.0f);
+            crossfade_progress = std::min(1.0f, crossfade_progress + fade_rate);
+        } else {
+            // Released / below takeover threshold: smooth crossfade out
+            float fade_rate = 1.0f / (0.060f * (float)sample_rate + 1.0f); // 60ms quick graceful release
+            crossfade_progress = std::max(0.0f, crossfade_progress - fade_rate);
+            if (crossfade_progress <= 0.0f) {
+                is_locked = false;
+            }
+        }
+
+        // If completely dry / inactive
+        if (crossfade_progress <= 0.0001f) {
             out_l = in_l;
             out_r = in_r;
             return;
         }
 
-        read_phase1 += 1.0f;
-        if (read_phase1 >= (float)loop_len) read_phase1 -= (float)loop_len;
-        read_phase2 += 1.0f;
-        if (read_phase2 >= (float)loop_len) read_phase2 -= (float)loop_len;
+        // 4. Equal-power dual-head recirculating read (unpitched, pristine timbre)
+        phase_a += 1.0f;
+        if (phase_a >= (float)current_loop_len) phase_a -= (float)current_loop_len;
+        phase_b += 1.0f;
+        if (phase_b >= (float)current_loop_len) phase_b -= (float)current_loop_len;
 
-        float w1 = 0.5f * (1.0f - cosf(2.0f * (float)M_PI * read_phase1 / (float)loop_len));
-        float w2 = 0.5f * (1.0f - cosf(2.0f * (float)M_PI * read_phase2 / (float)loop_len));
+        float w_a = 0.5f * (1.0f - cosf(2.0f * (float)M_PI * phase_a / (float)current_loop_len));
+        float w_b = 0.5f * (1.0f - cosf(2.0f * (float)M_PI * phase_b / (float)current_loop_len));
 
-        int i1 = (lock_start_idx + (int)read_phase1) & (RING_SIZE - 1);
-        int i2 = (lock_start_idx + (int)read_phase2) & (RING_SIZE - 1);
+        int idx_a = (lock_origin + (int)phase_a) & (MAX_BUF - 1);
+        int idx_b = (lock_origin + (int)phase_b) & (MAX_BUF - 1);
 
-        float held_l = ring_l[i1] * w1 + ring_l[i2] * w2;
-        float held_r = ring_r[i1] * w1 + ring_r[i2] * w2;
+        float loop_l = (buf_l[idx_a] * w_a + buf_l[idx_b] * w_b) * loop_volume_gain;
+        float loop_r = (buf_r[idx_a] * w_a + buf_r[idx_b] * w_b) * loop_volume_gain;
 
-        out_l = in_l * (1.0f - lock_crossfade) + held_l * lock_crossfade;
-        out_r = in_r * (1.0f - lock_crossfade) + held_r * lock_crossfade;
+        // 5. Loop HF warmth / damping filter
+        float damp_w = 2.0f * (float)M_PI * damping_hz / (float)sample_rate;
+        float damp_a = damp_w / (1.0f + damp_w);
+        damp_l += damp_a * (loop_l - damp_l);
+        damp_r += damp_a * (loop_r - damp_r);
+
+        float sustained_l = damp_l;
+        float sustained_r = damp_r;
+
+        // 6. Equal-power sinusoidal crossfade between live note and infinite sustain
+        float mix_wet = sinf(crossfade_progress * (float)M_PI * 0.5f);
+        float mix_dry = cosf(crossfade_progress * (float)M_PI * 0.5f);
+
+        out_l = in_l * mix_dry + sustained_l * mix_wet;
+        out_r = in_r * mix_dry + sustained_r * mix_wet;
     }
 };
 
 // -------------------------------------------------------------------------
-// Main CyberAcousticFeedbacker Plugin Class
+// Main CyberAcousticFeedbacker Plugin Class (Dev Tuner Edition)
 // -------------------------------------------------------------------------
 class CyberAcousticFeedbacker {
 private:
     double sample_rate;
 
-    // Pitch Shifters for Harmonics (L and R)
-    GranularPitchShifter shifter_l;
-    GranularPitchShifter shifter_r;
-
-    // Supercharged Speaker Distress Engines (L and R)
     SuperchargedSpeakerDistress distress_l;
     SuperchargedSpeakerDistress distress_r;
 
-    // Acoustic Cabinet Tail Diffusers (L and R)
     CabinetAcousticTail tail_diffuser_l;
     CabinetAcousticTail tail_diffuser_r;
 
-    // Master Output Ceiling Limiter (-6.0 dBFS)
     OutputCeilingLimiter output_limiter;
+    UnpitchedAcousticSustainer sustainer;
 
-    // Silent Guitar Pitch Detector & Energy Compensation Engine
-    SilentGuitarPitchTracker pitch_tracker;
-
-    // Seamless Infinite Feedback Hold Engine
-    InfiniteFeedbackHold infinite_hold;
-    float fast_env;
-
-    // Guitar String Envelope Detector with Hysteresis Impetus
+    // Envelope Detectors
     float guitar_env;
+    float fast_env;
     float env_atk_coeff;
     float env_rel_coeff;
     bool is_sustaining;
     float tail_env;
 
-    // Expression & Harmonic Morph Slew
     float smoothed_trigger;
-    float smoothed_ratio;
-    float morph_progress;
 
-    // Port Pointers
+    // LV2 Port Pointers
     const float* p_in_l;
     const float* p_in_r;
     float* p_out_l;
     float* p_out_r;
     const float* p_bypass;
     const float* p_trigger;
-    const float* p_mode;
-    const float* p_bloom;
     const float* p_gain;
-    const float* p_harmonic;
-    const float* p_warmth;
+    const float* p_distress;
     const float* p_tail;
     const float* p_mix;
 
+    // Dev Tuner Port Pointers
+    const float* p_takeover_thresh;
+    const float* p_transition_time;
+    const float* p_loop_window;
+    const float* p_loop_damping;
+    const float* p_vol_match;
+    const float* p_bloom_rate;
+
 public:
     CyberAcousticFeedbacker(double sr) : sample_rate(sr) {
-        shifter_l.init();
-        shifter_r.init();
-
         distress_l.init(sample_rate);
         distress_r.init(sample_rate);
 
@@ -656,35 +421,35 @@ public:
         tail_diffuser_r.init();
 
         output_limiter.init(sample_rate, -6.0f);
-        pitch_tracker.init(sample_rate);
-        infinite_hold.init();
-        fast_env = 0.0f;
+        sustainer.init();
 
-        env_atk_coeff = 1.0f - expf(-1.0f / ((float)sample_rate * 0.0030f)); // 3.0ms attack
-        env_rel_coeff = 1.0f - expf(-1.0f / ((float)sample_rate * 0.2500f)); // 250ms impetus release
+        guitar_env = 0.0f;
+        fast_env = 0.0f;
+        env_atk_coeff = 1.0f - expf(-1.0f / ((float)sample_rate * 0.0030f)); // 3ms attack
+        env_rel_coeff = 1.0f - expf(-1.0f / ((float)sample_rate * 0.2500f)); // 250ms release
         is_sustaining = false;
         tail_env = 0.0f;
-
         smoothed_trigger = 0.0f;
-        smoothed_ratio = 1.0f;
-        morph_progress = 0.0f;
     }
 
     void connect_port(uint32_t port, void* data) {
         switch ((PortIndex)port) {
-            case PORT_AUDIO_IN_L:  p_in_l = (const float*)data; break;
-            case PORT_AUDIO_IN_R:  p_in_r = (const float*)data; break;
-            case PORT_AUDIO_OUT_L: p_out_l = (float*)data; break;
-            case PORT_AUDIO_OUT_R: p_out_r = (float*)data; break;
-            case PORT_BYPASS:      p_bypass = (const float*)data; break;
-            case PORT_TRIGGER:     p_trigger = (const float*)data; break;
-            case PORT_MODE:        p_mode = (const float*)data; break;
-            case PORT_BLOOM:       p_bloom = (const float*)data; break;
-            case PORT_GAIN:        p_gain = (const float*)data; break;
-            case PORT_HARMONIC:    p_harmonic = (const float*)data; break;
-            case PORT_WARMTH:      p_warmth = (const float*)data; break;
-            case PORT_TAIL:        p_tail = (const float*)data; break;
-            case PORT_MIX:         p_mix = (const float*)data; break;
+            case PORT_AUDIO_IN_L:        p_in_l = (const float*)data; break;
+            case PORT_AUDIO_IN_R:        p_in_r = (const float*)data; break;
+            case PORT_AUDIO_OUT_L:       p_out_l = (float*)data; break;
+            case PORT_AUDIO_OUT_R:       p_out_r = (float*)data; break;
+            case PORT_BYPASS:            p_bypass = (const float*)data; break;
+            case PORT_TRIGGER:           p_trigger = (const float*)data; break;
+            case PORT_GAIN:              p_gain = (const float*)data; break;
+            case PORT_DISTRESS:          p_distress = (const float*)data; break;
+            case PORT_TAIL:              p_tail = (const float*)data; break;
+            case PORT_MIX:               p_mix = (const float*)data; break;
+            case PORT_TAKEOVER_THRESH:   p_takeover_thresh = (const float*)data; break;
+            case PORT_TRANSITION_TIME:   p_transition_time = (const float*)data; break;
+            case PORT_LOOP_WINDOW:       p_loop_window = (const float*)data; break;
+            case PORT_LOOP_DAMPING:      p_loop_damping = (const float*)data; break;
+            case PORT_VOL_MATCH:         p_vol_match = (const float*)data; break;
+            case PORT_BLOOM_RATE:        p_bloom_rate = (const float*)data; break;
         }
     }
 
@@ -696,67 +461,37 @@ public:
             return;
         }
 
-        // Control parameters
+        // Primary user controls
         float raw_trigger = (p_trigger ? *p_trigger : 0.0f);
         float target_trigger = std::max(0.0f, std::min(1.0f, raw_trigger));
-
-        int mode = (int)std::round(p_mode ? *p_mode : 0.0f); // 0=Poly Sustainer, 1=Harmonic Bloom, 2=Raw Cranked
-        float raw_bloom = (p_bloom ? *p_bloom : 1.2f);
-        float bloom_sec = (raw_bloom > 10.0f) ? (0.2f + (raw_bloom / 100.0f) * 3.8f) : std::max(0.1f, std::min(5.0f, raw_bloom));
-
         float gain_knob = (p_gain ? *p_gain : 75.0f) * 0.01f;
-        int harmonic_mode = (int)std::round(p_harmonic ? *p_harmonic : 1.0f);
-        float warmth_knob = (p_warmth ? *p_warmth : 50.0f) * 0.01f;   // Speaker distress drive
-        
-        // Tail knob: 0% = 0.2s (tight cut), 50% = 1.8s (natural room decay), 100% = 4.0s (ambient sustain trail)
-        float raw_tail = (p_tail ? *p_tail : 50.0f);
-        float tail_sec = (raw_tail > 10.0f) ? (0.2f + (raw_tail / 100.0f) * 3.8f) : std::max(0.1f, std::min(5.0f, raw_tail));
-        
+        float distress_knob = (p_distress ? *p_distress : 50.0f) * 0.01f;
+        float tail_sec = std::max(0.1f, std::min(5.0f, (p_tail ? *p_tail : 1.8f)));
         float mix_knob = (p_mix ? *p_mix : 50.0f) * 0.01f;
 
-        // Target pitch ratio for harmonic overtone
-        float target_ratio = 1.0f;
-        switch (harmonic_mode) {
-            case 0: target_ratio = 1.0f; break;        // Unison Fundamental
-            case 1: target_ratio = 1.498307f; break;   // 5th (+7 semitones)
-            case 2: target_ratio = 2.0f; break;        // Octave (+12 semitones)
-            case 3: target_ratio = 2.996614f; break;   // Octave + 5th (+19 semitones)
-            case 4: target_ratio = 4.0f; break;        // 2nd Octave (+24 semitones)
-            default: target_ratio = 1.498307f; break;
-        }
+        // Dev Tuner parameters
+        float takeover_threshold = (p_takeover_thresh ? *p_takeover_thresh : 90.0f) * 0.01f;
+        float transition_sec = (p_transition_time ? *p_transition_time : 350.0f) * 0.001f; // ms to sec
+        float loop_sec = (p_loop_window ? *p_loop_window : 80.0f) * 0.001f;               // ms to sec
+        float damping_hz = std::max(1000.0f, std::min(18000.0f, (p_loop_damping ? *p_loop_damping : 7500.0f)));
+        float vol_match_ratio = (p_vol_match ? *p_vol_match : 100.0f) * 0.01f;
+        float bloom_sec = std::max(0.1f, std::min(3.0f, (p_bloom_rate ? *p_bloom_rate : 0.8f)));
 
-        // Expression Bloom slew
-        float bloom_rate = 1.0f - expf(-1.0f / (bloom_sec * (float)sample_rate));
-        float release_rate = 1.0f - expf(-1.0f / (0.08f * (float)sample_rate)); // Instant clean release on heel down
-        float ratio_smooth_rate = 1.0f - expf(-1.0f / (0.02f * (float)sample_rate));
-
-        // Fast, responsive foot expression tracking (25ms attack, 40ms release)
+        // Slew rates
         float pedal_atk_rate = 1.0f - expf(-1.0f / (0.025f * (float)sample_rate));
         float pedal_rel_rate = 1.0f - expf(-1.0f / (0.040f * (float)sample_rate));
-
-        // Tail envelope rates
         float tail_atk_rate = 1.0f - expf(-1.0f / (0.05f * (float)sample_rate));
         float tail_rel_rate = 1.0f - expf(-1.0f / (tail_sec * (float)sample_rate));
 
-        // Supercharged Speaker Distress Drive
-        float distress_drive = warmth_knob * 1.8f + 0.6f;
-        float asym_amount = 0.15f + warmth_knob * 0.25f; // Stronger 2nd harmonic pull when cranked
+        float distress_drive = distress_knob * 1.8f + 0.6f;
+        float asym_amount = 0.15f + distress_knob * 0.25f;
 
         for (uint32_t i = 0; i < sample_count; ++i) {
             float in_l = p_in_l[i];
             float in_r = (p_in_r ? p_in_r[i] : in_l);
             float in_mono = 0.5f * (in_l + in_r);
 
-            // 1. SILENT PITCH TRACKER & HIGH-STRING ENERGY COMPENSATION
-            // Completely silent sidechain analysis - generates ZERO audio!
-            // Automatically detects when player is on high B/E strings or upper frets
-            // and supplies extra sustain and acoustic feedback energy.
-            pitch_tracker.process_sample(in_mono);
-            float energy_boost = pitch_tracker.get_energy_boost();
-            float detected_hz = pitch_tracker.get_detected_freq();
-            infinite_hold.set_pitch(detected_hz, sample_rate);
-
-            // 2. ASYMMETRIC ENVELOPE DETECTOR ON GUITAR INPUT
+            // Envelope detection
             float in_rect = fabsf(in_mono);
             if (in_rect > guitar_env) {
                 guitar_env += env_atk_coeff * (in_rect - guitar_env);
@@ -764,7 +499,7 @@ public:
                 guitar_env += env_rel_coeff * (in_rect - guitar_env);
             }
 
-            // Fast envelope for pluck detection
+            // Note pluck onset detection
             bool is_new_pluck = false;
             if (in_rect > fast_env * 2.2f && in_rect > 0.025f) {
                 is_new_pluck = true;
@@ -772,18 +507,18 @@ public:
             if (in_rect > fast_env) fast_env += 0.15f * (in_rect - fast_env);
             else fast_env += 0.002f * (in_rect - fast_env);
 
-            // 3. EXPRESSION VCA & FAST FOOT TRACKING
+            // Expression pedal foot tracking
             if (target_trigger > smoothed_trigger) {
                 smoothed_trigger += (target_trigger - smoothed_trigger) * pedal_atk_rate;
             } else {
                 smoothed_trigger += (target_trigger - smoothed_trigger) * pedal_rel_rate;
             }
 
-            // If expression pedal is heel-down (<0.005), clean dry passthrough protected by ceiling limiter
+            // Heel-down cleanup
             if (smoothed_trigger < 0.005f) {
                 is_sustaining = false;
                 tail_env = 0.0f;
-                infinite_hold.reset();
+                sustainer.reset();
                 float lim_l, lim_r;
                 output_limiter.process(in_l, in_r, lim_l, lim_r);
                 p_out_l[i] = lim_l;
@@ -791,122 +526,76 @@ public:
                 continue;
             }
 
-            // 4. CONTINUOUS ARTISTIC SUSTAIN & 100% TOE-DOWN INFINITE FEEDBACK LOCK
-            // Up to 96% of pedal travel (CC 0 to 121, CV 0V to 9.6V):
-            // - The pedal acts as a smooth, continuous, expressive sustain & bloom control.
-            // - Pitch-aware adaptation prevents high thin strings from cutting out prematurely.
-            // ONLY at 100% Toe Down (>= 0.96f / CC 122-127 / CV 9.6V-10V):
-            // - Full Infinite Feedback Lock engages, sustaining indefinitely as long as you like!
-            bool is_full_toe = (smoothed_trigger >= 0.96f);
-            float onset_threshold = 0.0015f / sqrtf(energy_boost);
-            float dropout_threshold = 0.00015f / (energy_boost * energy_boost);
-            if (guitar_env > onset_threshold) {
+            // Sustaining state
+            if (guitar_env > 0.0015f) {
                 is_sustaining = true;
-            } else if (is_full_toe && is_sustaining) {
-                // 100% Toe Down: full infinite feedback lock!
+            } else if (smoothed_trigger >= takeover_threshold && is_sustaining) {
                 is_sustaining = true;
-            } else if (guitar_env < dropout_threshold) {
+            } else if (guitar_env < 0.00015f) {
                 is_sustaining = false;
             }
 
-            // 5. NATURAL TAIL ENVELOPE
-            // Smooth acoustic room decay when pedal is released or strings are muted
             float target_tail_env = (is_sustaining && smoothed_trigger > 0.02f) ? 1.0f : 0.0f;
-            if (target_tail_env > tail_env) {
-                tail_env += (target_tail_env - tail_env) * tail_atk_rate;
-            } else {
-                tail_env += (target_tail_env - tail_env) * tail_rel_rate;
-            }
+            if (target_tail_env > tail_env) tail_env += (target_tail_env - tail_env) * tail_atk_rate;
+            else tail_env += (target_tail_env - tail_env) * tail_rel_rate;
 
-            // 6. DYNAMIC STRING SUSTAINER (Continuous Foot-Controlled E-Bow Leveler with Pitch Boost)
-            // Progressively scales from subtle singing sustain up to maximum feedback bloom.
-            // Automatically injects higher gain ceiling into high strings to match low-string kinetic energy.
-            float max_leveler_gain = (30.0f + smoothed_trigger * 220.0f * (0.8f + gain_knob * 0.4f)) * energy_boost;
-            float floor_offset = (0.010f * (1.0f - smoothed_trigger * 0.90f)) / energy_boost;
+            // Pure Unpitched Acoustic Leveler
+            float max_leveler_gain = 30.0f + smoothed_trigger * 220.0f * (0.8f + gain_knob * 0.4f);
+            float floor_offset = 0.010f * (1.0f - smoothed_trigger * 0.90f);
 
             float sustain_gain = 1.0f;
             if (guitar_env > 0.00001f) {
-                sustain_gain = (0.26f * energy_boost) / (guitar_env + floor_offset);
+                sustain_gain = 0.26f / (guitar_env + floor_offset);
                 if (sustain_gain > max_leveler_gain) sustain_gain = max_leveler_gain;
             }
 
             float sustained_l = in_l * sustain_gain * tail_env;
             float sustained_r = in_r * sustain_gain * tail_env;
 
-            // 7. HARMONIC OVERTONE GENERATION
-            // In Mode 1 (Harmonic Bloom), ratio smoothly morphs from unison up to harmonic
-            float active_ratio = target_ratio;
-            if (mode == 1 && harmonic_mode > 0) {
-                morph_progress += (smoothed_trigger - morph_progress) * (bloom_rate * 0.7f);
-                active_ratio = 1.0f + morph_progress * (target_ratio - 1.0f);
-            } else if (mode == 0) {
-                // Poly Sustainer: pure fundamental sustain
-                active_ratio = 1.0f;
-            }
-            smoothed_ratio += (active_ratio - smoothed_ratio) * ratio_smooth_rate;
+            // Supercharged Speaker Distress (Unpitched Natural Harmonics)
+            float distressed_l = distress_l.process(sustained_l, distress_drive, asym_amount, sample_rate);
+            float distressed_r = distress_r.process(sustained_r, distress_drive, asym_amount, sample_rate);
 
-            float harm_l = shifter_l.process(sustained_l, smoothed_ratio);
-            float harm_r = shifter_r.process(sustained_r, smoothed_ratio);
-
-            // Blend sustained fundamental with harmonic overtone
-            float harm_mix = (mode == 0) ? 0.0f : 0.50f;
-            float pre_distress_l = sustained_l * (1.0f - harm_mix * 0.5f) + harm_l * harm_mix;
-            float pre_distress_r = sustained_r * (1.0f - harm_mix * 0.5f) + harm_r * harm_mix;
-
-            // 8. SUPERCHARGED SPEAKER DISTRESS EMULATION (With High-Note Excitation)
-            float active_distress_drive = (warmth_knob * 1.8f + 0.6f) * (0.80f + 0.20f * energy_boost);
-            float distressed_l = distress_l.process(pre_distress_l, active_distress_drive, asym_amount, sample_rate);
-            float distressed_r = distress_r.process(pre_distress_r, active_distress_drive, asym_amount, sample_rate);
-
-            // 9. ACOUSTIC CABINET TAIL DIFFUSION
+            // Acoustic Room / Cabinet Tail
             float tailed_l = tail_diffuser_l.process(distressed_l, tail_sec, sample_rate);
             float tailed_r = tail_diffuser_r.process(distressed_r, tail_sec, sample_rate);
 
-            // Blend direct distressed feedback with acoustic cabinet tail
-            float final_feedback_l = distressed_l * 0.75f + tailed_l * 0.45f;
-            float final_feedback_r = distressed_r * 0.75f + tailed_r * 0.45f;
+            float natural_feedback_l = distressed_l * 0.75f + tailed_l * 0.45f;
+            float natural_feedback_r = distressed_r * 0.75f + tailed_r * 0.45f;
 
-            // 9.5. INFINITE FEEDBACK HOLD AT 100% TOE DOWN
-            // Seamlessly holds the captured guitar & cabinet feedback when strings die down
-            float held_feedback_l, held_feedback_r;
-            infinite_hold.process(final_feedback_l, final_feedback_r, smoothed_trigger, guitar_env, is_new_pluck,
-                                  held_feedback_l, held_feedback_r);
+            // Seamless Unpitched Sustainer Hand-Off with RMS Volume Matching
+            float held_l, held_r;
+            sustainer.process(natural_feedback_l, natural_feedback_r,
+                              smoothed_trigger, guitar_env, is_new_pluck,
+                              takeover_threshold, transition_sec, loop_sec,
+                              damping_hz, vol_match_ratio, sample_rate,
+                              held_l, held_r);
 
-            // 10. FINAL OUTPUT MIX: 100% PRISTINE CLEAN GUITAR + ROARING SPEAKER FEEDBACK & TAIL
-            float string_coupling_boost = 1.0f + (energy_boost - 1.0f) * 0.45f;
-            float wet_amount = smoothed_trigger * mix_knob * (1.0f + gain_knob * 0.6f) * tail_env * string_coupling_boost;
-            float raw_out_l = in_l + held_feedback_l * wet_amount;
-            float raw_out_r = in_r + held_feedback_r * wet_amount;
+            // Final Mix & Limiter
+            float wet_amount = smoothed_trigger * mix_knob * (1.0f + gain_knob * 0.6f) * tail_env;
+            float raw_out_l = in_l + held_l * wet_amount;
+            float raw_out_r = in_r + held_r * wet_amount;
 
-            // 11. MASTER OUTPUT CEILING LIMITER (-6.0 dBFS Peak Ceiling)
-            // Guarantees output bus never blasts past 0 dBFS into master bus clipping
             float limited_l, limited_r;
             output_limiter.process(raw_out_l, raw_out_r, limited_l, limited_r);
 
             p_out_l[i] = limited_l;
-            if (p_out_r) {
-                p_out_r[i] = limited_r;
-            }
+            if (p_out_r) p_out_r[i] = limited_r;
         }
     }
 
     void reset() {
-        shifter_l.init();
-        shifter_r.init();
         distress_l.reset();
         distress_r.reset();
         tail_diffuser_l.init();
         tail_diffuser_r.init();
         output_limiter.init(sample_rate, -6.0f);
-        pitch_tracker.init(sample_rate);
-        infinite_hold.reset();
+        sustainer.reset();
         guitar_env = 0.0f;
         fast_env = 0.0f;
         is_sustaining = false;
         tail_env = 0.0f;
         smoothed_trigger = 0.0f;
-        smoothed_ratio = 1.0f;
-        morph_progress = 0.0f;
     }
 };
 

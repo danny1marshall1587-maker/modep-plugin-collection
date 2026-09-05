@@ -1,18 +1,18 @@
 /* ==========================================================================
-   Cyber Acoustic Feedbacker — MOD-UI Stylesheet
+   Cyber Acoustic Feedbacker — Dev Tuner MOD-UI Stylesheet
    Solar Amber / Burning Copper Lava Aesthetic
    ========================================================================== */
 
 .mod-pedal.feedbacker-pedal,
 .mod-pedal.mod-cyber-feedbacker {
-    width: 240px;
-    height: 400px;
-    background: radial-gradient(circle at 50% 20%, #261608 0%, #150b03 60%, #080401 100%);
+    width: 250px;
+    height: 440px;
+    background: radial-gradient(circle at 50% 15%, #261608 0%, #150b03 55%, #080401 100%);
     border: 2px solid #78350f;
     border-radius: 18px;
     box-shadow: 0 16px 36px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(245, 158, 11, 0.25);
     box-sizing: border-box;
-    padding: 14px 12px;
+    padding: 10px 12px 14px 12px;
     color: #fef3c7;
     font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
     display: flex;
@@ -22,14 +22,12 @@
     user-select: none;
 }
 
-.mod-pedal.feedbacker-pedal .mod-plugin-brand,
-.mod-pedal.mod-cyber-feedbacker .mod-plugin-brand {
+.mod-pedal.feedbacker-pedal .mod-plugin-brand {
     text-align: center;
     margin: 0;
 }
 
-.mod-pedal.feedbacker-pedal .mod-plugin-brand h1,
-.mod-pedal.mod-cyber-feedbacker .mod-plugin-brand h1 {
+.mod-pedal.feedbacker-pedal .mod-plugin-brand h1 {
     font-size: 8.5px;
     font-weight: 900;
     letter-spacing: 2px;
@@ -39,214 +37,231 @@
     padding: 0;
 }
 
-.mod-pedal.feedbacker-pedal .mod-plugin-name,
-.mod-pedal.mod-cyber-feedbacker .mod-plugin-name {
+.mod-pedal.feedbacker-pedal .mod-plugin-name {
     text-align: center;
-    margin: 1px 0 6px 0;
+    margin: 0;
 }
 
-.mod-pedal.feedbacker-pedal .mod-plugin-name h1,
-.mod-pedal.mod-cyber-feedbacker .mod-plugin-name h1 {
-    font-size: 13px;
+.mod-pedal.feedbacker-pedal .mod-plugin-name h1 {
+    font-size: 12px;
     font-weight: 900;
     letter-spacing: 0.5px;
     color: #ffffff;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), 0 0 14px rgba(245, 158, 11, 0.4);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), 0 0 12px rgba(245, 158, 11, 0.4);
     margin: 0;
     padding: 0;
 }
 
+.mod-pedal.feedbacker-pedal .dev-badge {
+    font-size: 7px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    color: #00ffcc;
+    background: rgba(0, 255, 204, 0.12);
+    border: 1px solid rgba(0, 255, 204, 0.35);
+    border-radius: 4px;
+    padding: 1px 5px;
+    margin: 2px 0 4px 0;
+    text-transform: uppercase;
+}
+
 /* Bypass LED */
-.mod-pedal.feedbacker-pedal .mod-light,
-.mod-pedal.mod-cyber-feedbacker .mod-light {
-    width: 8px;
-    height: 8px;
+.mod-pedal.feedbacker-pedal .mod-light {
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: #451a03;
     border: 1px solid #78350f;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     transition: all 0.1s ease;
 }
 
-.mod-pedal.feedbacker-pedal .mod-light.on,
-.mod-pedal.mod-cyber-feedbacker .mod-light.on {
+.mod-pedal.feedbacker-pedal .mod-light.on {
     background: #f59e0b;
     box-shadow: 0 0 12px #f59e0b, 0 0 20px #f59e0b;
 }
 
-/* Mode Selector Bar */
-.mod-pedal.feedbacker-pedal .mode-selector-bar,
-.mod-pedal.mod-cyber-feedbacker .mode-selector-bar {
-    display: flex;
-    gap: 4px;
-    background: #000000;
-    border: 1px solid #78350f;
-    border-radius: 14px;
-    padding: 2px;
-    margin-bottom: 10px;
-}
-
-.mod-pedal.feedbacker-pedal .mode-pill,
-.mod-pedal.mod-cyber-feedbacker .mode-pill {
-    background: transparent;
-    border: none;
-    color: #a1a1aa;
-    font-size: 8px;
-    font-weight: 800;
-    padding: 3px 8px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-}
-
-.mod-pedal.feedbacker-pedal .mode-pill:hover,
-.mod-pedal.mod-cyber-feedbacker .mode-pill:hover {
-    color: #fff;
-}
-
-.mod-pedal.feedbacker-pedal .mode-pill.active,
-.mod-pedal.mod-cyber-feedbacker .mode-pill.active {
-    background: #f59e0b;
-    color: #000;
-    box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
-}
-
-/* Knobs Grid */
-.mod-pedal.feedbacker-pedal .cyber-knobs-grid,
-.mod-pedal.mod-cyber-feedbacker .cyber-knobs-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px 6px;
+/* Section Dividers */
+.section-divider {
     width: 100%;
-    margin-bottom: 8px;
+    text-align: center;
+    border-bottom: 1px solid rgba(120, 53, 15, 0.5);
+    line-height: 0.1em;
+    margin: 3px 0 6px 0;
 }
 
-.mod-pedal.feedbacker-pedal .knob-cell,
-.mod-pedal.mod-cyber-feedbacker .knob-cell {
+.section-divider span {
+    background: #180d04;
+    padding: 0 6px;
+    font-size: 6.5px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #fbbf24;
+}
+
+.section-divider.dev-divider span {
+    color: #00ffcc;
+    background: #130a03;
+}
+
+/* Knobs Grids */
+.cyber-knobs-grid {
+    display: grid;
+    gap: 4px 4px;
+    width: 100%;
+}
+
+.cyber-knobs-grid.main-grid {
+    grid-template-columns: repeat(4, 1fr);
+    margin-bottom: 4px;
+}
+
+.cyber-knobs-grid.dev-grid {
+    grid-template-columns: repeat(3, 1fr);
+    margin-bottom: 6px;
+}
+
+.knob-cell {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.mod-pedal.feedbacker-pedal .custom-knob-dial,
-.mod-pedal.mod-cyber-feedbacker .custom-knob-dial {
-    width: 36px;
-    height: 36px;
+/* Rotary Dial */
+.custom-knob-dial {
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     background: radial-gradient(circle at 35% 35%, #451a03 0%, #270e02 60%, #100501 100%);
     border: 2px solid #b45309;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.7), inset 0 1px 2px rgba(255, 255, 255, 0.2);
     position: relative;
     cursor: pointer;
     transition: border-color 0.15s ease;
 }
 
-.mod-pedal.feedbacker-pedal .custom-knob-dial:hover,
-.mod-pedal.mod-cyber-feedbacker .custom-knob-dial:hover {
-    border-color: #f59e0b;
-    box-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
+.custom-knob-dial.dev-dial {
+    width: 26px;
+    height: 26px;
+    border-color: #0d9488;
+    background: radial-gradient(circle at 35% 35%, #042f2e 0%, #021f1e 60%, #000000 100%);
 }
 
-.mod-pedal.feedbacker-pedal .knob-rotor,
-.mod-pedal.mod-cyber-feedbacker .knob-rotor {
+.custom-knob-dial:hover {
+    border-color: #f59e0b;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+.custom-knob-dial.dev-dial:hover {
+    border-color: #00ffcc;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+}
+
+.knob-rotor {
     width: 2px;
-    height: 13px;
+    height: 10px;
     background: #fbbf24;
-    box-shadow: 0 0 6px #fbbf24;
+    box-shadow: 0 0 5px #fbbf24;
     position: absolute;
-    top: 4px;
+    top: 3px;
     left: calc(50% - 1px);
     transform-origin: bottom center;
     border-radius: 1px;
 }
 
-.mod-pedal.feedbacker-pedal .mod-knob-title,
-.mod-pedal.mod-cyber-feedbacker .mod-knob-title {
-    font-size: 7px;
+.custom-knob-dial.dev-dial .knob-rotor {
+    background: #00ffcc;
+    box-shadow: 0 0 5px #00ffcc;
+    height: 8px;
+}
+
+.mod-knob-title {
+    font-size: 6px;
     font-weight: 800;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
     color: #fde68a;
-    margin-top: 3px;
+    margin-top: 2px;
     text-align: center;
     text-transform: uppercase;
 }
 
+.mod-knob-title.dev-title {
+    color: #5eead4;
+    font-size: 5.5px;
+}
+
 /* Dual Footswitches Bottom Section */
-.mod-pedal.feedbacker-pedal .pedal-bottom-section,
-.mod-pedal.mod-cyber-feedbacker .pedal-bottom-section {
+.pedal-bottom-section {
     width: 100%;
     margin-top: auto;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    padding-top: 6px;
+    padding-top: 4px;
     border-top: 1px solid rgba(120, 53, 15, 0.6);
 }
 
-.mod-pedal.feedbacker-pedal .footswitch-block,
-.mod-pedal.mod-cyber-feedbacker .footswitch-block {
+.footswitch-block {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
 }
 
-.mod-pedal.feedbacker-pedal .switch-title,
-.mod-pedal.mod-cyber-feedbacker .switch-title {
-    font-size: 6.5px;
+.switch-title {
+    font-size: 6px;
     font-weight: 800;
     letter-spacing: 0.5px;
     color: #fbbf24;
     text-align: center;
 }
 
-/* Trigger Footswitch LED */
-.mod-pedal.feedbacker-pedal .trigger-led,
-.mod-pedal.mod-cyber-feedbacker .trigger-led {
-    width: 8px;
-    height: 8px;
+.trigger-led {
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: #022c22;
     border: 1px solid #065f46;
     transition: all 0.1s ease;
 }
 
-.mod-pedal.feedbacker-pedal .trigger-led.on,
-.mod-pedal.mod-cyber-feedbacker .trigger-led.on {
+.trigger-led.on {
     background: #00ffcc;
-    box-shadow: 0 0 12px #00ffcc, 0 0 20px #00ffcc;
+    box-shadow: 0 0 10px #00ffcc, 0 0 18px #00ffcc;
 }
 
-/* Trigger Footswitch Button */
-.mod-pedal.feedbacker-pedal .trigger-footswitch-btn,
-.mod-pedal.mod-cyber-feedbacker .trigger-footswitch-btn {
-    width: 34px;
-    height: 34px;
+.trigger-footswitch-btn {
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #52525b 0%, #27272a 60%, #09090b 100%);
-    border: 2px solid #71717a;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+    background: radial-gradient(circle at 35% 35%, #71717a 0%, #3f3f46 60%, #18181b 100%);
+    border: 2px solid #a1a1aa;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8), inset 0 1px 2px rgba(255, 255, 255, 0.4);
     cursor: pointer;
-    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 0;
     outline: none;
-    transition: transform 0.05s ease, box-shadow 0.05s ease;
+    transition: all 0.08s ease;
 }
 
-.mod-pedal.feedbacker-pedal .trigger-footswitch-btn:active,
-.mod-pedal.feedbacker-pedal .trigger-footswitch-btn.pressed,
-.mod-pedal.mod-cyber-feedbacker .trigger-footswitch-btn:active,
-.mod-pedal.mod-cyber-feedbacker .trigger-footswitch-btn.pressed {
-    transform: scale(0.92);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 8px #00ffcc;
+.trigger-footswitch-btn:active,
+.trigger-footswitch-btn.pressed {
+    transform: scale(0.94);
     border-color: #00ffcc;
+    box-shadow: 0 0 14px rgba(0, 255, 204, 0.6), inset 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
-.mod-pedal.feedbacker-pedal .trigger-footswitch-btn .footswitch-ring,
-.mod-pedal.mod-cyber-feedbacker .trigger-footswitch-btn .footswitch-ring {
+.footswitch-ring {
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    border: 1px solid #a1a1aa;
-    margin: auto;
+    border: 1.5px solid #d4d4d8;
+    background: radial-gradient(circle at 40% 40%, #52525b 0%, #27272a 100%);
+}
+
+.mod-footswitch {
+    width: 32px;
+    height: 32px;
 }

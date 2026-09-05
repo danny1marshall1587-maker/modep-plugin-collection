@@ -12,18 +12,29 @@ def package_plugin_bundles():
     plugins = [
         ('harmonic-tremolo', 'harmonic-tremolo.lv2'),
         ('cyber-denoiser', 'cyber-denoiser.lv2'),
+        ('cyber-denoiser-mono.lv2', 'cyber-denoiser-mono.lv2'),
         ('galaxy-strobe-tune', 'galaxy-strobe-tune.lv2'),
         ('dimension-c', 'dimension-c.lv2'),
-        ('Dimension_IV.lv2', 'Dimension_IV.lv2'),
-        ('Dearmondo610.lv2', 'Dearmondo610.lv2'),
         ('guitar-midi', 'guitar-midi.lv2'),
         ('bluesbreaker.lv2', 'bluesbreaker.lv2'),
-        ('aether.lv2', 'aether.lv2'),
         ('nam-loader.lv2', 'nam-loader.lv2'),
         ('cyber-hum-killer.lv2', 'cyber-hum-killer.lv2'),
+        ('cyber-hum-killer-mono.lv2', 'cyber-hum-killer-mono.lv2'),
         ('smart-fizz-killer.lv2', 'smart-fizz-killer.lv2'),
-        ('cyber-expression-cv.lv2', 'cyber-expression-cv.lv2'),
-        ('aelapse.lv2', 'aelapse.lv2')
+        ('smart-fizz-killer-mono.lv2', 'smart-fizz-killer-mono.lv2'),
+        ('aelapse.lv2', 'aelapse.lv2'),
+        ('aelapse-mono.lv2', 'aelapse-mono.lv2'),
+        ('cyber-stomp-box.lv2', 'cyber-stomp-box.lv2'),
+        ('cyber-puresustain-delay.lv2', 'cyber-puresustain-delay.lv2'),
+        ('cyber-puresustain-delay-mono.lv2', 'cyber-puresustain-delay-mono.lv2'),
+        ('cyber-cloud-bloom.lv2', 'cyber-cloud-bloom.lv2'),
+        ('cyber-cloud-bloom-mono.lv2', 'cyber-cloud-bloom-mono.lv2'),
+        ('cyber-spring-reverb.lv2', 'cyber-spring-reverb.lv2'),
+        ('cyber-spring-reverb-stereo.lv2', 'cyber-spring-reverb-stereo.lv2'),
+        ('cyber-acoustic-feedbacker.lv2', 'cyber-acoustic-feedbacker.lv2'),
+        ('cyber-acoustic-feedbacker-mono.lv2', 'cyber-acoustic-feedbacker-mono.lv2'),
+        ('cyber-cv-reverser.lv2', 'cyber-cv-reverser.lv2'),
+        ('cyber-cv-splitter.lv2', 'cyber-cv-splitter.lv2')
     ]
 
     print("================================================================")

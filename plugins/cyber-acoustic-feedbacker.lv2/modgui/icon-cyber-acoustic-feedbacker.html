@@ -4,28 +4,14 @@
     <!-- Top Branding -->
     <div class="mod-plugin-brand"><h1>CYBER AUDIO</h1></div>
     <div class="mod-plugin-name"><h1>Acoustic Feedbacker</h1></div>
+    <div class="dev-badge">DEV TUNER MODE</div>
 
     <!-- Bypass LED -->
     <div class="mod-light on" mod-role="bypass-light"></div>
 
-    <!-- Mode Selector Pills -->
-    <div class="mode-selector-bar">
-        <button type="button" class="mode-pill active" data-mode="0">ROOT</button>
-        <button type="button" class="mode-pill" data-mode="1">POLY</button>
-        <button type="button" class="mode-pill" data-mode="2">BLOOM</button>
-        <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="mode" style="display:none;"></div>
-    </div>
-
-    <!-- Knobs Container -->
-    <div class="cyber-knobs-grid">
-        <div class="knob-cell">
-            <div class="custom-knob-dial" data-symbol="bloom" data-min="0" data-max="100" data-default="40">
-                <div class="knob-rotor"></div>
-            </div>
-            <span class="mod-knob-title">BLOOM</span>
-            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="bloom" style="display:none;"></div>
-        </div>
-
+    <!-- Section: Primary Performance Controls -->
+    <div class="section-divider"><span>MAIN STOMP CONTROLS</span></div>
+    <div class="cyber-knobs-grid main-grid">
         <div class="knob-cell">
             <div class="custom-knob-dial" data-symbol="gain" data-min="0" data-max="100" data-default="75">
                 <div class="knob-rotor"></div>
@@ -35,27 +21,19 @@
         </div>
 
         <div class="knob-cell">
-            <div class="custom-knob-dial" data-symbol="harmonic" data-min="0" data-max="4" data-default="1">
-                <div class="knob-rotor"></div>
-            </div>
-            <span class="mod-knob-title">HARMONIC</span>
-            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="harmonic" style="display:none;"></div>
-        </div>
-
-        <div class="knob-cell">
-            <div class="custom-knob-dial" data-symbol="warmth" data-min="0" data-max="100" data-default="50">
+            <div class="custom-knob-dial" data-symbol="distress" data-min="0" data-max="100" data-default="50">
                 <div class="knob-rotor"></div>
             </div>
             <span class="mod-knob-title">DISTRESS</span>
-            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="warmth" style="display:none;"></div>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="distress" style="display:none;"></div>
         </div>
 
         <div class="knob-cell">
-            <div class="custom-knob-dial" data-symbol="vibrato" data-min="0" data-max="100" data-default="75">
+            <div class="custom-knob-dial" data-symbol="tail" data-min="0.1" data-max="5.0" data-default="1.8">
                 <div class="knob-rotor"></div>
             </div>
             <span class="mod-knob-title">TAIL</span>
-            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="vibrato" style="display:none;"></div>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="tail" style="display:none;"></div>
         </div>
 
         <div class="knob-cell">
@@ -64,6 +42,58 @@
             </div>
             <span class="mod-knob-title">MIX</span>
             <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="mix" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- Section: Dev Calibration & Sustainer Tuner Controls -->
+    <div class="section-divider dev-divider"><span>SUSTAINER CALIBRATION (DEV)</span></div>
+    <div class="cyber-knobs-grid dev-grid">
+        <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="takeover_thresh" data-min="70" data-max="100" data-default="90">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">POINT %</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="takeover_thresh" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="transition_time" data-min="50" data-max="1500" data-default="350">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">FADE (ms)</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="transition_time" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="loop_window" data-min="20" data-max="400" data-default="80">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">WINDOW</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="loop_window" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="loop_damping" data-min="1000" data-max="18000" data-default="7500">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">DAMP (Hz)</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="loop_damping" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="vol_match" data-min="50" data-max="150" data-default="100">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">VOL MATCH</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="vol_match" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="bloom_rate" data-min="0.1" data-max="3.0" data-default="0.8">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">BLOOM (s)</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="bloom_rate" style="display:none;"></div>
         </div>
     </div>
 

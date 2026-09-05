@@ -4,7 +4,7 @@
     <!-- Top Branding -->
     <div class="mod-plugin-brand"><h1>CYBER AUDIO</h1></div>
     <div class="mod-plugin-name"><h1>Acoustic Feedbacker Mono</h1></div>
-    <div class="dev-badge">ACOUSTIC ROOM & STRING TUNER</div>
+    <div class="dev-badge">ELECTRO-ACOUSTIC DEV TUNER</div>
 
     <!-- Bypass LED -->
     <div class="mod-light on" mod-role="bypass-light"></div>
@@ -42,6 +42,36 @@
             </div>
             <span class="mod-knob-title">MIX</span>
             <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="mix" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- Section: Continuous Trigger Wiggle & Pluck Policy (Dev) -->
+    <div class="section-divider dev-divider"><span>TRIGGER WIGGLE & PLUCK POLICY (DEV)</span></div>
+    <div class="trigger-lfo-bar">
+        <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="trig_lfo_rate" data-min="0.05" data-max="5.0" data-default="0.60">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">WIGGLE SPD</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="trig_lfo_rate" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial dev-dial" data-symbol="trig_lfo_depth" data-min="0" data-max="50" data-default="20">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title dev-title">WIGGLE DEP</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="trig_lfo_depth" style="display:none;"></div>
+        </div>
+
+        <!-- Hold Drone Toggle Button -->
+        <div class="drone-toggle-box">
+            <span class="routing-label">ON PLUCK:</span>
+            <div class="drone-toggle-switch" data-symbol="hold_on_pluck" data-val="1">
+                <span class="toggle-opt opt-cut">RESET</span>
+                <span class="toggle-opt opt-hold active">HOLD DRONE</span>
+            </div>
+            <div class="mod-control-port" mod-role="input-control-port" mod-port-symbol="hold_on_pluck" style="display:none;"></div>
         </div>
     </div>
 

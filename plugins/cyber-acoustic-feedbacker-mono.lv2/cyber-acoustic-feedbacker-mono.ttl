@@ -15,11 +15,11 @@
         foaf:name "Cyber Audio" ;
         foaf:homepage <http://cyber-audio.co.uk> ;
     ] ;
-    lv2:minorVersion 7 ;
+    lv2:minorVersion 8 ;
     lv2:microVersion 0 ;
     mod:brand "CyberAudio" ;
     mod:label "Feedbacker Mono" ;
-    rdfs:comment "Mono physical electro-acoustic string feedback & clean sustainer. Closed-loop speaker distress recirculation, high-density acoustic room simulation with room-in-loop feedback switch." ;
+    rdfs:comment "Mono physical electro-acoustic string feedback & clean sustainer. Closed-loop speaker distress recirculation, acoustic room simulation, trigger wiggle LFO, and hold-drone policy." ;
 
     lv2:port [
         a lv2:AudioPort , lv2:InputPort ;
@@ -274,4 +274,31 @@
         lv2:minimum 0.0 ;
         lv2:maximum 100.0 ;
         units:unit units:pc ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 30 ;
+        lv2:symbol "trig_lfo_rate" ;
+        lv2:name "Wiggle LFO Rate" ;
+        lv2:default 0.60 ;
+        lv2:minimum 0.05 ;
+        lv2:maximum 5.0 ;
+        units:unit units:hz ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 31 ;
+        lv2:symbol "trig_lfo_depth" ;
+        lv2:name "Wiggle LFO Depth" ;
+        lv2:default 20.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 50.0 ;
+        units:unit units:pc ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 32 ;
+        lv2:symbol "hold_on_pluck" ;
+        lv2:name "Hold Drone On Pluck" ;
+        lv2:default 1.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 1.0 ;
+        lv2:portProperty lv2:toggled ;
     ] .

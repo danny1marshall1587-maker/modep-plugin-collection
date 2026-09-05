@@ -72,6 +72,26 @@ function (event) {
         event.set_port_value('room_in_loop', next);
     });
 
+    // Hold Drone On Pluck Toggle Switch Handling
+    var droneToggle = pedal.find('.drone-toggle-switch');
+    droneToggle.on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var cur = parseFloat(droneToggle.attr('data-val') || 1);
+        var next = (cur > 0.5) ? 0.0 : 1.0;
+        droneToggle.attr('data-val', next);
+
+        if (next > 0.5) {
+            droneToggle.find('.opt-cut').removeClass('active');
+            droneToggle.find('.opt-hold').addClass('active');
+        } else {
+            droneToggle.find('.opt-hold').removeClass('active');
+            droneToggle.find('.opt-cut').addClass('active');
+        }
+
+        event.set_port_value('hold_on_pluck', next);
+    });
+
     // Hold / Stomp Trigger Button Handling
     var triggerBtn = pedal.find('.trigger-stomp-button');
     var isTriggerHeld = false;
@@ -115,6 +135,17 @@ function (event) {
             } else {
                 roomToggle.find('.opt-loop').removeClass('active');
                 roomToggle.find('.opt-out').addClass('active');
+            }
+        }
+
+        if (symbol === 'hold_on_pluck') {
+            droneToggle.attr('data-val', value);
+            if (value > 0.5) {
+                droneToggle.find('.opt-cut').removeClass('active');
+                droneToggle.find('.opt-hold').addClass('active');
+            } else {
+                droneToggle.find('.opt-hold').removeClass('active');
+                droneToggle.find('.opt-cut').addClass('active');
             }
         }
     }

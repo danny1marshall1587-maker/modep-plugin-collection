@@ -3,5 +3,5 @@
 
 <http://cyber-audio.co.uk/plugins/cyber-fender-bassman59>
     a lv2:Plugin ;
-    lv2:binary <cyber_fender_bassman59.dll> ;
+    lv2:binary <cyber_fender_bassman59.dll> , <cyber_fender_bassman59.so> ;
     rdfs:seeAlso <cyber_fender_bassman59.ttl> , <modgui.ttl> .

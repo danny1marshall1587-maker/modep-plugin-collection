@@ -3,5 +3,5 @@
 
 <http://cyber-audio.co.uk/plugins/cyber-roland-jc120>
     a lv2:Plugin ;
-    lv2:binary <cyber_roland_jc120.dll> ;
+    lv2:binary <cyber_roland_jc120.dll> , <cyber_roland_jc120.so> ;
     rdfs:seeAlso <cyber_roland_jc120.ttl> , <modgui.ttl> .

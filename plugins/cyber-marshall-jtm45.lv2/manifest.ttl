@@ -3,5 +3,5 @@
 
 <http://cyber-audio.co.uk/plugins/cyber-marshall-jtm45>
     a lv2:Plugin ;
-    lv2:binary <cyber_marshall_jtm45.dll> ;
+    lv2:binary <cyber_marshall_jtm45.dll> , <cyber_marshall_jtm45.so> ;
     rdfs:seeAlso <cyber_marshall_jtm45.ttl> , <modgui.ttl> .

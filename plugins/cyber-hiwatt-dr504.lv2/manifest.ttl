@@ -3,5 +3,5 @@
 
 <http://cyber-audio.co.uk/plugins/cyber-hiwatt-dr504>
     a lv2:Plugin ;
-    lv2:binary <cyber_hiwatt_dr504.dll> ;
+    lv2:binary <cyber_hiwatt_dr504.dll> , <cyber_hiwatt_dr504.so> ;
     rdfs:seeAlso <cyber_hiwatt_dr504.ttl> , <modgui.ttl> .

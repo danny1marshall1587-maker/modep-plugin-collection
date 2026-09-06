@@ -10,6 +10,8 @@ import sys
 import subprocess
 import shutil
 
+sys.stdout.reconfigure(line_buffering=True)
+
 def build_and_deploy():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     gpp = os.path.join(base_dir, 'tools', 'w64devkit', 'bin', 'g++.exe')
@@ -49,7 +51,26 @@ def build_and_deploy():
         ('cyber-feedback-room-mono.lv2', 'src/cyber_feedback_room_mono.cpp', 'cyber_feedback_room_mono.dll'),
         ('cyber-cv-reverser.lv2', 'src/cyber_cv_reverser.cpp', 'cyber_cv_reverser.dll'),
         ('cyber-cv-splitter.lv2', 'src/cyber_cv_splitter.cpp', 'cyber_cv_splitter.dll'),
-        ('cyber-ycv40.lv2', 'src/cyber_ycv40_lv2.cpp', 'cyber_ycv40.dll')
+        ('cyber-ycv40.lv2', 'src/cyber_ycv40_lv2.cpp', 'cyber_ycv40.dll'),
+        ('cyber-dumble-ods.lv2', 'src/cyber_dumble_ods_lv2.cpp', 'cyber_dumble_ods.dll'),
+        ('cyber-fender-bassman59.lv2', 'src/cyber_fender_bassman59_lv2.cpp', 'cyber_fender_bassman59.dll'),
+        ('cyber-fender-deluxe6g3.lv2', 'src/cyber_fender_deluxe6g3_lv2.cpp', 'cyber_fender_deluxe6g3.dll'),
+        ('cyber-fender-vibrolux6g11.lv2', 'src/cyber_fender_vibrolux6g11_lv2.cpp', 'cyber_fender_vibrolux6g11.dll'),
+        ('cyber-fender-vibroverb63.lv2', 'src/cyber_fender_vibroverb63_lv2.cpp', 'cyber_fender_vibroverb63.dll'),
+        ('cyber-friedman-be100.lv2', 'src/cyber_friedman_be100_lv2.cpp', 'cyber_friedman_be100.dll'),
+        ('cyber-hiwatt-dr504.lv2', 'src/cyber_hiwatt_dr504_lv2.cpp', 'cyber_hiwatt_dr504.dll'),
+        ('cyber-koch-the-greg.lv2', 'src/cyber_koch_the_greg_lv2.cpp', 'cyber_koch_the_greg.dll'),
+        ('cyber-magnatone-280.lv2', 'src/cyber_magnatone_280_lv2.cpp', 'cyber_magnatone_280.dll'),
+        ('cyber-marshall-jtm45.lv2', 'src/cyber_marshall_jtm45_lv2.cpp', 'cyber_marshall_jtm45.dll'),
+        ('cyber-matchless-dc30.lv2', 'src/cyber_matchless_dc30_lv2.cpp', 'cyber_matchless_dc30.dll'),
+        ('cyber-orange-or120.lv2', 'src/cyber_orange_or120_lv2.cpp', 'cyber_orange_or120.dll'),
+        ('cyber-rockman-x100.lv2', 'src/cyber_rockman_x100_lv2.cpp', 'cyber_rockman_x100.dll'),
+        ('cyber-roland-jc120.lv2', 'src/cyber_roland_jc120_lv2.cpp', 'cyber_roland_jc120.dll'),
+        ('cyber-toneking-imperial.lv2', 'src/cyber_toneking_imperial_lv2.cpp', 'cyber_toneking_imperial.dll'),
+        ('cyber-trainwreck-express.lv2', 'src/cyber_trainwreck_express_lv2.cpp', 'cyber_trainwreck_express.dll'),
+        ('cyber-tworock-crs.lv2', 'src/cyber_tworock_crs_lv2.cpp', 'cyber_tworock_crs.dll'),
+        ('cyber-vox-ac30pa.lv2', 'src/cyber_vox_ac30pa_lv2.cpp', 'cyber_vox_ac30pa.dll'),
+        ('cyber-vox-ac30tb.lv2', 'src/cyber_vox_ac30tb_lv2.cpp', 'cyber_vox_ac30tb.dll')
     ]
 
     print("================================================================")

@@ -3,5 +3,5 @@
 
 <http://cyber-audio.co.uk/plugins/cyber-vox-ac30pa>
     a lv2:Plugin ;
-    lv2:binary <cyber_vox_ac30pa.dll> ;
+    lv2:binary <cyber_vox_ac30pa.dll> , <cyber_vox_ac30pa.so> ;
     rdfs:seeAlso <cyber_vox_ac30pa.ttl> , <modgui.ttl> .

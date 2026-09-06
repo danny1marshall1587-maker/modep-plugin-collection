@@ -3,5 +3,5 @@
 
 <http://cyber-audio.co.uk/plugins/cyber-fender-vibroverb63>
     a lv2:Plugin ;
-    lv2:binary <cyber_fender_vibroverb63.dll> ;
+    lv2:binary <cyber_fender_vibroverb63.dll> , <cyber_fender_vibroverb63.so> ;
     rdfs:seeAlso <cyber_fender_vibroverb63.ttl> , <modgui.ttl> .

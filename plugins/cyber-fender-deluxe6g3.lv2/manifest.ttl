@@ -3,5 +3,5 @@
 
 <http://cyber-audio.co.uk/plugins/cyber-fender-deluxe6g3>
     a lv2:Plugin ;
-    lv2:binary <cyber_fender_deluxe6g3.dll> ;
+    lv2:binary <cyber_fender_deluxe6g3.dll> , <cyber_fender_deluxe6g3.so> ;
     rdfs:seeAlso <cyber_fender_deluxe6g3.ttl> , <modgui.ttl> .

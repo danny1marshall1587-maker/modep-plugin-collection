@@ -3,5 +3,5 @@
 
 <http://cyber-audio.co.uk/plugins/cyber-dumble-ods>
     a lv2:Plugin ;
-    lv2:binary <cyber_dumble_ods.dll> ;
+    lv2:binary <cyber_dumble_ods.dll> , <cyber_dumble_ods.so> ;
     rdfs:seeAlso <cyber_dumble_ods.ttl> , <modgui.ttl> .

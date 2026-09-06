@@ -3,5 +3,5 @@
 
 <http://cyber-audio.co.uk/plugins/cyber-friedman-be100>
     a lv2:Plugin ;
-    lv2:binary <cyber_friedman_be100.dll> ;
+    lv2:binary <cyber_friedman_be100.dll> , <cyber_friedman_be100.so> ;
     rdfs:seeAlso <cyber_friedman_be100.ttl> , <modgui.ttl> .

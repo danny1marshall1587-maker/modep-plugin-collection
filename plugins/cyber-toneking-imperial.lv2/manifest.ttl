@@ -3,5 +3,5 @@
 
 <http://cyber-audio.co.uk/plugins/cyber-toneking-imperial>
     a lv2:Plugin ;
-    lv2:binary <cyber_toneking_imperial.dll> ;
+    lv2:binary <cyber_toneking_imperial.dll> , <cyber_toneking_imperial.so> ;
     rdfs:seeAlso <cyber_toneking_imperial.ttl> , <modgui.ttl> .

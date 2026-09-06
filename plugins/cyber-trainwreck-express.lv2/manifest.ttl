@@ -3,5 +3,5 @@
 
 <http://cyber-audio.co.uk/plugins/cyber-trainwreck-express>
     a lv2:Plugin ;
-    lv2:binary <cyber_trainwreck_express.dll> ;
+    lv2:binary <cyber_trainwreck_express.dll> , <cyber_trainwreck_express.so> ;
     rdfs:seeAlso <cyber_trainwreck_express.ttl> , <modgui.ttl> .

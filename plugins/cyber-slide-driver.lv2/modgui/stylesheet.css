@@ -232,10 +232,11 @@
     box-shadow: 0 0 8px #ff9900;
 }
 
-/* Noise Deck & Zero Noise Pill Button */
+/* Noise Deck & Pill Buttons */
 .slide-driver-pedal .slide-driver-noise-deck {
     display: flex;
     justify-content: center;
+    gap: 8px;
     margin-top: 4px;
     margin-bottom: 2px;
 }

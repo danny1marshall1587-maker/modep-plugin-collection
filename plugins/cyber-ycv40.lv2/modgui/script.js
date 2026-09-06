@@ -69,6 +69,10 @@ function (event, funcs) {
             pedal.find('#ycv-cab-txt').text(cabNames[cidx]);
         } else if (symbol === 'noise_gate') {
             pedal.find('#ycv-gate-btn').toggleClass('active', fVal > 0.5);
+        } else if (symbol === 'noise_spectral') {
+            pedal.find('#ycv-spectral-btn').toggleClass('active', fVal > 0.5);
+        } else if (symbol === 'noise_defizz') {
+            pedal.find('#ycv-defizz-btn').toggleClass('active', fVal > 0.5);
         }
     }
 
@@ -284,6 +288,26 @@ function (event, funcs) {
         if (isNaN(curVal)) curVal = 1.0;
         var nextVal = (curVal > 0.5) ? 0.0 : 1.0;
         sendPortValue('noise_gate', nextVal);
+        $(this).toggleClass('active', nextVal > 0.5);
+    });
+
+    // Spectral De-Noise Toggle Handler
+    pedal.find('#ycv-spectral-btn').off('click.ycv').on('click.ycv', function (e) {
+        e.stopPropagation();
+        var curVal = parseFloat(pedal.find('.mod-knob-image[mod-port-symbol="noise_spectral"]').val());
+        if (isNaN(curVal)) curVal = 1.0;
+        var nextVal = (curVal > 0.5) ? 0.0 : 1.0;
+        sendPortValue('noise_spectral', nextVal);
+        $(this).toggleClass('active', nextVal > 0.5);
+    });
+
+    // Dynamic De-Fizz Toggle Handler
+    pedal.find('#ycv-defizz-btn').off('click.ycv').on('click.ycv', function (e) {
+        e.stopPropagation();
+        var curVal = parseFloat(pedal.find('.mod-knob-image[mod-port-symbol="noise_defizz"]').val());
+        if (isNaN(curVal)) curVal = 1.0;
+        var nextVal = (curVal > 0.5) ? 0.0 : 1.0;
+        sendPortValue('noise_defizz', nextVal);
         $(this).toggleClass('active', nextVal > 0.5);
     });
 

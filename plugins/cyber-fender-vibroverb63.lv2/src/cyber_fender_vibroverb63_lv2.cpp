@@ -38,7 +38,8 @@ enum PortIndex {
     PORT_OUTPUT_LEVEL   = 15,
     PORT_NOISE_SPECTRAL = 16,
     PORT_NOISE_DEFIZZ   = 17,
-    PORT_COUNT          = 17 + 1
+    PORT_NOISE_LEVEL    = 18,
+    PORT_COUNT          = 18 + 1
 };
 
 struct OnePole {
@@ -291,8 +292,8 @@ initCabFilters();
         const float* input, float* output, uint32_t n_samples,
         float bypass, float channel, float pNormVol, float pNormTreb, float pNormBass,
         float pVibVol, float pVibTreb, float pVibBass, float pTremSpeed, float pTremIntensity,
-        float pSpeakerCab, float pSpeakerDrive, float pNoiseGate, float pOutputLevel, float pNoiseSpectral = 1.0f, float pNoiseDefizz = 1.0f
-    ) {
+        float pSpeakerCab, float pSpeakerDrive, float pNoiseGate, float pOutputLevel, float pNoiseSpectral = 1.0f, float pNoiseDefizz= 1.0f
+    , float pNoiseLevel = 5.0f) {
         if (bypass < 0.5f) {
             if (output != input) memcpy(output, input, n_samples * sizeof(float));
             return;
@@ -362,6 +363,8 @@ initCabFilters();
             pOut = processSpeaker(pOut, cabType, pSpeakerDrive);
 
             // Smart Zero-Floor Noise Suppressor
+            float noiseSens = std::max(0.0f, std::min(10.0f, pNoiseLevel)) / 5.0f;
+
             // 7A. 10-Band Spectral Phase-Cancellation De-Noise Engine (Subtractive)
             if (pNoiseSpectral > 0.5f) {
                 float b[10];
@@ -380,7 +383,7 @@ initCabFilters();
                     specLevelStates[band] += (absB - specLevelStates[band]) * coeff;
                     float r = specLevelStates[band];
 
-                    float targetG = 1.0f - (specTLinear[band] / (r + 1e-9f));
+                    float targetG = 1.0f - (specTLinear[band] * noiseSens / (r + 1e-9f));
                     targetG = std::max(0.0f, std::min(1.0f, targetG));
 
                     float currentCoeff;
@@ -411,7 +414,7 @@ initCabFilters();
                 defizzLpState += defizzAlpha * (pOut - defizzLpState);
                 pOut = defizzLpState;
 
-                float expTarget = (normLevel > 0.15f) ? 1.0f : (normLevel / 0.15f);
+                float expTarget = (normLevel > 0.15f) ? 1.0f : (1.0f - (1.0f - (normLevel / 0.15f)) * std::min(1.0f, noiseSens));
                 defizzExpanderGain += 0.005f * (expTarget - defizzExpanderGain);
                 pOut *= defizzExpanderGain;
             }
@@ -423,8 +426,8 @@ initCabFilters();
                 if (absSc > gateEnv) gateEnv += gateAtk * (absSc - gateEnv);
                 else gateEnv += gateRel * (absSc - gateEnv);
 
-                const float threshOpen = 0.00100f;
-                const float threshClose = 0.00045f;
+                float threshOpen = 0.00100f * noiseSens;
+                float threshClose = 0.00045f * noiseSens;
 
                 if (!gateIsOpen) {
                     if (gateEnv >= threshOpen) gateIsOpen = true;
@@ -436,6 +439,9 @@ initCabFilters();
                 float smoothRate = (targetGain > gateGain) ? gateAtkSmooth : gateRelSmooth;
                 gateGain += smoothRate * (targetGain - gateGain);
                 pOut *= gateGain;
+            } else {
+                gateGain = 1.0f;
+                gateIsOpen = true;
             }
             float outTrim = 1.0f;
             if (pOutputLevel <= 0.05f) {
@@ -508,11 +514,12 @@ struct CyberFenderVibroverb63LV2 {
     const float* outputLevel;
     const float* noiseSpectral;
     const float* noiseDefizz;
+    const float* noiseLevel;
     CyberFenderVibroverb63LV2() : dsp(nullptr), audioIn(nullptr), audioOut(nullptr),
         bypass(nullptr), channel(nullptr), normVol(nullptr), normTreble(nullptr),
         normBass(nullptr), vibVol(nullptr), vibTreble(nullptr), vibBass(nullptr),
         tremSpeed(nullptr), tremIntensity(nullptr), speakerCab(nullptr),
-        speakerDrive(nullptr), noiseGate(nullptr) , outputLevel(nullptr), noiseSpectral(nullptr), noiseDefizz(nullptr) {}
+        speakerDrive(nullptr), noiseGate(nullptr) , outputLevel(nullptr), noiseSpectral(nullptr), noiseDefizz(nullptr) , noiseLevel(nullptr) {}
     ~CyberFenderVibroverb63LV2() { if (dsp) delete dsp; }
 };
 
@@ -543,6 +550,7 @@ static void connect_port(LV2_Handle instance, uint32_t port, void* data) {
         case PORT_OUTPUT_LEVEL:   h->outputLevel = (const float*)data; break;
         case PORT_NOISE_SPECTRAL: h->noiseSpectral = (const float*)data; break;
         case PORT_NOISE_DEFIZZ:   h->noiseDefizz = (const float*)data; break;
+        case PORT_NOISE_LEVEL:    h->noiseLevel = (const float*)data; break;
     }
 }
 
@@ -567,7 +575,8 @@ static void run(LV2_Handle instance, uint32_t n_samples) {
         h->speakerCab ? *h->speakerCab : 0.0f,
         h->speakerDrive ? *h->speakerDrive : 5.0f,
         h->noiseGate ? *h->noiseGate : 1.0f, h->outputLevel ? *h->outputLevel : 7.0f,
-        h->noiseSpectral ? *h->noiseSpectral : 1.0f, h->noiseDefizz ? *h->noiseDefizz : 1.0f
+        h->noiseSpectral ? *h->noiseSpectral : 1.0f, h->noiseDefizz ? *h->noiseDefizz : 1.0f,
+        h->noiseLevel ? *h->noiseLevel : 5.0f
     );
 }
 

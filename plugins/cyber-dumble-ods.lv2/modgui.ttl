@@ -51,5 +51,21 @@
             lv2:index 8 ;
             lv2:symbol "speaker_drive" ;
             lv2:name "Cone Drive" ;
+        ] , [
+            lv2:index 9 ;
+            lv2:symbol "noise_gate" ;
+            lv2:name "Gate" ;
+        ] , [
+            lv2:index 10 ;
+            lv2:symbol "noise_spectral" ;
+            lv2:name "Spectral" ;
+        ] , [
+            lv2:index 11 ;
+            lv2:symbol "noise_defizz" ;
+            lv2:name "De-Fizz" ;
+        ] , [
+            lv2:index 12 ;
+            lv2:symbol "noise_level" ;
+            lv2:name "Noise Depth" ;
         ]
     ] .

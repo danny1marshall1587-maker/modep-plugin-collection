@@ -40,7 +40,8 @@ enum PortIndex {
     PORT_OUTPUT_LEVEL   = 13,
     PORT_NOISE_SPECTRAL = 14,
     PORT_NOISE_DEFIZZ   = 15,
-    PORT_COUNT          = 15 + 1
+    PORT_NOISE_LEVEL    = 16,
+    PORT_COUNT          = 16 + 1
 };
 
 struct OnePole {
@@ -287,8 +288,8 @@ initCabFilters();
         const float* input, float* output, uint32_t n_samples,
         float bypass, float channel, float pNormVol, float pNormTone,
         float pBrightVol, float pBrightTone, float pTremSpeed, float pTremIntensity,
-        float pSpeakerCab, float pSpeakerDrive, float pNoiseGate, float pOutputLevel, float pNoiseSpectral = 1.0f, float pNoiseDefizz = 1.0f
-    ) {
+        float pSpeakerCab, float pSpeakerDrive, float pNoiseGate, float pOutputLevel, float pNoiseSpectral = 1.0f, float pNoiseDefizz= 1.0f
+    , float pNoiseLevel = 5.0f) {
         if (bypass < 0.5f) {
             if (output != input) memcpy(output, input, n_samples * sizeof(float));
             return;
@@ -371,6 +372,8 @@ initCabFilters();
             pOut = processSpeaker(pOut, cabType, pSpeakerDrive);
 
             // Smart Zero-Floor Noise Suppressor
+            float noiseSens = std::max(0.0f, std::min(10.0f, pNoiseLevel)) / 5.0f;
+
             // 7A. 10-Band Spectral Phase-Cancellation De-Noise Engine (Subtractive)
             if (pNoiseSpectral > 0.5f) {
                 float b[10];
@@ -389,7 +392,7 @@ initCabFilters();
                     specLevelStates[band] += (absB - specLevelStates[band]) * coeff;
                     float r = specLevelStates[band];
 
-                    float targetG = 1.0f - (specTLinear[band] / (r + 1e-9f));
+                    float targetG = 1.0f - (specTLinear[band] * noiseSens / (r + 1e-9f));
                     targetG = std::max(0.0f, std::min(1.0f, targetG));
 
                     float currentCoeff;
@@ -420,7 +423,7 @@ initCabFilters();
                 defizzLpState += defizzAlpha * (pOut - defizzLpState);
                 pOut = defizzLpState;
 
-                float expTarget = (normLevel > 0.15f) ? 1.0f : (normLevel / 0.15f);
+                float expTarget = (normLevel > 0.15f) ? 1.0f : (1.0f - (1.0f - (normLevel / 0.15f)) * std::min(1.0f, noiseSens));
                 defizzExpanderGain += 0.005f * (expTarget - defizzExpanderGain);
                 pOut *= defizzExpanderGain;
             }
@@ -432,8 +435,8 @@ initCabFilters();
                 if (absSc > gateEnv) gateEnv += gateAtk * (absSc - gateEnv);
                 else gateEnv += gateRel * (absSc - gateEnv);
 
-                const float threshOpen = 0.00100f;
-                const float threshClose = 0.00045f;
+                float threshOpen = 0.00100f * noiseSens;
+                float threshClose = 0.00045f * noiseSens;
 
                 if (!gateIsOpen) {
                     if (gateEnv >= threshOpen) gateIsOpen = true;
@@ -445,6 +448,9 @@ initCabFilters();
                 float smoothRate = (targetGain > gateGain) ? gateAtkSmooth : gateRelSmooth;
                 gateGain += smoothRate * (targetGain - gateGain);
                 pOut *= gateGain;
+            } else {
+                gateGain = 1.0f;
+                gateIsOpen = true;
             }
             float outTrim = 1.0f;
             if (pOutputLevel <= 0.05f) {
@@ -541,11 +547,12 @@ static void run(LV2_Handle instance, uint32_t sample_count) {
     float pOutputLevel  = data->ports[PORT_OUTPUT_LEVEL] ? *data->ports[PORT_OUTPUT_LEVEL] : 7.0f;
     float pNoiseSpectral = data->ports[PORT_NOISE_SPECTRAL] ? *data->ports[PORT_NOISE_SPECTRAL] : 1.0f;
     float pNoiseDefizz   = data->ports[PORT_NOISE_DEFIZZ] ? *data->ports[PORT_NOISE_DEFIZZ] : 1.0f;
+    float pNoiseLevel    = data->ports[PORT_NOISE_LEVEL] ? *data->ports[PORT_NOISE_LEVEL] : 5.0f;
 
     data->amp->process(
         in, out, sample_count,
         bypass, channel, pNormVol, pNormTone, pBrightVol, pBrightTone,
-        pTremSpeed, pTremIntensity, pSpeakerCab, pSpeakerDrive, pNoiseGate, pOutputLevel, pNoiseSpectral, pNoiseDefizz
+        pTremSpeed, pTremIntensity, pSpeakerCab, pSpeakerDrive, pNoiseGate, pOutputLevel, pNoiseSpectral, pNoiseDefizz, pNoiseLevel
     );
 }
 

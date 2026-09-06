@@ -51,6 +51,10 @@ function (event, funcs) {
             pedal.find('#jc120-cab-txt').text(cabNames[sc]);
         } else if (symbol === 'noise_gate') {
             pedal.find('#jc120-gate-btn').toggleClass('active', fVal > 0.5);
+        } else if (symbol === 'noise_spectral') {
+            pedal.find('#jc120-spectral-btn').toggleClass('active', fVal > 0.5);
+        } else if (symbol === 'noise_defizz') {
+            pedal.find('#jc120-defizz-btn').toggleClass('active', fVal > 0.5);
         }
     }
 
@@ -183,14 +187,32 @@ function (event, funcs) {
         pedal.find('#jc120-cab-txt').text(cabNames[nextVal]);
     });
 
-    // Zero-Noise Gate Toggle Handler
-    pedal.find('#jc120-gate-btn').off('click.jc').on('click.jc', function (e) {
+    
+    // Smart Zero-Noise Gate Toggle Handler
+    pedal.find('#jc120-gate-btn').off('click.jc120').on('click.jc120', function (e) {
         e.stopPropagation();
-        var curVal = parseFloat(pedal.find('.mod-knob-image[mod-port-symbol="noise_gate"]').val());
-        if (isNaN(curVal)) curVal = 1.0;
-        var nextVal = (curVal > 0.5) ? 0.0 : 1.0;
-        sendPortValue('noise_gate', nextVal);
+        var isAct = $(this).hasClass('active');
+        var nextVal = isAct ? 0.0 : 1.0;
         $(this).toggleClass('active', nextVal > 0.5);
+        sendPortValue('noise_gate', nextVal);
+    });
+
+    // Spectral De-Noise Toggle Handler
+    pedal.find('#jc120-spectral-btn').off('click.jc120').on('click.jc120', function (e) {
+        e.stopPropagation();
+        var isAct = $(this).hasClass('active');
+        var nextVal = isAct ? 0.0 : 1.0;
+        $(this).toggleClass('active', nextVal > 0.5);
+        sendPortValue('noise_spectral', nextVal);
+    });
+
+    // Dynamic De-Fizz Toggle Handler
+    pedal.find('#jc120-defizz-btn').off('click.jc120').on('click.jc120', function (e) {
+        e.stopPropagation();
+        var isAct = $(this).hasClass('active');
+        var nextVal = isAct ? 0.0 : 1.0;
+        $(this).toggleClass('active', nextVal > 0.5);
+        sendPortValue('noise_defizz', nextVal);
     });
 
     if (event.type === 'start' && event.ports) {

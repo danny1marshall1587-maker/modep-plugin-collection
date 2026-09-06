@@ -54,6 +54,10 @@ function (event, funcs) {
             pedal.find('#matchless-cab-txt').text(cabNames[sc]);
         } else if (symbol === 'noise_gate') {
             pedal.find('#matchless-gate-btn').toggleClass('active', fVal > 0.5);
+        } else if (symbol === 'noise_spectral') {
+            pedal.find('#matchless-spectral-btn').toggleClass('active', fVal > 0.5);
+        } else if (symbol === 'noise_defizz') {
+            pedal.find('#matchless-defizz-btn').toggleClass('active', fVal > 0.5);
         }
     }
 
@@ -187,14 +191,32 @@ function (event, funcs) {
         pedal.find('#matchless-cab-txt').text(cabNames[nextVal]);
     });
 
-    // Zero-Noise Gate Toggle Handler
+    
+    // Smart Zero-Noise Gate Toggle Handler
     pedal.find('#matchless-gate-btn').off('click.matchless').on('click.matchless', function (e) {
         e.stopPropagation();
-        var curVal = parseFloat(pedal.find('.mod-knob-image[mod-port-symbol="noise_gate"]').val());
-        if (isNaN(curVal)) curVal = 1.0;
-        var nextVal = (curVal > 0.5) ? 0.0 : 1.0;
-        sendPortValue('noise_gate', nextVal);
+        var isAct = $(this).hasClass('active');
+        var nextVal = isAct ? 0.0 : 1.0;
         $(this).toggleClass('active', nextVal > 0.5);
+        sendPortValue('noise_gate', nextVal);
+    });
+
+    // Spectral De-Noise Toggle Handler
+    pedal.find('#matchless-spectral-btn').off('click.matchless').on('click.matchless', function (e) {
+        e.stopPropagation();
+        var isAct = $(this).hasClass('active');
+        var nextVal = isAct ? 0.0 : 1.0;
+        $(this).toggleClass('active', nextVal > 0.5);
+        sendPortValue('noise_spectral', nextVal);
+    });
+
+    // Dynamic De-Fizz Toggle Handler
+    pedal.find('#matchless-defizz-btn').off('click.matchless').on('click.matchless', function (e) {
+        e.stopPropagation();
+        var isAct = $(this).hasClass('active');
+        var nextVal = isAct ? 0.0 : 1.0;
+        $(this).toggleClass('active', nextVal > 0.5);
+        sendPortValue('noise_defizz', nextVal);
     });
 
     if (event.type === 'start' && event.ports) {

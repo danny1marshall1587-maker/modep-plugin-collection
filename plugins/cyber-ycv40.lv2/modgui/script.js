@@ -281,37 +281,35 @@ function (event, funcs) {
         pedal.find('#ycv-cab-txt').text(cabNames[nextVal]);
     });
 
+    // Handle initialization on start
+    
     // Smart Zero-Noise Gate Toggle Handler
     pedal.find('#ycv-gate-btn').off('click.ycv').on('click.ycv', function (e) {
         e.stopPropagation();
-        var curVal = parseFloat(pedal.find('.mod-knob-image[mod-port-symbol="noise_gate"]').val());
-        if (isNaN(curVal)) curVal = 1.0;
-        var nextVal = (curVal > 0.5) ? 0.0 : 1.0;
-        sendPortValue('noise_gate', nextVal);
+        var isAct = $(this).hasClass('active');
+        var nextVal = isAct ? 0.0 : 1.0;
         $(this).toggleClass('active', nextVal > 0.5);
+        sendPortValue('noise_gate', nextVal);
     });
 
     // Spectral De-Noise Toggle Handler
     pedal.find('#ycv-spectral-btn').off('click.ycv').on('click.ycv', function (e) {
         e.stopPropagation();
-        var curVal = parseFloat(pedal.find('.mod-knob-image[mod-port-symbol="noise_spectral"]').val());
-        if (isNaN(curVal)) curVal = 1.0;
-        var nextVal = (curVal > 0.5) ? 0.0 : 1.0;
-        sendPortValue('noise_spectral', nextVal);
+        var isAct = $(this).hasClass('active');
+        var nextVal = isAct ? 0.0 : 1.0;
         $(this).toggleClass('active', nextVal > 0.5);
+        sendPortValue('noise_spectral', nextVal);
     });
 
     // Dynamic De-Fizz Toggle Handler
     pedal.find('#ycv-defizz-btn').off('click.ycv').on('click.ycv', function (e) {
         e.stopPropagation();
-        var curVal = parseFloat(pedal.find('.mod-knob-image[mod-port-symbol="noise_defizz"]').val());
-        if (isNaN(curVal)) curVal = 1.0;
-        var nextVal = (curVal > 0.5) ? 0.0 : 1.0;
-        sendPortValue('noise_defizz', nextVal);
+        var isAct = $(this).hasClass('active');
+        var nextVal = isAct ? 0.0 : 1.0;
         $(this).toggleClass('active', nextVal > 0.5);
+        sendPortValue('noise_defizz', nextVal);
     });
 
-    // Handle initialization on start
     if (event.type === 'start' && event.ports) {
         for (var i = 0; i < event.ports.length; i++) {
             var p = event.ports[i];

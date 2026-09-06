@@ -121,26 +121,6 @@ function (event, funcs) {
                     sendPortValue(sym, newVal);
                 });
 
-    // Spectral De-Noise Toggle Handler
-    pedal.find('#orange-spectral-btn').off('click').on('click', function (e) {
-        e.stopPropagation();
-        var curVal = parseFloat(pedal.find('.mod-knob-image[mod-port-symbol="noise_spectral"]').val());
-        if (isNaN(curVal)) curVal = 1.0;
-        var nextVal = (curVal > 0.5) ? 0.0 : 1.0;
-        sendPortValue('noise_spectral', nextVal);
-        $(this).toggleClass('active', nextVal > 0.5);
-    });
-
-    // Dynamic De-Fizz Toggle Handler
-    pedal.find('#orange-defizz-btn').off('click').on('click', function (e) {
-        e.stopPropagation();
-        var curVal = parseFloat(pedal.find('.mod-knob-image[mod-port-symbol="noise_defizz"]').val());
-        if (isNaN(curVal)) curVal = 1.0;
-        var nextVal = (curVal > 0.5) ? 0.0 : 1.0;
-        sendPortValue('noise_defizz', nextVal);
-        $(this).toggleClass('active', nextVal > 0.5);
-    });
-
                 $(window).on('mouseup.org_drag touchend.org_drag', function () {
                     $(window).off('.org_drag');
                 });
@@ -204,14 +184,32 @@ function (event, funcs) {
         pedal.find('#orange-cab-txt').text(cabNames[nextVal]);
     });
 
-    // Zero-Noise Gate Toggle Handler
-    pedal.find('#orange-gate-btn').off('click.org').on('click.org', function (e) {
+    
+    // Smart Zero-Noise Gate Toggle Handler
+    pedal.find('#orange-gate-btn').off('click.orange').on('click.orange', function (e) {
         e.stopPropagation();
-        var curVal = parseFloat(pedal.find('.mod-knob-image[mod-port-symbol="noise_gate"]').val());
-        if (isNaN(curVal)) curVal = 1.0;
-        var nextVal = (curVal > 0.5) ? 0.0 : 1.0;
-        sendPortValue('noise_gate', nextVal);
+        var isAct = $(this).hasClass('active');
+        var nextVal = isAct ? 0.0 : 1.0;
         $(this).toggleClass('active', nextVal > 0.5);
+        sendPortValue('noise_gate', nextVal);
+    });
+
+    // Spectral De-Noise Toggle Handler
+    pedal.find('#orange-spectral-btn').off('click.orange').on('click.orange', function (e) {
+        e.stopPropagation();
+        var isAct = $(this).hasClass('active');
+        var nextVal = isAct ? 0.0 : 1.0;
+        $(this).toggleClass('active', nextVal > 0.5);
+        sendPortValue('noise_spectral', nextVal);
+    });
+
+    // Dynamic De-Fizz Toggle Handler
+    pedal.find('#orange-defizz-btn').off('click.orange').on('click.orange', function (e) {
+        e.stopPropagation();
+        var isAct = $(this).hasClass('active');
+        var nextVal = isAct ? 0.0 : 1.0;
+        $(this).toggleClass('active', nextVal > 0.5);
+        sendPortValue('noise_defizz', nextVal);
     });
 
     if (event.type === 'start' && event.ports) {

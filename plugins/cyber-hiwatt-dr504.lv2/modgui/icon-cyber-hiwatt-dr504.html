@@ -145,6 +145,16 @@
         <div class="hiwatt-deck-control">
             <span class="hiwatt-deck-lbl">NOISE CONTROL LAB</span>
             <div class="hiwatt-mods-cluster">
+
+                <!-- Overall Noise Reduction Depth Knob -->
+                <div class="hiwatt-knob-unit mini" title="Overall Noise Suppression Depth (0 - 10, default 5.0)">
+                    <div class="hiwatt-dial custom-knob-dial mini-dial" data-symbol="noise_level" data-min="0" data-max="10" data-default="5.0">
+                        <div class="hiwatt-dial-cap mini-cap"></div>
+                        <div class="knob-rotor mini-rotor"></div>
+                    </div>
+                    <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="noise_level" style="display:none;"></div>
+                    <span class="hiwatt-lbl mini-lbl">DEPTH</span>
+                </div>
                 <button type="button" class="hiwatt-mod-switch-pill active" id="hiwatt-spectral-btn" title="Spectral De-Noise: 10-band phase-cancelling subtractor. Continuous zero-latency hiss removal with infinite sustain.">SPECTRAL</button>
                 <button type="button" class="hiwatt-mod-switch-pill active" id="hiwatt-defizz-btn" title="Dynamic De-Fizz: Dynamic sliding high-cut + smooth downward expander. Eliminates buzzy decay without choking attack.">DE-FIZZ</button>
                 <button type="button" class="hiwatt-mod-switch-pill active" id="hiwatt-gate-btn" title="Smart Gate: Original clean-input sidechained hard gate.">SMART GATE</button>

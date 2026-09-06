@@ -97,8 +97,24 @@
         </div>
 
         <div class="rockman-deck-control">
-            <span class="rockman-deck-lbl">NOISE FLOOR</span>
-            <button type="button" class="rockman-mod-switch-pill active" id="rockman-gate-btn" title="Smart Zero-Floor Suppressor: Clean input tracking with zero latency and natural sustain">ZERO NOISE</button>
+            <span class="rockman-deck-lbl">NOISE CONTROL LAB</span>
+            <div class="rockman-mods-cluster">
+
+                <!-- Overall Noise Reduction Depth Knob -->
+                <div class="rockman-knob-unit mini" title="Overall Noise Suppression Depth (0 - 10, default 5.0)">
+                    <div class="rockman-dial custom-knob-dial mini-dial" data-symbol="noise_level" data-min="0" data-max="10" data-default="5.0">
+                        <div class="rockman-dial-cap mini-cap"></div>
+                        <div class="knob-rotor mini-rotor"></div>
+                    </div>
+                    <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="noise_level" style="display:none;"></div>
+                    <span class="rockman-lbl mini-lbl">DEPTH</span>
+                </div>
+                <button type="button" class="rockman-mod-switch-pill active" id="rockman-spectral-btn" title="Spectral De-Noise: 10-band phase-cancelling subtractor. Continuous zero-latency hiss removal with infinite sustain.">SPECTRAL</button>
+                <button type="button" class="rockman-mod-switch-pill active" id="rockman-defizz-btn" title="Dynamic De-Fizz: Dynamic sliding high-cut + smooth downward expander. Eliminates buzzy decay without choking attack.">DE-FIZZ</button>
+                <button type="button" class="rockman-mod-switch-pill active" id="rockman-gate-btn" title="Smart Gate: Original clean-input sidechained hard gate.">SMART GATE</button>
+            </div>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="noise_spectral" style="display:none;"></div>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="noise_defizz" style="display:none;"></div>
             <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="noise_gate" style="display:none;"></div>
         </div>
     </div>

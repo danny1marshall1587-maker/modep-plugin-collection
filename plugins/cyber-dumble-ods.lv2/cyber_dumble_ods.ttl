@@ -194,4 +194,14 @@
         lv2:maximum 1.0 ;
         lv2:portProperty lv2:toggled , lv2:integer ;
         rdfs:comment "Dynamic high-frequency sliding lowpass and downward expander. Eliminates decaying buzz and gating edge chatter." ;
+    ]
+    , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 21 ;
+        lv2:symbol "noise_level" ;
+        lv2:name "Noise Depth" ;
+        lv2:default 5.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 10.0 ;
+        rdfs:comment "Master Noise Reduction Intensity (0.0 = Off / Bypass, 5.0 = Default Optimal, 10.0 = Aggressive Suppression)." ;
     ] .

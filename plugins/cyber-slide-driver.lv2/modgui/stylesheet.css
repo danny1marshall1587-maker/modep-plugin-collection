@@ -282,18 +282,3 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.9);
 }
 
-/* Audio Jacks Styling */
-.slide-driver-pedal .mod-pedal-input,
-.slide-driver-pedal .mod-pedal-output {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-.slide-driver-pedal .mod-pedal-input {
-    left: -18px;
-}
-
-.slide-driver-pedal .mod-pedal-output {
-    right: -18px;
-}

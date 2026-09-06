@@ -46,7 +46,8 @@ enum PortIndex {
     PORT_OUTPUT         = 11,  // Master Volume (-18 dB to +18 dB) (0 - 100%)
     PORT_RATIO_B        = 12,  // Comp B Ratio (0 = 8:1, 1 = 12:1)
     PORT_ZERO_NOISE     = 13,  // Master 3-in-1 Noise Engine (0 / 1)
-    PORT_COUNT          = 14
+    PORT_CLEAN_MODE     = 14,  // Pure Clean Dual-FET Compression Mode (0 / 1)
+    PORT_COUNT          = 15
 };
 
 // ─── One-Pole Filter ────────────────────────────────────────────────────────
@@ -268,7 +269,8 @@ public:
         const float* in, float* out, uint32_t n_samples,
         float bypass, float pCompA, float pCompB, float pDrive,
         float pClean, float pTone, float pDeIce, float pMidBoost,
-        float pBassTight, float pOutput, float pRatioB, float pZeroNoise
+        float pBassTight, float pOutput, float pRatioB, float pZeroNoise,
+        float pCleanMode
     ) {
         if (bypass < 0.5f) {
             if (out != in) std::memcpy(out, in, n_samples * sizeof(float));
@@ -302,6 +304,7 @@ public:
         float outGain = powf(10.0f, outDb * 0.05f);
 
         bool useGate = (pZeroNoise > 0.5f);
+        bool cleanMode = (pCleanMode > 0.5f);
 
         for (uint32_t i = 0; i < n_samples; ++i) {
             float rawIn = in[i];
@@ -316,12 +319,17 @@ public:
             s = compA.process(s, compANorm, 4.0f, 1.15f);
             s = compB.process(s, compBNorm, ratioB, makeupB);
 
-            // Clean blend tap before clipping
+            // Clean tap before clipping
             float preClipClean = s;
 
-            // 3. Asymmetrical Soft-Clipping Overdrive
-            float driven = softClipHybrid(s, driveNorm);
-            s = (1.0f - cleanNorm * 0.45f) * driven + (cleanNorm * 0.45f) * preClipClean;
+            // 3. Asymmetrical Soft-Clipping Overdrive OR Pure Clean Comp
+            if (cleanMode) {
+                // Pure clean compression: No diode clipping saturation, crystal-clear high headroom
+                s = preClipClean;
+            } else {
+                float driven = softClipHybrid(s, driveNorm);
+                s = (1.0f - cleanNorm * 0.45f) * driven + (cleanNorm * 0.45f) * preClipClean;
+            }
 
             // 4. Post-Drive Smoothing & De-Ice Polish
             s = toneLp.process(s);
@@ -452,6 +460,7 @@ struct CyberSlideDriverLV2 {
     const float* pOutput    = nullptr;
     const float* pRatioB    = nullptr;
     const float* pZeroNoise = nullptr;
+    const float* pCleanMode = nullptr;
 
     ~CyberSlideDriverLV2() {
         if (dsp) delete dsp;
@@ -482,6 +491,7 @@ static void connect_port(LV2_Handle instance, uint32_t port, void* data) {
         case PORT_OUTPUT:     self->pOutput   = (const float*)data; break;
         case PORT_RATIO_B:    self->pRatioB   = (const float*)data; break;
         case PORT_ZERO_NOISE: self->pZeroNoise= (const float*)data; break;
+        case PORT_CLEAN_MODE: self->pCleanMode= (const float*)data; break;
         default: break;
     }
 }
@@ -508,7 +518,8 @@ static void run(LV2_Handle instance, uint32_t n_samples) {
         self->pBassTight ? *self->pBassTight : 75.0f,
         self->pOutput    ? *self->pOutput    : 50.0f,
         self->pRatioB    ? *self->pRatioB    : 0.0f,
-        self->pZeroNoise ? *self->pZeroNoise : 1.0f
+        self->pZeroNoise ? *self->pZeroNoise : 1.0f,
+        self->pCleanMode ? *self->pCleanMode : 0.0f
     );
 }
 

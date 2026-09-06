@@ -328,3 +328,10 @@
     z-index: 9999 !important;
     pointer-events: auto !important;
 }
+
+/* Noise Control Lab Cluster */
+.jtm45-mods-cluster {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}

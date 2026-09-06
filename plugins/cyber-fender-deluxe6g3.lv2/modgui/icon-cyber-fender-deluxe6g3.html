@@ -110,8 +110,14 @@
         </div>
 
         <div class="deluxe6g3-deck-control">
-            <span class="deluxe6g3-deck-lbl">NOISE FLOOR</span>
-            <button type="button" class="deluxe6g3-mod-switch-pill active" id="deluxe6g3-gate-btn" title="Smart Zero-Floor Suppressor: Clean input tracking with zero latency and natural sustain">ZERO NOISE</button>
+            <span class="deluxe6g3-deck-lbl">NOISE CONTROL LAB</span>
+            <div class="deluxe6g3-mods-cluster">
+                <button type="button" class="deluxe6g3-mod-switch-pill active" id="deluxe6g3-spectral-btn" title="Spectral De-Noise: 10-band phase-cancelling subtractor. Continuous zero-latency hiss removal with infinite sustain.">SPECTRAL</button>
+                <button type="button" class="deluxe6g3-mod-switch-pill active" id="deluxe6g3-defizz-btn" title="Dynamic De-Fizz: Dynamic sliding high-cut + smooth downward expander. Eliminates buzzy decay without choking attack.">DE-FIZZ</button>
+                <button type="button" class="deluxe6g3-mod-switch-pill active" id="deluxe6g3-gate-btn" title="Smart Gate: Original clean-input sidechained hard gate.">SMART GATE</button>
+            </div>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="noise_spectral" style="display:none;"></div>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="noise_defizz" style="display:none;"></div>
             <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="noise_gate" style="display:none;"></div>
         </div>
     </div>

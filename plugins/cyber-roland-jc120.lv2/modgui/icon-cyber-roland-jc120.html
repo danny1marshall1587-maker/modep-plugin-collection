@@ -142,8 +142,14 @@
         </div>
 
         <div class="jc120-deck-control">
-            <span class="jc120-deck-lbl">NOISE FLOOR</span>
-            <button type="button" class="jc120-mod-switch-pill active" id="jc120-gate-btn" title="Smart Zero-Floor Suppressor: Clean input tracking with zero latency and natural sustain">ZERO NOISE</button>
+            <span class="jc120-deck-lbl">NOISE CONTROL LAB</span>
+            <div class="jc120-mods-cluster">
+                <button type="button" class="jc120-mod-switch-pill active" id="jc120-spectral-btn" title="Spectral De-Noise: 10-band phase-cancelling subtractor. Continuous zero-latency hiss removal with infinite sustain.">SPECTRAL</button>
+                <button type="button" class="jc120-mod-switch-pill active" id="jc120-defizz-btn" title="Dynamic De-Fizz: Dynamic sliding high-cut + smooth downward expander. Eliminates buzzy decay without choking attack.">DE-FIZZ</button>
+                <button type="button" class="jc120-mod-switch-pill active" id="jc120-gate-btn" title="Smart Gate: Original clean-input sidechained hard gate.">SMART GATE</button>
+            </div>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="noise_spectral" style="display:none;"></div>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="noise_defizz" style="display:none;"></div>
             <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="noise_gate" style="display:none;"></div>
         </div>
     </div>

@@ -34,7 +34,9 @@ enum PortIndex {
     PORT_SPEAKER_DRIVE  = 11,
     PORT_NOISE_GATE     = 12,
     PORT_OUTPUT_LEVEL   = 13,
-    PORT_COUNT          = 13 + 1
+    PORT_NOISE_SPECTRAL = 14,
+    PORT_NOISE_DEFIZZ   = 15,
+    PORT_COUNT          = 15 + 1
 };
 
 struct OnePole {
@@ -306,7 +308,7 @@ initCabFilters();
         const float* input, float* output, uint32_t n_samples,
         float bypass, float pVolume, float pTreble, float pMiddle, float pBass,
         float pPresence, float pBright, float pEdgeMod,
-        float pSpeakerCab, float pSpeakerDrive, float pNoiseGate, float pOutputLevel
+        float pSpeakerCab, float pSpeakerDrive, float pNoiseGate, float pOutputLevel, float pNoiseSpectral = 1.0f, float pNoiseDefizz = 1.0f
     ) {
         if (bypass < 0.5f) {
             if (output != input) memcpy(output, input, n_samples * sizeof(float));
@@ -367,8 +369,8 @@ initCabFilters();
             pOut = processSpeaker(pOut, cabType, pSpeakerDrive);
 
             // Smart Zero-Floor Noise Suppressor
-            if (useGate) {
-                // 1. 10-Band Spectral Phase-Cancellation De-Noise Engine
+            // 7A. 10-Band Spectral Phase-Cancellation De-Noise Engine (Subtractive)
+            if (pNoiseSpectral > 0.5f) {
                 float b[10];
                 specLpStates[0] += (pOut - specLpStates[0]) * specBCoeffs[0];
                 b[0] = specLpStates[0];
@@ -399,8 +401,10 @@ initCabFilters();
                     spectralSum += b[band] * specCurrentGains[band];
                 }
                 pOut = spectralSum;
+            }
 
-                // 2. Dynamic De-Fizz (Sliding High-Cut + Smooth Downward Expander)
+            // 7B. Dynamic De-Fizz (Sliding High-Cut + Smooth Downward Expander)
+            if (pNoiseDefizz > 0.5f) {
                 float absP = fabsf(pOut);
                 if (absP > defizzEnv) defizzEnv += defizzAtk * (absP - defizzEnv);
                 else defizzEnv += defizzRel * (absP - defizzEnv);
@@ -417,8 +421,10 @@ initCabFilters();
                 float expTarget = (normLevel > 0.15f) ? 1.0f : (normLevel / 0.15f);
                 defizzExpanderGain += 0.005f * (expTarget - defizzExpanderGain);
                 pOut *= defizzExpanderGain;
+            }
 
-                // 3. Smart Zero-Floor Clean-Input Sidechain Gate
+            // 7C. Smart Zero-Floor Noise Suppressor (Clean-Input Sidechain Gate)
+            if (useGate) {
                 float sc = gateScLp.lp(gateScHp.hp(rawIn, 100.0f, sampleRate), 3200.0f, sampleRate);
                 float absSc = fabsf(sc);
                 if (absSc > gateEnv) gateEnv += gateAtk * (absSc - gateEnv);
@@ -504,10 +510,12 @@ struct CyberTrainwreckExpressLV2 {
     const float* noiseGate;
 
     const float* outputLevel;
+    const float* noiseSpectral;
+    const float* noiseDefizz;
     CyberTrainwreckExpressLV2() : dsp(nullptr), audioIn(nullptr), audioOut(nullptr),
         bypass(nullptr), volume(nullptr), treble(nullptr), middle(nullptr), bass(nullptr),
         presence(nullptr), bright(nullptr), edgeMod(nullptr), speakerCab(nullptr),
-        speakerDrive(nullptr), noiseGate(nullptr) , outputLevel(nullptr) {}
+        speakerDrive(nullptr), noiseGate(nullptr) , outputLevel(nullptr), noiseSpectral(nullptr), noiseDefizz(nullptr) {}
     ~CyberTrainwreckExpressLV2() { if (dsp) delete dsp; }
 };
 
@@ -534,6 +542,8 @@ static void connect_port(LV2_Handle instance, uint32_t port, void* data) {
         case PORT_SPEAKER_DRIVE:h->speakerDrive = (const float*)data; break;
         case PORT_NOISE_GATE:   h->noiseGate = (const float*)data; break;
         case PORT_OUTPUT_LEVEL:   h->outputLevel = (const float*)data; break;
+        case PORT_NOISE_SPECTRAL: h->noiseSpectral = (const float*)data; break;
+        case PORT_NOISE_DEFIZZ:   h->noiseDefizz = (const float*)data; break;
     }
 }
 
@@ -555,7 +565,8 @@ static void run(LV2_Handle instance, uint32_t n_samples) {
         h->edgeMod ? *h->edgeMod : 0.0f,
         h->speakerCab ? *h->speakerCab : 0.0f,
         h->speakerDrive ? *h->speakerDrive : 5.5f,
-        h->noiseGate ? *h->noiseGate : 1.0f, h->outputLevel ? *h->outputLevel : 7.0f
+        h->noiseGate ? *h->noiseGate : 1.0f, h->outputLevel ? *h->outputLevel : 7.0f,
+        h->noiseSpectral ? *h->noiseSpectral : 1.0f, h->noiseDefizz ? *h->noiseDefizz : 1.0f
     );
 }
 

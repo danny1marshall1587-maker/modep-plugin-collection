@@ -60,6 +60,10 @@ function (event, funcs) {
             pedal.find('#toneking-cab-txt').text(cabNames[sc]);
         } else if (symbol === 'noise_gate') {
             pedal.find('#toneking-gate-btn').toggleClass('active', fVal > 0.5);
+        } else if (symbol === 'noise_spectral') {
+            pedal.find('#toneking-spectral-btn').toggleClass('active', fVal > 0.5);
+        } else if (symbol === 'noise_defizz') {
+            pedal.find('#toneking-defizz-btn').toggleClass('active', fVal > 0.5);
         }
     }
 
@@ -119,6 +123,26 @@ function (event, funcs) {
                     updateKnobDisplay(dial, newVal);
                     sendPortValue(sym, newVal);
                 });
+
+    // Spectral De-Noise Toggle Handler
+    pedal.find('#toneking-spectral-btn').off('click').on('click', function (e) {
+        e.stopPropagation();
+        var curVal = parseFloat(pedal.find('.mod-knob-image[mod-port-symbol="noise_spectral"]').val());
+        if (isNaN(curVal)) curVal = 1.0;
+        var nextVal = (curVal > 0.5) ? 0.0 : 1.0;
+        sendPortValue('noise_spectral', nextVal);
+        $(this).toggleClass('active', nextVal > 0.5);
+    });
+
+    // Dynamic De-Fizz Toggle Handler
+    pedal.find('#toneking-defizz-btn').off('click').on('click', function (e) {
+        e.stopPropagation();
+        var curVal = parseFloat(pedal.find('.mod-knob-image[mod-port-symbol="noise_defizz"]').val());
+        if (isNaN(curVal)) curVal = 1.0;
+        var nextVal = (curVal > 0.5) ? 0.0 : 1.0;
+        sendPortValue('noise_defizz', nextVal);
+        $(this).toggleClass('active', nextVal > 0.5);
+    });
 
                 $(window).on('mouseup.tk_drag touchend.tk_drag', function () {
                     $(window).off('.tk_drag');

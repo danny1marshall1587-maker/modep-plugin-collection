@@ -159,6 +159,37 @@ public:
         gateRel = 1.0f - expf(-1.0f / ((float)sampleRate * 0.220f));       // 220 ms detector release
         gateAtkSmooth = 1.0f - expf(-1.0f / ((float)sampleRate * 0.001f)); // 1.0 ms gain opening
         gateRelSmooth = 1.0f - expf(-1.0f / ((float)sampleRate * 0.180f)); // 180 ms gain fadeout
+
+        // 10-Band Spectral Phase Subtraction Initialization
+        const float sRateF = (float)sampleRate;
+        specAttCoeff = 1.0f - expf(-1.0f / (0.0001f * sRateF));
+        specLevelAtt = 1.0f - expf(-1.0f / (0.0020f * sRateF));
+        specLevelRel = 1.0f - expf(-1.0f / (0.0600f * sRateF));
+
+        const float multi[9] = { 60.0f, 150.0f, 400.0f, 800.0f, 1500.0f, 3000.0f, 5000.0f, 8000.0f, 12000.0f };
+        for (int i = 0; i < 9; ++i) {
+            specLpStates[i] = 0.0f;
+            float w = 2.0f * (float)M_PI * multi[i] / sRateF;
+            specBCoeffs[i] = std::min(0.99f, 1.0f - expf(-w));
+        }
+
+        const float defaultThreshDb[10] = {
+            -72.0f, -70.0f, -68.0f, -65.0f, -63.0f,
+            -60.0f, -57.0f, -55.0f, -54.0f, -53.0f
+        };
+        for (int i = 0; i < 10; ++i) {
+            specLevelStates[i] = 0.0f;
+            specCurrentGains[i] = 1.0f;
+            specThresholdsDb[i] = defaultThreshDb[i];
+            specTLinear[i] = powf(10.0f, specThresholdsDb[i] * 0.05f);
+        }
+
+        // Dynamic De-Fizz Initialization
+        defizzEnv = 0.0f;
+        defizzLpState = 0.0f;
+        defizzExpanderGain = 1.0f;
+        defizzAtk = 1.0f - expf(-1.0f / (0.002f * sRateF));
+        defizzRel = 1.0f - expf(-1.0f / (0.070f * sRateF));
 initFilters();
     }
 
@@ -352,13 +383,64 @@ initFilters();
 
             // 6. Smart Zero-Floor Noise Suppressor
             if (useGate) {
+                // 1. 10-Band Spectral Phase-Cancellation De-Noise Engine
+                float b[10];
+                specLpStates[0] += (s - specLpStates[0]) * specBCoeffs[0];
+                b[0] = specLpStates[0];
+                for (int band = 1; band < 9; ++band) {
+                    specLpStates[band] += (s - specLpStates[band]) * specBCoeffs[band];
+                    b[band] = specLpStates[band] - specLpStates[band - 1];
+                }
+                b[9] = s - specLpStates[8];
+
+                float spectralSum = 0.0f;
+                for (int band = 0; band < 10; ++band) {
+                    float absB = fabsf(b[band]);
+                    float coeff = (absB > specLevelStates[band]) ? specLevelAtt : specLevelRel;
+                    specLevelStates[band] += (absB - specLevelStates[band]) * coeff;
+                    float r = specLevelStates[band];
+
+                    float targetG = 1.0f - (specTLinear[band] / (r + 1e-9f));
+                    targetG = std::max(0.0f, std::min(1.0f, targetG));
+
+                    float currentCoeff;
+                    if (targetG > specCurrentGains[band]) {
+                        currentCoeff = specAttCoeff;
+                    } else {
+                        float tailStab = 1.0f + (1.0f - std::min(1.0f, specCurrentGains[band])) * 8.0f;
+                        currentCoeff = 1.0f - expf(-1.0f / (0.010f * tailStab * (float)sampleRate));
+                    }
+                    specCurrentGains[band] += (targetG - specCurrentGains[band]) * currentCoeff;
+                    spectralSum += b[band] * specCurrentGains[band];
+                }
+                s = spectralSum;
+
+                // 2. Dynamic De-Fizz (Sliding High-Cut + Smooth Downward Expander)
+                float absP = fabsf(s);
+                if (absP > defizzEnv) defizzEnv += defizzAtk * (absP - defizzEnv);
+                else defizzEnv += defizzRel * (absP - defizzEnv);
+
+                float normLevel = (defizzEnv - 0.0005f) / (0.0300f - 0.0005f);
+                normLevel = std::max(0.0f, std::min(1.0f, normLevel));
+
+                float dynCutoff = 2800.0f + normLevel * 11200.0f;
+                float defizzW = 2.0f * (float)M_PI * dynCutoff / (float)sampleRate;
+                float defizzAlpha = defizzW / (1.0f + defizzW);
+                defizzLpState += defizzAlpha * (s - defizzLpState);
+                s = defizzLpState;
+
+                float expTarget = (normLevel > 0.15f) ? 1.0f : (normLevel / 0.15f);
+                defizzExpanderGain += 0.005f * (expTarget - defizzExpanderGain);
+                s *= defizzExpanderGain;
+
+                // 3. Smart Zero-Floor Clean-Input Sidechain Gate
                 float sc = gateScLp.lp(gateScHp.hp(rawIn, 100.0f, sampleRate), 3200.0f, sampleRate);
                 float absSc = fabsf(sc);
                 if (absSc > gateEnv) gateEnv += gateAtk * (absSc - gateEnv);
                 else gateEnv += gateRel * (absSc - gateEnv);
 
-                const float threshOpen = 0.00100f;  // ~ -60.0 dBFS
-                const float threshClose = 0.00045f; // ~ -66.9 dBFS
+                const float threshOpen = 0.00100f;
+                const float threshClose = 0.00045f;
 
                 if (!gateIsOpen) {
                     if (gateEnv >= threshOpen) gateIsOpen = true;
@@ -393,9 +475,25 @@ private:
     float speakerEnv, speakerThermalEnv, speakerConeHistory;
     float spkAtk, spkRel, spkThermalRel;
 
+    // Smart Zero-Floor Noise Suppressor State
     OnePole gateScHp, gateScLp;
     float gateEnv, gateGain, gateAtk, gateRel, gateAtkSmooth, gateRelSmooth;
     bool gateIsOpen;
+
+    // 10-Band Spectral Phase-Cancellation De-Noise Engine
+    float specLpStates[9];
+    float specLevelStates[10];
+    float specCurrentGains[10];
+    float specThresholdsDb[10];
+    float specTLinear[10];
+    float specBCoeffs[9];
+    float specLevelAtt, specLevelRel, specAttCoeff;
+
+    // Dynamic De-Fizz Sliding Low-Pass & Smooth Expander State
+    float defizzEnv;
+    float defizzLpState;
+    float defizzExpanderGain;
+    float defizzAtk, defizzRel;
 };
 
 struct CyberRockmanX100LV2 {

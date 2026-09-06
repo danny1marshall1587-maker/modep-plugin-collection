@@ -3,5 +3,5 @@
 
 <http://cyber-audio.co.uk/plugins/cyber-koch-the-greg>
     a lv2:Plugin ;
-    lv2:binary <cyber_koch_the_greg.dll> ;
+    lv2:binary <cyber_koch_the_greg.dll> , <cyber_koch_the_greg.so> ;
     rdfs:seeAlso <cyber_koch_the_greg.ttl> , <modgui.ttl> .

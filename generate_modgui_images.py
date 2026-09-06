@@ -142,6 +142,15 @@ def create_pedal_graphic(plugin_type, width, height):
         sub_text = "PITCH SUSTAIN & DISTRESS"
         knob_color = (255, 180, 180, 255)
         accent_color = (255, 80, 80, 255)
+    elif plugin_type == 'cyber-slide-driver.lv2':
+        bg_color = (45, 28, 15, 255)
+        border_color = (180, 130, 70, 255)
+        led_color = (255, 170, 50, 255)
+        title_text = "SLIDE DRIVER"
+        brand_text = "CYBER AUDIO"
+        sub_text = "JOEY LANDRETH DUAL COMP"
+        knob_color = (235, 195, 130, 255)
+        accent_color = (240, 190, 110, 255)
     else: # galaxy-strobe-tune
         bg_color = (5, 11, 20, 255)
         border_color = (0, 229, 255, 255)
@@ -332,7 +341,8 @@ plugins = [
     'cyber-cloud-bloom.lv2', 'cyber-cloud-bloom-mono.lv2',
     'cyber-spring-reverb.lv2', 'cyber-spring-reverb-stereo.lv2',
     'cyber-acoustic-feedbacker.lv2', 'cyber-acoustic-feedbacker-mono.lv2',
-    'cyber-feedback-room.lv2', 'cyber-feedback-room-mono.lv2'
+    'cyber-feedback-room.lv2', 'cyber-feedback-room-mono.lv2',
+    'cyber-slide-driver.lv2'
 ]
 for p in plugins:
     out_dir = os.path.join('plugins', p, 'modgui')

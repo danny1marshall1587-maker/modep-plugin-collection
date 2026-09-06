@@ -107,6 +107,7 @@ jobs:
         compile_plugin "cyber-tworock-crs.lv2" "src/cyber_tworock_crs_lv2.cpp" "cyber_tworock_crs.so"
         compile_plugin "cyber-vox-ac30pa.lv2" "src/cyber_vox_ac30pa_lv2.cpp" "cyber_vox_ac30pa.so"
         compile_plugin "cyber-vox-ac30tb.lv2" "src/cyber_vox_ac30tb_lv2.cpp" "cyber_vox_ac30tb.so"
+        compile_plugin "cyber-slide-driver.lv2" "src/cyber_slide_driver_lv2.cpp" "cyber_slide_driver.so"
 
     - name: Package Bundle for ${{ matrix.arch }}
       run: |

@@ -1,0 +1,298 @@
+/* Cyber Slide Driver — Boutique Anodized Bronze & Champagne Gold Slide Compressor / Overdrive */
+
+.slide-driver-pedal {
+    position: absolute;
+    width: 360px;
+    height: 565px;
+    background: radial-gradient(circle at 50% 25%, #422d1a 0%, #291b0f 55%, #150d07 100%);
+    border-radius: 24px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.95), 
+                inset 0 1px 3px rgba(230, 185, 120, 0.6), 
+                inset 0 -4px 8px rgba(0, 0, 0, 0.95);
+    border: 3px solid #8e683e;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    user-select: none;
+    overflow: visible;
+    z-index: 10;
+}
+
+.slide-driver-pedal .mod-drag-handle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 28px;
+    cursor: move;
+    z-index: 20;
+}
+
+.slide-driver-pedal .mod-plugin-brand {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.slide-driver-pedal .mod-plugin-brand h1 {
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    color: #f0cf9e;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+    margin: 0;
+}
+
+.slide-driver-pedal .mod-plugin-name {
+    text-align: center;
+    padding-bottom: 2px;
+    margin: 1px 24px 2px 24px;
+}
+
+.slide-driver-pedal .mod-plugin-name h1 {
+    font-size: 17px;
+    font-weight: 900;
+    letter-spacing: 1.2px;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
+    margin: 0;
+}
+
+.slide-driver-pedal .slide-driver-subtitle {
+    text-align: center;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #d1a877;
+    margin-bottom: 6px;
+    border-bottom: 1.5px solid rgba(209, 168, 119, 0.35);
+    padding-bottom: 4px;
+    margin-left: 28px;
+    margin-right: 28px;
+}
+
+/* Bypass Jewel Light */
+.slide-driver-pedal .mod-light {
+    position: absolute;
+    top: 14px;
+    right: 20px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #2a1100;
+    border: 2px solid #5a3311;
+    box-shadow: inset 0 0 4px #000;
+    transition: all 0.15s ease;
+}
+
+.slide-driver-pedal .mod-light.on {
+    background: #ffaa33;
+    border-color: #ffd899;
+    box-shadow: 0 0 14px #ff9900, 0 0 25px rgba(255, 170, 51, 0.8), inset 0 0 4px #fff;
+}
+
+/* Knob Section Headers */
+.slide-driver-pedal .knob-section-header {
+    margin: 5px 18px 2px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slide-driver-pedal .section-title {
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+    color: #e4be88;
+    text-shadow: 0 1px 2px #000;
+    text-transform: uppercase;
+}
+
+/* Control Groups */
+.slide-driver-pedal .mod-control-group {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 2px 12px;
+    margin-bottom: 4px;
+}
+
+.slide-driver-pedal .mod-control-group.row-3 {
+    padding: 0 10px;
+}
+
+.slide-driver-pedal .mod-control-group.row-4 {
+    padding: 0 6px;
+}
+
+.slide-driver-pedal .mod-knob {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90px;
+}
+
+.slide-driver-pedal .mod-knob.mini {
+    width: 76px;
+}
+
+.slide-driver-pedal .mod-knob-title {
+    margin-top: 3px;
+    font-size: 8px;
+    font-weight: 800;
+    color: #e2c092;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    text-align: center;
+    white-space: nowrap;
+    text-shadow: 0 1px 2px #000;
+}
+
+/* Custom Knob Dial (Gold Cap on Anodized Aluminum) */
+.slide-driver-pedal .custom-knob-dial {
+    position: relative;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #5a4128 0%, #2d1c0c 70%, #150b04 100%);
+    border: 2px solid #8e683e;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.9), inset 0 1px 2px rgba(255, 220, 160, 0.4);
+    cursor: pointer;
+}
+
+.slide-driver-pedal .mod-knob.mini .custom-knob-dial {
+    width: 38px;
+    height: 38px;
+}
+
+.slide-driver-pedal .knob-rotor {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 3px;
+    height: 18px;
+    background: #ffdd99;
+    border-radius: 2px;
+    box-shadow: 0 0 5px rgba(255, 220, 150, 0.9);
+    transform-origin: 50% 100%;
+    transform: translate(-50%, -100%) rotate(0deg);
+}
+
+.slide-driver-pedal .mod-knob.mini .knob-rotor {
+    height: 14px;
+    width: 2.5px;
+}
+
+/* Custom Toggle Switch */
+.slide-driver-pedal .custom-toggle-switch {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.slide-driver-pedal .switch-slot {
+    width: 14px;
+    height: 26px;
+    background: #150c05;
+    border-radius: 7px;
+    border: 2px solid #664422;
+    box-shadow: inset 0 2px 5px #000;
+    position: relative;
+}
+
+.slide-driver-pedal .switch-lever {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 16px;
+    background: linear-gradient(180deg, #d4a76a 0%, #684a22 100%);
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    transform: translate(-50%, -50%) rotate(-25deg);
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-driver-pedal .switch-led {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #2a1100;
+    margin-top: 3px;
+    box-shadow: inset 0 0 2px #000;
+    transition: all 0.15s ease;
+}
+
+.slide-driver-pedal .switch-led.lit {
+    background: #ffaa33;
+    box-shadow: 0 0 8px #ff9900;
+}
+
+/* Noise Deck & Zero Noise Pill Button */
+.slide-driver-pedal .slide-driver-noise-deck {
+    display: flex;
+    justify-content: center;
+    margin-top: 4px;
+    margin-bottom: 2px;
+}
+
+.slide-driver-pedal .slide-driver-gate-pill {
+    background: linear-gradient(180deg, #332211 0%, #1a0e05 100%);
+    border: 1.5px solid #684a25;
+    border-radius: 12px;
+    color: #997750;
+    font-size: 8.5px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    padding: 3px 18px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+    transition: all 0.15s ease;
+}
+
+.slide-driver-pedal .slide-driver-gate-pill.active {
+    background: linear-gradient(180deg, #6e461a 0%, #3a220a 100%);
+    border-color: #f0bf77;
+    color: #ffe6ba;
+    box-shadow: 0 0 12px rgba(240, 191, 119, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+/* Bypass Footswitch */
+.slide-driver-pedal .mod-footswitch {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #888 0%, #444 60%, #1a1a1a 100%);
+    border: 4px solid #aaa;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.9), inset 0 2px 4px rgba(255,255,255,0.7);
+    cursor: pointer;
+}
+
+.slide-driver-pedal .mod-footswitch:active {
+    transform: translateX(-50%) scale(0.96);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.9);
+}
+
+/* Audio Jacks Styling */
+.slide-driver-pedal .mod-pedal-input,
+.slide-driver-pedal .mod-pedal-output {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.slide-driver-pedal .mod-pedal-input {
+    left: -18px;
+}
+
+.slide-driver-pedal .mod-pedal-output {
+    right: -18px;
+}

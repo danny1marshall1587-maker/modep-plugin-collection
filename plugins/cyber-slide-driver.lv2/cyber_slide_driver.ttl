@@ -1,0 +1,160 @@
+@prefix doap:  <http://usefulinc.com/ns/doap#> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix units: <http://lv2plug.in/ns/extensions/units#> .
+@prefix mod:   <http://moddevices.com/ns/mod#> .
+
+<http://cyber-audio.co.uk/plugins/cyber-slide-driver>
+    a lv2:Plugin ,
+      lv2:DistortionPlugin ,
+      lv2:CompressorPlugin ;
+
+    doap:name "Cyber Slide Driver" ;
+    doap:license <http://opensource.org/licenses/mit> ;
+    doap:developer [
+        foaf:name "Cyber Audio" ;
+    ] ;
+
+    mod:brand "Cyber Audio" ;
+    mod:label "Slide Driver" ;
+
+    rdfs:comment "Joey Landreth signature dual-cascaded FET compression, 800Hz vocal horn boost, asymmetrical soft overdrive, 3.2kHz anti-harsh de-icer, and 3-in-1 master noise engine." ;
+
+    lv2:minorVersion 1 ;
+    lv2:microVersion 0 ;
+
+    lv2:port [
+        a lv2:AudioPort , lv2:InputPort ;
+        lv2:index 0 ;
+        lv2:symbol "in" ;
+        lv2:name "Audio In" ;
+    ] , [
+        a lv2:AudioPort , lv2:OutputPort ;
+        lv2:index 1 ;
+        lv2:symbol "out" ;
+        lv2:name "Audio Out" ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 2 ;
+        lv2:symbol "bypass" ;
+        lv2:name "Bypass" ;
+        lv2:default 1.0000 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 1.0 ;
+        lv2:portProperty lv2:toggled , lv2:integer ;
+        lv2:designation lv2:enabled ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 3 ;
+        lv2:symbol "comp_a" ;
+        lv2:name "Comp A (Peak)" ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        lv2:default 45.0 ;
+        units:unit units:pc ;
+        rdfs:comment "Fast 1176 FET peak limiter. Tames initial slide glass/brass click and string clack." ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 4 ;
+        lv2:symbol "comp_b" ;
+        lv2:name "Comp B (Sustain)" ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        lv2:default 65.0 ;
+        units:unit units:pc ;
+        rdfs:comment "Slow-release 1176 FET sustain pump. Delivers violin/horn-like infinite bloom." ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 5 ;
+        lv2:symbol "drive" ;
+        lv2:name "Overdrive" ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        lv2:default 38.0 ;
+        units:unit units:pc ;
+        rdfs:comment "Hybrid Germanium/Silicon asymmetrical soft clipping in op-amp feedback loop." ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 6 ;
+        lv2:symbol "clean" ;
+        lv2:name "Clean Headroom" ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        lv2:default 25.0 ;
+        units:unit units:pc ;
+        rdfs:comment "Blends unclipped pick clarity beneath the singing saturated overdrive." ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 7 ;
+        lv2:symbol "tone" ;
+        lv2:name "Tone" ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        lv2:default 55.0 ;
+        units:unit units:pc ;
+        rdfs:comment "Active variable post-clipping smooth lowpass filter (2.2 kHz to 8.5 kHz)." ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 8 ;
+        lv2:symbol "de_ice" ;
+        lv2:name "De-Ice / Smooth" ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        lv2:default 40.0 ;
+        units:unit units:pc ;
+        rdfs:comment "Dedicated 3.2 kHz anti-harsh notch filter. Removes slide screech and ice-pick glare." ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 9 ;
+        lv2:symbol "mid_boost" ;
+        lv2:name "Vocal Mids" ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        lv2:default 60.0 ;
+        units:unit units:pc ;
+        rdfs:comment "800 Hz resonant vocal bump for horn-like singing slide expression." ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 10 ;
+        lv2:symbol "bass_tight" ;
+        lv2:name "Bass Tight" ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        lv2:default 75.0 ;
+        units:unit units:pc ;
+        rdfs:comment "4th-order 82 Hz sub-bass tightening filter. Prevents muddy low-end clack." ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 11 ;
+        lv2:symbol "output" ;
+        lv2:name "Level" ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 100.0 ;
+        lv2:default 50.0 ;
+        units:unit units:pc ;
+        rdfs:comment "Master output volume (-18 dB to +18 dB, center 50% is unity 0 dB)." ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 12 ;
+        lv2:symbol "ratio_b" ;
+        lv2:name "Comp B Ratio" ;
+        lv2:minimum 0 ;
+        lv2:maximum 1 ;
+        lv2:default 0 ;
+        lv2:portProperty lv2:enumeration , lv2:integer ;
+        lv2:scalePoint [ rdfs:label "8:1 (Vocal Squeeze)" ; rdf:value 0 ] ;
+        lv2:scalePoint [ rdfs:label "12:1 (Heavy Bloom)" ; rdf:value 1 ] ;
+        rdfs:comment "Compression ratio for the sustain engine." ;
+    ] , [
+        a lv2:ControlPort , lv2:InputPort ;
+        lv2:index 13 ;
+        lv2:symbol "zero_noise" ;
+        lv2:name "Zero Noise" ;
+        lv2:minimum 0 ;
+        lv2:maximum 1 ;
+        lv2:default 1 ;
+        lv2:portProperty lv2:toggled , lv2:integer ;
+        rdfs:comment "Master 3-in-1 noise engine: 10-band spectral subtractor + dynamic de-fizz + smart clean gate." ;
+    ] .

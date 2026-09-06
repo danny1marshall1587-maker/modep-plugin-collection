@@ -3,5 +3,5 @@
 
 <http://cyber-audio.co.uk/plugins/cyber-magnatone-280>
     a lv2:Plugin ;
-    lv2:binary <cyber_magnatone_280.dll> ;
+    lv2:binary <cyber_magnatone_280.dll> , <cyber_magnatone_280.so> ;
     rdfs:seeAlso <cyber_magnatone_280.ttl> , <modgui.ttl> .

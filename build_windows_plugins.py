@@ -70,7 +70,8 @@ def build_and_deploy():
         ('cyber-trainwreck-express.lv2', 'src/cyber_trainwreck_express_lv2.cpp', 'cyber_trainwreck_express.dll'),
         ('cyber-tworock-crs.lv2', 'src/cyber_tworock_crs_lv2.cpp', 'cyber_tworock_crs.dll'),
         ('cyber-vox-ac30pa.lv2', 'src/cyber_vox_ac30pa_lv2.cpp', 'cyber_vox_ac30pa.dll'),
-        ('cyber-vox-ac30tb.lv2', 'src/cyber_vox_ac30tb_lv2.cpp', 'cyber_vox_ac30tb.dll')
+        ('cyber-vox-ac30tb.lv2', 'src/cyber_vox_ac30tb_lv2.cpp', 'cyber_vox_ac30tb.dll'),
+        ('cyber-slide-driver.lv2', 'src/cyber_slide_driver_lv2.cpp', 'cyber_slide_driver.dll')
     ]
 
     print("================================================================")

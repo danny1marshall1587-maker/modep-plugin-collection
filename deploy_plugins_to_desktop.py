@@ -127,7 +127,8 @@ def deploy_to_desktop():
         ('cyber-trainwreck-express.lv2', 'cyber-trainwreck-express.lv2'),
         ('cyber-tworock-crs.lv2', 'cyber-tworock-crs.lv2'),
         ('cyber-vox-ac30pa.lv2', 'cyber-vox-ac30pa.lv2'),
-        ('cyber-vox-ac30tb.lv2', 'cyber-vox-ac30tb.lv2')
+        ('cyber-vox-ac30tb.lv2', 'cyber-vox-ac30tb.lv2'),
+        ('cyber-slide-driver.lv2', 'cyber-slide-driver.lv2')
     ]
 
     for target_base in target_dirs:

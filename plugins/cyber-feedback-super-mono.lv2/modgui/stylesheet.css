@@ -1,0 +1,284 @@
+/* ==========================================================================
+   Cyber Feedback Super — MOD-UI Stylesheet
+   Deep Stealth Cyan / Obsidian Synth Aesthetic
+   ========================================================================== */
+
+.mod-pedal.feedback-super-pedal {
+    width: 290px;
+    height: 520px;
+    background: radial-gradient(circle at 50% 15%, #0f172a 0%, #090d16 60%, #030712 100%);
+    border: 2px solid #0284c7;
+    border-radius: 18px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.95), inset 0 1px 0 rgba(56, 189, 248, 0.4);
+    box-sizing: border-box;
+    padding: 10px 12px 12px 12px;
+    color: #e0f2fe;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    user-select: none;
+}
+
+.mod-pedal.feedback-super-pedal .mod-plugin-brand h1 {
+    font-size: 8.5px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: #38bdf8;
+    text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+    margin: 0;
+    padding: 0;
+}
+
+.mod-pedal.feedback-super-pedal .mod-plugin-name h1 {
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), 0 0 14px rgba(56, 189, 248, 0.5);
+    margin: 1px 0 0 0;
+    padding: 0;
+}
+
+.mod-pedal.feedback-super-pedal .pedal-subtitle {
+    font-size: 6px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    color: #0284c7;
+    margin: 1px 0 3px 0;
+    text-transform: uppercase;
+}
+
+/* Bypass LED */
+.mod-pedal.feedback-super-pedal .mod-light {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #082f49;
+    border: 1px solid #0284c7;
+    margin-bottom: 4px;
+    transition: all 0.1s ease;
+}
+
+.mod-pedal.feedback-super-pedal .mod-light.on {
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 20px #38bdf8;
+}
+
+/* Master Feedback Hero Knob */
+.feedback-hero-section {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 4px;
+}
+
+.hero-knob-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.custom-knob-dial.hero-dial {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #0369a1 0%, #075985 50%, #082f49 100%);
+    border: 2.5px solid #38bdf8;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.8), inset 0 2px 4px rgba(255, 255, 255, 0.25), 0 0 12px rgba(56, 189, 248, 0.35);
+    position: relative;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.custom-knob-dial.hero-dial:hover {
+    border-color: #7dd3fc;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.8), 0 0 18px rgba(56, 189, 248, 0.7);
+}
+
+.hero-rotor {
+    width: 3px;
+    height: 20px;
+    background: #7dd3fc;
+    box-shadow: 0 0 8px #7dd3fc;
+    position: absolute;
+    top: 5px;
+    left: calc(50% - 1.5px);
+    transform-origin: bottom center;
+    border-radius: 2px;
+}
+
+.hero-title {
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: #7dd3fc;
+    margin-top: 3px;
+    text-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+}
+
+/* Section Dividers */
+.section-divider {
+    width: 100%;
+    text-align: center;
+    border-bottom: 1px solid rgba(2, 132, 199, 0.45);
+    line-height: 0.1em;
+    margin: 3px 0 5px 0;
+}
+
+.section-divider span {
+    background: #090d16;
+    padding: 0 6px;
+    font-size: 5.5px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #38bdf8;
+}
+
+/* Grids */
+.cyber-knobs-grid {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-bottom: 4px;
+}
+
+.knob-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+}
+
+.custom-knob-dial {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #1e293b 0%, #0f172a 70%, #020617 100%);
+    border: 1.5px solid #0284c7;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.8), inset 0 1px 2px rgba(255, 255, 255, 0.15);
+    position: relative;
+    cursor: pointer;
+}
+
+.custom-knob-dial:hover {
+    border-color: #38bdf8;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.8), 0 0 8px rgba(56, 189, 248, 0.4);
+}
+
+.knob-rotor {
+    width: 2px;
+    height: 12px;
+    background: #38bdf8;
+    box-shadow: 0 0 4px #38bdf8;
+    position: absolute;
+    top: 3px;
+    left: calc(50% - 1px);
+    transform-origin: bottom center;
+    border-radius: 1px;
+}
+
+.mod-knob-title {
+    font-size: 6px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    color: #94a3b8;
+    margin-top: 3px;
+    text-align: center;
+}
+
+/* Routing Bar */
+.room-routing-bar {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.routing-label {
+    font-size: 6px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    color: #64748b;
+}
+
+.room-toggle-switch {
+    display: flex;
+    background: #020617;
+    border: 1px solid #0284c7;
+    border-radius: 10px;
+    padding: 1px;
+    cursor: pointer;
+}
+
+.toggle-opt {
+    font-size: 5.5px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 8px;
+    color: #64748b;
+    transition: all 0.15s ease;
+}
+
+.toggle-opt.active {
+    background: #0284c7;
+    color: #ffffff;
+    box-shadow: 0 0 6px rgba(56, 189, 248, 0.5);
+}
+
+/* Footswitch Area */
+.footswitch-area {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 4px;
+}
+
+.trigger-switch-box,
+.bypass-switch-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.trigger-stomp-button {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 30%, #475569 0%, #1e293b 60%, #0f172a 100%);
+    border: 2px solid #64748b;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7), inset 0 2px 3px rgba(255, 255, 255, 0.3);
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.trigger-stomp-button:active,
+.trigger-stomp-button.active {
+    background: radial-gradient(circle at 50% 50%, #0284c7 0%, #0369a1 70%, #075985 100%);
+    border-color: #38bdf8;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.9), 0 0 14px #38bdf8;
+}
+
+.trigger-plunger {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #cbd5e1 0%, #94a3b8 100%);
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.footswitch-title {
+    font-size: 6.5px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    color: #94a3b8;
+    margin-top: 3px;
+}

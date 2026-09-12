@@ -1,0 +1,163 @@
+<div class="mod-pedal mod-pedal-boxy{{{cns}}} feedback-super-pedal{{{c_extra}}}">
+    <div mod-role="drag-handle" class="mod-drag-handle"></div>
+
+    <!-- Top Branding -->
+    <div class="mod-plugin-brand"><h1>CYBER AUDIO</h1></div>
+    <div class="mod-plugin-name"><h1>Feedback Super</h1></div>
+    <div class="pedal-subtitle">CLEAN ZERO-CROSSING SUSTAINER & FEEDBACKER</div>
+
+    <!-- Bypass LED -->
+    <div class="mod-light on" mod-role="bypass-light"></div>
+
+    <!-- Master Feedback Hero Knob -->
+    <div class="feedback-hero-section">
+        <div class="knob-cell hero-knob-cell">
+            <div class="custom-knob-dial hero-dial" data-symbol="feedback" data-min="0" data-max="1" data-default="0.0">
+                <div class="knob-rotor hero-rotor"></div>
+            </div>
+            <span class="mod-knob-title hero-title">FEEDBACK</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="feedback" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- Dev / Tuner Section 1: Micro-Sampler Seam & Pitch Tuning -->
+    <div class="section-divider"><span>MICRO-SAMPLER SEAM & PITCH TUNING</span></div>
+    <div class="cyber-knobs-grid tuner-grid">
+        <div class="knob-cell">
+            <div class="custom-knob-dial" data-symbol="sustain_level" data-min="0" data-max="1.5" data-default="1.0">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title">SUSTAIN</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="sustain_level" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial" data-symbol="crossfade_ms" data-min="5" data-max="100" data-default="20.0">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title">X-FADE (MS)</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="crossfade_ms" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial" data-symbol="loop_len_min" data-min="10" data-max="80" data-default="30.0">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title">MIN LOOP</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="loop_len_min" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial" data-symbol="loop_nudge" data-min="-50" data-max="50" data-default="0">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title">NUDGE (SMP)</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="loop_nudge" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- Dev / Tuner Section 2: Dynamics & Organic Waver -->
+    <div class="section-divider"><span>DYNAMICS & ORGANIC RESIDUAL WAVER</span></div>
+    <div class="cyber-knobs-grid tuner-grid">
+        <div class="knob-cell">
+            <div class="custom-knob-dial" data-symbol="release_ms" data-min="50" data-max="3000" data-default="400.0">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title">RELEASE</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="release_ms" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial" data-symbol="waver_depth" data-min="0" data-max="10" data-default="1.5">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title">WAVER DEPTH</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="waver_depth" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial" data-symbol="waver_rate" data-min="0.1" data-max="8.0" data-default="1.2">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title">WAVER RATE</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="waver_rate" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial" data-symbol="speaker_distress" data-min="0" data-max="1" data-default="0.35">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title">DISTRESS</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="speaker_distress" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- Section 3: Room Reverb Matrix -->
+    <div class="section-divider"><span>ACOUSTIC ROOM MATRIX</span></div>
+    <div class="room-routing-bar">
+        <span class="routing-label">ROUTING:</span>
+        <div class="room-toggle-switch" data-symbol="room_in_loop" data-val="1">
+            <span class="toggle-opt opt-out">POST OUT</span>
+            <span class="toggle-opt opt-loop active">IN FEEDBACK LOOP</span>
+        </div>
+        <div class="mod-control-port" mod-role="input-control-port" mod-port-symbol="room_in_loop" style="display:none;"></div>
+    </div>
+
+    <div class="cyber-knobs-grid room-grid">
+        <div class="knob-cell">
+            <div class="custom-knob-dial" data-symbol="room_size" data-min="5" data-max="300" data-default="180.0">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title">ROOM SIZE</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="room_size" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial" data-symbol="room_decay" data-min="0.1" data-max="3.0" data-default="2.0">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title">ROOM DECAY</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="room_decay" style="display:none;"></div>
+        </div>
+
+        <div class="knob-cell">
+            <div class="custom-knob-dial" data-symbol="room_mix" data-min="0" data-max="100" data-default="25.0">
+                <div class="knob-rotor"></div>
+            </div>
+            <span class="mod-knob-title">ROOM MIX</span>
+            <div class="mod-knob-image" mod-role="input-control-port" mod-port-symbol="room_mix" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- Dual Footswitches Section -->
+    <div class="footswitch-area">
+        <div class="trigger-switch-box">
+            <div class="trigger-stomp-button" title="Hold / 100% Feedback Swell">
+                <div class="trigger-plunger"></div>
+            </div>
+            <span class="footswitch-title">HOLD SUSTAIN</span>
+            <div class="mod-control-port" mod-role="input-control-port" mod-port-symbol="feedback" style="display:none;"></div>
+        </div>
+
+        <div class="bypass-switch-box">
+            <div class="mod-footswitch" mod-role="bypass"></div>
+            <span class="footswitch-title">ENGAGE</span>
+        </div>
+    </div>
+
+    <!-- Audio I/O Ports -->
+    <div class="mod-pedal-input">
+        {{#effect.ports.audio.input}}
+        <div class="mod-input mod-input-disconnected" title="{{name}}" mod-role="input-audio-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-input-image"></div>
+        </div>
+        {{/effect.ports.audio.input}}
+    </div>
+    <div class="mod-pedal-output">
+        {{#effect.ports.audio.output}}
+        <div class="mod-output mod-output-disconnected" title="{{name}}" mod-role="output-audio-port" mod-port-symbol="{{symbol}}">
+            <div class="mod-pedal-output-image"></div>
+        </div>
+        {{/effect.ports.audio.output}}
+    </div>
+</div>
